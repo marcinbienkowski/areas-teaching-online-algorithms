@@ -1,0 +1,86 @@
+\section{Zarządzanie plikami}
+
+W tej części rozważymy rozszerzenie problemu przenoszenia pliku.
+Kiedy pozbędziemy się założenia, że może być tylko jedna kopia pliku w sieci 
+i rozróżnimy pomiędzy odwołaniami odczytu z pliku i zapisu do niego, otrzymamy następujący problem.
+
+\problem{Zarządzanie plikiem}{
+Dany jest ciąg żądań $\textsc{Req}(\sigma_t)$, gdzie $\textsc{Req} \in \{ \textsc{Read}, 
+\textsc{Write} \}$ a $\sigma_t$ jest jakimś wierzchołkiem. Niech $Q$ oznacza zbiór wierzchołków
+w których algorytm ma kopię pliku. Przy żądaniu odczytu z pliku algorytm płaci za odległość 
+między $\sigma_t$ a najbliższym wierzchołkiem ze zbioru $Q$. Przy żądaniu zapisu algorytm musi uaktualnić
+wszystkie kopie, płaci zatem za koszt minimalnego drzewa Steinera opartego na wierzchołkach 
+$Q \cup \{ \sigma_t \}$. Po obsłudze żądania algorytm może skopiować plik z dowolnego wierzchołka $u$
+do dowolnego innego $u'$, płacąc $D \cdot d(u,u')$. Można też za darmo usunąć kopię z dowolnego wierzchołka.
+}
+
+Zauważmy, że jeśli sekwencja składa się z samych żądań \textsc{Write}, to utrzymywanie 
+więcej niż jednej kopii pliku nie ma sensu i cały problem staje się problemem przenoszenia pliku. 
+
+Z drugiej strony podproblem, w którym występują tylko żądania \textsc{Read} nazywamy problemem kopiowania  
+pliku (usuwanie kopii pliku nie ma sensu). W tym podproblemie ma sens mówienie tylko o ścisłej konkurencyjności,
+bo koszt kopiowania pliku do wszystkich wierzchołków jest funkcją rozmiaru grafu i jest niezależny od wejścia. 
+
+Poniżej przedstawiamy algorytm $\CNT$ dla problemu zarządzania plikiem w klikach (pełnych grafach 
+z odległościami między każdą parą wierzchołków równą $1$). Każdy wierzchołek $v$ ma licznik $c_v$,
+początkowo ustawiony na $0$. Każdy wierzchołek $v$ wykonuje następujący program \textsc{Count}($v$):
+
+
+\begin{algorithmic}
+\State while $c_v < D$ {\bf :}
+\State if ($\textsc{Read}(v)$ i $v \notin Q$) or ($\textsc{Write}(v)$ a ,,sieć oczekuje'') 
+\State then $c_v${\tt ++} 
+\State endfi 
+\State endwhile 
+\State Skopiuj plik do $v$ \\
+\State while $c_v > 0$ {\bf : } 
+\State if $\textsc{Write}(w)$ i $v \neq w$ 
+\State then $c_v${\tt --} 
+\State endif 
+\State end-while
+\State Jeśli masz ostatnią kopię pliku w sieci, przejdź w stan oczekiwania. 
+\State Skasuj plik z $v$. 
+\State Przejdź do punktu 1.
+\end{algorithmic}
+
+\begin{theorem}
+Algorytm $\CNT$ jest $3$-konkurencyjny dla problemu zarządzania plikiem
+\end{theorem}
+
+\begin{proof}
+Po pierwsze zaobserwujmy, że tylko jeden procesor może być w stanie oczekiwania. Co więcej 
+pozostałe wierzchołki wykonują wtedy punkt 1 (mówimy wtedy, że cała {\em sieć jest w stanie oczekiwania}).
+
+Nazwijmy wykonanie kroków od 1 do 6 w wierzchołku $v$ fazą wierzchołka $v$.
+Oczywiście fazy różnych wierzchołków niekoniecznie pokrywają się w czasie. 
+
+Niech $Q$ będzie zbiorem wszystkich wierzchołków, które mają plik.
+W definicji problemu koszty zostały zdefiniowane globalnie. Dla celów analizy przypiszemy te koszty 
+poszczególnym procesorom.
+\begin{enumerate}[(i)]
+\item Procesor, który zgłasza żądanie odczytu, płaci $1$.
+\item Jeśli sieć jest w stanie oczekiwania i procesor $v$ zgłasza żądanie zapisu, $v$ płaci $1$.
+\item Jeśli sieć nie jest w stanie oczekiwania i procesor $v$ zgłasza żądanie zapisu, płacą wszystkie 
+	wierzchołki ze zbioru $Q \setminus \{ v \}$.
+\item Jeśli plik jest kopiowany, $D$ płaci wierzchołek, który otrzymuje plik.
+\end{enumerate}
+Weźmy dowolny wierzchołek $v$. Przy powyższej definicji opłat, każdej zapłacie o $1$ odpowiada 
+zwiększenie lub zmniejszenie licznika $c_v$ o $1$. Zatem 
+$v$ płaci dokładnie $3 \cdot D$ w pojedynczej fazie. Wyjątkiem jest pierwsza faza, w której wierzchołki
+zaczynające z plikiem płacą tylko $D$.
+
+Załóżmy, że w rozwiązaniu optymalnym, $\OPT$ płaci za usuwanie pliku a nie za jego kopiowanie.
+Przez takie założenie koszt pojedynczego wierzchołka może zostać zmodyfikowany co najwyżej o $D$, 
+zatem koszt całego rozwiązania optymalnego zostanie zaburzony o co najwyżej $n \cdot D$. Stała 
+ta nie ma znaczenia przy odpowiednio długiej sekwencji wejściowej.
+
+Teraz obliczmy jaki jest koszt algorytmu optymalnego związany z pojedynczym wierzchołkiem $v$ 
+w krokach, które stanowią pojedynczą fazę wierzchołka $v$. 
+Jeśli $\OPT$ usuwa plik z $v$ w danej fazie, to wtedy jego koszt to co najmniej $D$. 
+W przeciwnym przypadku $\OPT$ nie usuwa pliku z $v$ i mamy dwa podprzypadki.
+Jeśli ma plik w $v$ przez całą fazę, to wtedy płaci $1$ za każde z $D$ żądań w kroku 3. 
+Jeśli nie ma pliku w $v$ przez całą fazę, to wtedy płaci $1$ za każde z $D$ żądań w kroku 1.
+W każdym z tych przypadków koszt przypisany wierzchołkowi $v$ w rozwiązaniu optymalnym 
+wynosi co najmniej~$D$. 
+\end{proof}
+

@@ -1,0 +1,232 @@
+
+\section{Funkcje potencjału dla algorytmów randomizowanych}
+
+\subsection{Reorganizacja listy: algorytm BIT}
+
+
+\noindent
+{\bf Idea modyfikacji algorytmu MTF:} 
+Analiza algorytmu {\sc Mtf} zakłada najgorszy dla nas przypadek, w których
+{\OPT} może nie przemieścić elementu $\sigma_t$ i dzięki temu nasz potencjał
+zwiększa się dodatkowo o $A$. Z drugiej strony algorytm, który nie będzie się
+ruszać w ogóle, będzie niekonkurencyjny. Pomysł polega więc na tym, żeby
+wykorzystać randomizację do lepszego ,,łapania'' {\OPT}-a, tj. przesuwać
+element z prawdopodobieństwem $1/2$.
+
+Przypomnijmy teraz związany z {\MTF} rysunek zastępując zbiory $\mathcal{A}$ i
+$\mathcal{C}$ jednym zbiorem nazwanym $\mathcal{Y}$.
+
+\myfigurehere{bit}{\includegraphics{pict/bit}}
+
+\noindent
+Na początku algorytm {\sc Bit} 
+dla każdego elementu $x$ wybiera losowo $b(x) \in \{0,1\}$. Nastepnie 
+podczas obsługi odwołania do elementu $x$ wykonaj:
+
+\begin{algorithmic}
+\State \textsc{Flip}$(b(x))$
+\State if $b(x) = 1$ then przesuń $x$ na początek listy
+\end{algorithmic}
+
+
+Zauważmy, że algorytm {\sc Bit} jest używa
+stałej liczby bitów losowych ($\ell$), żeby obsłużyć sekwencje wejściową o dowolnej długości.
+Z faktu, że $b(x)$ jest losowane na początku i trzymane w tajemnicy przed adwersarzem otrzymujemy 
+następujący fakt.
+
+\begin{observation}
+Zauważmy, że w danym kroku $t$, dla dowolnego $x$, $b(x)$ jest zmienną losową przyjmującą wartość 
+$1$ z~prawdopodobieństwem $1/2$ i $0$ z takim samym prawdopodobieństwem, niezależnie od liczby odwołań 
+do $x$ i stanu listy algorytmu optymalnego. 
+\end{observation}
+
+Musimy zmodyfikować dodatkowo funkcję potencjału: w przypadku kroku $t$, takiego że $b(\sigma_t) = 1$,
+{\BIT} musi potencjałem skompensować to, że {\OPT} może mieć koszt o $B$ mniejszy od {\BIT}.
+
+\begin{theorem}
+Algorytm $\BIT$ jest $1,\!75$-konkurencyjny.
+\end{theorem}
+
+\begin{proof}
+Wybierzmy dowolną sekwencję $\sigma$. Uruchomimy na niej algorytm $\BIT$ i algorytm 
+optymalny $\OPT$ i będziemy obserwować jak się na niej zachowują. 
+
+Do dowodu będziemy potrzebować paru oznaczeń. Niech $x \prec_\mathrm{alg} y$ oznacza, że 
+$x$ występuje przed $y$ ($x$ jest bliżej początku listy niż $y$) na liście algorytmu $\ALG$.
+{\em Inwersją} nazywamy uporządkowaną parę $(x,y)$, taką że $x \prec_\mathrm{opt} y$ oraz
+$y \prec_\mathrm{bit} x$. Mówimy, że inwersja $(x,y)$ jest typu $b(x)$.
+Niech $\phi_i$ oznacza liczbę inwersji typu $i$. Definiujemy funkcję potencjału jako
+\[
+	\Phi = \phi_0 + 2 \cdot \phi_1 \enspace.
+\]
+
+Rozważmy krok $t$ w którym występuje odwołanie do elementu $\sigma_t$. Dla dowodu konkurencyjności algorytmu
+wystarczy pokazać, że 
+\begin{equation}
+\label{eq:bit_competitive}
+	\E[\BIT(t)] + \E[\Delta\Phi(t)] \;\leq\; (7/4) \cdot \OPT(t) \enspace.
+\end{equation}
+
+
+Podobnie jak w dowodzie konkurencyjności algorytmu $\MTF$ podzielimy krok $t$ na dwie akcje. W pierwszej 
+akcji $\BIT$ i $\OPT$ płacą za żądanie \textsf{Access}$(\sigma_t)$, 
+$\BIT$ wykonuje swoje (bezpłatne) zamiany a $\OPT$ wykonuje swoje 
+bezpłatne zamiany. W drugiej akcji $\OPT$ wykonuje swoje płatne zamiany i płaci za nie. Udowodnimy, że 
+nierówność (\ref{eq:bit_competitive}) zachodzi dla każdej z akcji z osobna.
+
+\myparagraph{Dowód nierówności (\ref{eq:bit_competitive}) dla pierwszej akcji} 
+%
+Niech $Y+1$ będzie pozycją na której $\sigma_t$ jest w liście $\OPT$. Niech $B$ będzie zmienną losową oznaczającą 
+liczbę inwersji $(\sigma_t,y)$. Typ tych inwersji zależy oczywiście od $b(\sigma_t)$.
+Wtedy $\OPT = Y+1$ zaś $\BIT \leq Y + B$. $\OPT$ przesuwa się o $Y-Y'$ pozycji do przodu na liście. 
+Pozostaje zatem ograniczyć zmianę potencjału.
+
+\begin{itemize}
+
+\item 
+Załóżmy, że na początku kroku $t$, $b(\sigma_t) = 1$. 
+	
+	Wtedy $\BIT$ zmienia wartość $b(\sigma_t)$ na $0$ i nie przesuwa $\sigma_t$. 
+	Każda inwersja $(\sigma_t,y)$ zmienia wtedy typ z $1$ na $0$, a związana z tym zmiana potencjału to $-B$. 
+	$\OPT$ może następnie przesunąć $\sigma_t$ w stronę
+	początku listy. Wpływa to na status par 
+	$(y_{Y'+1},\sigma_t), (y_{Y'+2},\sigma_t), \ldots, (y_{Y},\sigma_t)$: te z nich które były inwersjami
+	przestają nimi być, zaś te, które nie były inwersjami, stają się nimi.
+	Wszystkie tworzone w ten sposób inwersje mają typ $0$, a zatem związana z tym zmiana potencjału to
+	co najwyżej $Y - Y'$. 
+	Otrzymujemy zatem $\E[\Delta\Phi'' | b(\sigma_t) = 0] \leq -B + Y - Y'$.
+
+\item
+	Załóżmy, że na początku kroku $t$, $b(\sigma_t) = 0$. 
+
+	Wtedy $\BIT$ zmienia wartość $b(\sigma_t)$ na $1$ i przesuwa $\sigma_t$ na
+	początek. Usuwa to wszystkie $I$ inwersji $(\sigma_t,b)$ (o typie 0).
+	Związana z tym zmiana potencjału to $-B$.
+
+	Po zmianie bitu, $b(\sigma_t)=1$ i $\sigma_t$ jest przesuwany na początek. 
+	Podobnie jak poprzednio, wszyscy kandydaci na nowe inwersje są na liście 
+	par 
+	$(y_{1},\sigma_t), (y_{2},\sigma_t), \ldots, (y_{Y'},\sigma_t)$ 
+	Każda z tych inwersji jest z jednakowym prawdopodobieństwem
+	(zależnym od bitu $b(y_i)$) typu 0 i typu 1. 
+	Dlatego $\E[\Delta\Phi'' |
+	b(\sigma_t) = 1] \leq (Y'-1) \cdot (\frac{1}{2} \cdot 1 + \frac{1}{2}
+	\cdot 2) < \frac{3}{2} \cdot Y'$.
+
+\end{itemize}
+
+Po połączeniu obu przypadków otrzymujemy 
+\[
+	\E[\Delta\Phi''] = 
+	\textstyle	
+	\frac{1}{2} \cdot \E[\Delta\Phi'' | b(\sigma_t) = 0] +
+	\frac{1}{2} \cdot \E[\Delta\Phi'' | b(\sigma_t) = 1]
+	\leq \frac{1}{2} \cdot Y - \frac{1}{2} \cdot Y' + \frac{3}{4} \cdot Y' \leq \frac{3}{4} \cdot Y
+	\enspace.
+\]
+
+Zatem ostatecznie
+\[
+	\textstyle
+	\E[\BIT + \Delta\Phi] = \E[\BIT + \Delta\Phi' + \Delta\Phi''] \leq \frac{7}{4} \cdot Y = \frac{7}{4} \cdot \OPT
+	\enspace.
+\]
+
+\myparagraph{Dowód nierówności (\ref{eq:bit_competitive}) dla drugiej akcji} 
+%
+Oczywiście $\BIT = 0$.
+Dla każdej zamiany wykonywanej przez $\OPT$ związany z nią koszt 
+wynosi $1$ i tworzona jest wtedy co najwyżej
+jedna inwersja. Prawdopodobieństwo, że jej typ to $1$ lub $2$ wynosi $1/2$. Zatem oczekiwany wzrost potencjału to 
+co najwyżej 
+\[ 
+\E[\Delta\Phi(t)] \;=\; 
+\textstyle\frac{1}{2} \cdot 1 + \frac{1}{2} \cdot 2 \;=\; 
+\frac{3}{2} \;\leq\; \frac{3}{2} \cdot \OPT(t) 
+\enspace.
+\qedhere
+\]
+
+
+\end{proof}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Pamięć podręczna: algorytm RAND}
+
+Rozważmy następujący losowy algorytm pamięci podręcznej $\RAND$. Jeśli w ciągu wejściowym występuje 
+odwołanie do strony, której nie ma w pamięci podręcznej, to $\RAND$ wyrzuca z pamięci podręcznej losową stronę. 
+Udowodnimy, że współczynnik konkurencyjności algorytmu $\RAND$ przeciwko adwersarzowi nieświadomemu
+i adwersarzowi adaptującemu się wynosi $k$. W tym celu udowodnimy następujące dwa twierdzenia.
+
+\begin{theorem}
+$\RAND$ jest $k$-konkurencyjny przeciwko adwersarzowi adaptującemu się.
+\end{theorem}
+
+\begin{proof}
+Zdefiniujemy funkcję potencjału, która będzie tym większa, im większa jest różnica między tym co 
+w pamięci podręcznej trzyma $\RAND$ a tym co trzyma adwersarz $\OPT$. Bez straty ogólności możemy
+założyć, że algorytm stosowany przez $\OPT$ wyrzuca w każdym kroku co najwyżej jedną stronę.
+Niech w dowolnej chwili 
+$P$ będzie zbiorem wszystkich stron, które są zarówno w pamięci podręcznej $\RAND$ jak i $\OPT$.
+Stronę należącą do tego zbioru nazywamy {\em wspólną}.
+Definiujemy funkcję potencjału jako
+\[
+	\Phi = k \cdot (k - |\P|) \enspace.
+\]
+Oczywiście $\Phi$ jest zawsze dodatnie. 
+Wystarczy że pokażemy, że dla dowolnych stanów pamięci podręcznych $\RAND$ i $\OPT$
+na początku jakiegoś kroku i dla odwołania do dowolnej strony, zachodzi
+\begin{equation}
+	\label{eq:rand_amortized}
+	\E[\RAND] + \E[\Delta\Phi] \leq k \cdot \E[\OPT] \enspace. 
+\end{equation}
+Sumując to po wszystkich krokach, korzystając z liniowości wartości oczekiwanej i nieujemności funkcji potencjału 
+dostajemy, $\E[\RAND(\sigma)] \leq k \cdot \E[\OPT(\sigma)] + \Phi_0$, co dowodzi konkurencyjności algorytmu.
+
+
+Na marginesie zauważmy, że w przypadku dowodu z funkcją potencjału dla algorytmu $\BIT$ walczącego przeciwko adwersarzowi 
+oblivious, stan algorytmu był zmienną losową niezależną od adwersarza. W przypadku adwersarza adaptującego się, w każdym 
+kroku musimy rozpatrywać dowolny możliwy stan pamięci podręcznej $\RAND$. 
+
+Wystarczy zatem udowodnić (\ref{eq:rand_amortized}). W tym celu ustalmy dowolny krok $t$ 
+i oznaczmy stronę do której jest odwołanie w tym kroku przez $p$. Rozważamy cztery przypadki:
+\begin{description}
+\item[Przypadek 1] {\em Strona $p$ jest w pamięci podręcznej $\RAND$.} Wtedy $\RAND = 0$. 
+	Jeśli adwersarz ma $p$ w pamięci podręcznej, $\OPT = \Delta\Phi = 0$. W~przeciwnym 
+	przypadku $\OPT = 1$, a $\Delta\Phi \leq k$ (bo $\P$ może się zmienić co najwyżej o jeden element).
+
+\item[Przypadek 2] {\em Strony $p$ nie ma w pamięci podręcznej $\RAND$, ale jest w pamięci podręcznej $\OPT$.}
+	Wtedy $\RAND = 1$ i $\OPT = 0$, zatem wystarczy pokazać, że $\E[\Delta\Phi] \leq -1$.
+	Na początku tego ruchu $|\P| \leq k - 1$. 	
+	Z prawdopodobieństwem $|P|/k$, algorytm wyrzuca ze swojej pamięci wspólną stronę. Wtedy nie ma zmiany 
+	w liczności zbioru $P$, bo $\RAND$ wrzuca do pamięci wspólną stronę $p$. 
+	W przeciwnym przypadku zbiór $P$ zwiększa się o $1$ i potencjał maleje o $k$. 
+	Zatem 
+		\[ 
+			\E[\Delta\Phi] = \frac{|\P|}{k} \cdot 0 + \frac{(k-|\P|)}{k} \cdot (-k) \leq - \frac{1}{k} \cdot k = -1 \enspace. \]
+		
+\item[Przypadek 3] {\em Strony $p$ nie ma w pamięciach podręcznych $\RAND$ ani $\OPT$, a adwersarz wyrzuca
+	niewspólną stronę.} Wtedy $\RAND = \OPT = 1$. 
+	W tym przypadku zbiór $\P$ nie może się zmniejszyć (a pozostaje taki sam jeśli $\RAND$ wyrzuci 
+	wspólną stronę), a zatem $\Delta\Phi \leq 0$. 
+	
+\item[Przypadek 4] {\em Strony $p$ nie ma w pamięciach podręcznych $\RAND$ ani $\OPT$, a adwersarz wyrzuca
+	wspólną stronę $q \in \P$.} Jak w poprzednim przypadku $\RAND = \OPT = 1$.
+	Jeśli algorytm wyrzuci stronę $q$ albo dowolną stronę nie będącą w $\P$, to liczność zbioru $\P$ a więc 
+	i potencjał nie zmienia się. Jeśli natomiast algorytm wyrzuci stronę należącą do $P \setminus \{q\}$
+	(co zdarza się z prawdopodobieństwem $\frac{|\P| - 1}{k}$, to potencjał zwiększy się o $k$.
+	Wtedy \[ 
+		\E[\Delta\Phi] = \frac{|\P| - 1}{k} \cdot k = |\P| - 1 \leq k - 1 \enspace.
+	\]
+\end{description}
+Zatem w każdym z powyższych przypadków zachodzi nierówność \ref{eq:rand_amortized}.
+\end{proof}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+

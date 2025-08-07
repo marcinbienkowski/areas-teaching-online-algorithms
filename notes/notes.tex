@@ -1,0 +1,105 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[margin=2cm,bottom=3cm]{geometry}
+\usepackage{amsmath,amsopn,amsfonts,amsthm}
+%\usepackage{polski}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[noend]{algpseudocode}
+\usepackage{enumerate}
+\usepackage{ifpdf}
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{marginnote}
+\usepackage{xspace}
+
+\usepackage{color}
+\definecolor{LinksColor}{rgb}{0,0.2,0.8}
+\definecolor{CitingsColor}{rgb}{0,0.2,0.8} 
+
+\usepackage[pdfpagelabels=true]{hyperref}
+\hypersetup{
+  bookmarksnumbered=true,
+  pdftitle={Algorytmy online: skrypt do wykładu},
+  pdfauthor={Marcin Bienkowski},
+  pdfkeywords={algorytmy online, skrypt, wykład},
+  colorlinks,
+  linkcolor=LinksColor,
+  citecolor=CitingsColor,
+  plainpages=false,
+}
+
+\newcommand{\lref}[2][]{\hyperref[#2]{#1~\ref*{#2}}}
+\usepackage{indentfirst}
+
+\input{macros}
+
+
+\makeatletter
+\DeclareOldFontCommand{\rm}{\normalfont\rmfamily}{\mathrm}
+\DeclareOldFontCommand{\sf}{\normalfont\sffamily}{\mathsf}
+\DeclareOldFontCommand{\tt}{\normalfont\ttfamily}{\mathtt}
+\DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf}
+\DeclareOldFontCommand{\it}{\normalfont\itshape}{\mathit}
+\DeclareOldFontCommand{\sl}{\normalfont\slshape}{\@nomath\sl}
+\DeclareOldFontCommand{\sc}{\normalfont\scshape}{\@nomath\sc}
+\makeatother
+
+\begin{document}
+
+%\pagenumbering{roman}
+
+\begin{center}
+\thispagestyle{empty}
+\vphantom{skrypt}
+\vfill
+{\Huge\sectfont\textbf{Algorytmy Online}\\}
+\vspace{0.3cm}
+{\large\sectfont\textbf{(Skrypt do wykładu)}}\\
+\vspace{1.5cm}
+{\Large\sectfont\textbf{Marcin Bieńkowski}}
+\vfill
+Instytut Informatyki Uniwersytetu Wrocławskiego \\
+Wrocław, 2005--2023
+\end{center}
+\cleardoublepage
+
+\tableofcontents 
+\cleardoublepage
+%\pagenumbering{arabic}
+
+
+\rozdzial{1}
+\rozdzial{2}
+\rozdzial{3}
+\rozdzial{4}
+\rozdzial{5}
+\rozdzial{6}
+\rozdzial{10}
+\rozdzial{11}
+
+\rozdzial{7}
+\rozdzial{8}
+\rozdzial{9}
+\rozdzial{12}
+\rozdzial{13}
+
+
+\appendix
+
+\rozdzial{20}
+\rozdzial{21}
+\rozdzial{22}
+\rozdzial{23}
+\rozdzial{24}
+\rozdzial{25}
+\rozdzial{26}
+\rozdzial{27}
+\rozdzial{28}
+\rozdzial{29}
+
+
+\end{document}
+
+

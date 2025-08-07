@@ -1,0 +1,175 @@
+
+\section{Problem $k$ serwisantów}
+
+\marginnote{W.7A}
+
+Do zdefinowania problemu $k$-serwer przydatne będzie przypomnienie następującego pojęcia.
+Przestrzenią metryczną $(\mathcal{X},d)$ jest zbiór punktów $\mathcal{X}$ wraz ze zdefiniowaną funkcją 
+odległości $d$ spełniającą dla dowolnych punktów $x,y,z \in \mathcal{X}$ następujące warunki:
+\begin{enumerate}[(i)]
+\item $d(x,y) = 0 \Leftrightarrow x = y$;
+\item $d(x,y) = d(y,x)$;
+\item $d(x,y) \leq d(x,z) + d(z,y)$.
+\end{enumerate}
+
+\problem{$k$ serwisantów ($k$-server)}{
+Ustalmy pewna przestrzeń metryczną. Ciąg wejściowy to ciąg punktów
+$(\sigma_t)_t$ z tej przestrzeni. Algorytm dysponuje zbiorem $k$ serwerów;
+każdy serwer zajmuje określony punkt z przestrzeni. W kroku~$t$ algorytm może
+dowolnie przemieścić swoje serwery, ale pod koniec takiego ruchu, co najmniej
+jeden z serwerów musi być w punkcie $\sigma_t$. Algorytm płaci za sumaryczną
+drogę przebytą przez swoje serwery.
+}
+
+Zauważmy, że dla metryki dyskretnej problem jest równoważny problemowi pamięci podręcznej.
+
+\begin{observation}
+Algorytm zachłanny nie jest konkurencyjny.
+\end{observation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Algorytm Double Coverage}
+
+Warto zacząć od Greedy i powiedzieć, że można go trochę usprawnić przesuwając kiedyś
+dalszy serwer (np.~starajac się zrównoważyć koszt obu serwerów). Jak zrobi się to 
+w leniwy sposób, to dostaje się początek DC.
+
+W tej części przedstawimy algorytm dla przypadku, w którym przestrzeń metryczna
+jest prostą rzeczywistą.  Algorytm {\sc DoubleCoverage} (DC) w każdym kroku $t$
+wykonuje następującą operację. Jeśli $\sigma_t$ leży na lewo (lub na prawo) od
+wszystkich serwerów algorytmu, to DC przenosi do $\sigma_t$ najbliższy serwer.
+Jeśli natomiast $\sigma_t$ leży pomiędzy dwoma serwerami $s_a$ i $s_b$, to DC
+przesuwa je z jednakową prędkością w kierunku $\sigma_t$ do momentu, kiedy
+jeden z nich dotrze do punktu $\sigma_t$.
+
+Tu warto pokazać na 2 serwerach, caczego jak weźmiemy potencjał 
+równy minimalnemu matchingowi, to nie wystarczy: w przypadku gdy żądanie jest 
+całkowicie z lewej strony, to mamy nadmiarowy potencjał a jeśli żądanie 
+jest pomiędzy serwerami, to brakuje nam potencjału. 
+
+\marginnote{W.6B}
+
+\begin{theorem}
+Algorytm $\DC$ jest $k$-konkurencyjny
+\end{theorem}
+
+\begin{proof}
+Niech $\Mmin$ oznacza koszt minimalnego skojarzenia między serwerami $\DC$ i
+serwerami $\OPT$.  Serwery algorytmu $\DC$ oznaczamy przez $s_1, s_2, \ldots,
+s_k$.  Niech $\sum_\DC$ będzie sumą odległości między wszystkimi parami
+serwerów $\DC$, tj.~$\sum_\DC = \sum_{i < j} d(s_i, s_j)$. Definiujemy
+następującą nieujemną funkcję potencjału:
+\[
+	\Phi = k \cdot \Mmin + \sum\nolimits_\DC
+\]
+Rozważmy krok $t$. Podzielimy ten krok na dwie części. W pierwszej swoje
+serwery przesunie $\OPT$, w drugiej algorytm $\DC$. Dla każdej części z osobna
+udowodnimy, że zachodzi nierówność 
+\begin{equation}
+\label{eq:dc_competitive}
+	\DC + \Delta\Phi \leq k \cdot \OPT \enspace.
+\end{equation}
+Dowód dla pierwszej części jest łatwy.  Algorytm $\DC$ nie ponosi żadnego
+kosztu a część potencjału, $\sum_\DC$, nie zmienia się. Jeśli $\OPT$ przesuwa
+jeden ze swoich serwerów o $d$ to koszt obecnego skojarzenia zwiększa się co
+najwyżej o $d$, a zatem koszt minimalnego skojarzenia wzrasta również co
+najwyżej o $d$. 
+
+Dla dowodu drugiej częsci rozpatrzmy dwa przypadki możliwych ruchów $\DC$. W
+pierwszym przypadku $\DC$ przesuwa jeden serwer $s_a$ (leżący najbardziej na
+lewo lub najbardziej na prawo) w stronę punktu $\sigma_t$.  Przy przesunięciu
+na odległość $d$, $\sum_\DC$ wzrasta o $(k-1) \cdot d$.  Jak wygląda minimalne
+skojarzenie na początku drugiej części? Serwery $\OPT$ już wykonały swój ruch,
+a zatem jeden z nich jest na pozycji $\sigma_t$.  Można pokazać, że istnieje
+minimalne skojarzenie w którym serwer $s_a$ jest skojarzony z $\sigma_t$.  Stąd
+wynika, że przesunięcie serwera $s_a$ do $\sigma_t$ zmniejsza koszt tego
+skojarzenia (a więc i koszt minimalnego skojarzenia) o co najmniej $d$.  Stąd
+całkowita zmiana potencjału to $\Delta\Phi \leq - k \cdot d + (k-1) \cdot d =
+-d$.  Zatem koszt przesunięcia serwera jest amortyzowany przez spadek
+potencjału.
+
+W drugim przypadku $\sigma_t$ leży między dwoma serwerami $s_a$ i $s_b$.
+Załóżmy, że każdy z nich przesunął się o $d$. Na początku drugiej części
+istnieje minimalne skojarzenie, w którym jeden z nich jest skojarzony z
+$\sigma_t$ (ćwiczenie). Załóżmy, że jest to serwer $s_a$.  Wtedy na skutek
+ruchu serwera $s_a$ wartość $\Mmin$ maleje o $d$. Z drugiej strony (być może)
+$b$ oddala się swojego skojarzonego serwera, powodując wzrost $\Mmin$ o co
+najwyżej $d$.  Zatem $\Delta\Mmin \leq 0$. Jaka jest natomiast zmiana w części
+$\sum_\DC$ potencjału?  Zmieniają się tylko odległości między parami, w których
+jednym z elementów jest $s_a$ lub $s_b$.  Niech $A$ oznacza zbiór serwerów na
+lewo od $s_a$ i $s_b$, a $B$ zbiór serwerów na prawo od nich.  Wtedy suma
+$\sum_{s \in A} d(s,s_a)$ rośnie o $|A| \cdot d$ a suma  $\sum_{s \in A}
+d(s,s_b)$ maleje o $|A| \cdot d$.  Podobnie jest ze z odległościami między
+$s_a$, $s_b$ i zbiorem $B$.  Na zmianę $\sum_\DC$ wpływa zatem jedynie
+zmniejszająca się odległość między $s_a$ i $s_b$ --- zmiana ta wynosi $2 d$.
+Stąd $\Delta\Phi \leq -2 d$, co kończy dowód (\ref{eq:dc_competitive}).
+\end{proof}
+
+Tu można wspomnieć, że dla drzew jest praktycznie tak samo.
+
+\subsection{Dolne ograniczenie}
+
+\begin{observation}
+Bez straty ogólności możemy założyć, że algorytm jest leniwy, tj.~po żadaniu przesuwa co 
+najwyżej jeden serwer (do miejsca żądania).
+\end{observation}
+
+\begin{lemma}
+Dla dowolnej przestrzeni metrycznej, która ma więcej niż $k$ punktów, 
+współczynnik konkurencyjnosci dowolnego algorytmu deterministycznego
+$\ALG$ dla problemu $k$-serwer wynosi co najmniej $k$.
+\end{lemma}
+
+\begin{proof}
+Weźmy dowolny algorytm deterministyczny $\ALG$. Bez straty ogólności, możemy
+założyć, że jest on algorytmem leniwym, tj.~w jednym kroku $t$ przemieszcza
+tylko jeden serwer.
+Niech $v_1, v_2, \ldots, v_k$ będą punktami przestrzeni, w których początkowo 
+znajdują się serwery. Niech $v_{k+1}$ będzie dowolnym innym punktem. Zbiór 
+$\{ v_1, v_2 \ldots, v_{k+1} \}$ oznaczamy przez $S$;
+będziemy używać tylko tych wierzchołków. Na początku $\ALG$ nie ma serwera 
+w $v_{k+1}$; mówimy, że $\ALG$ ma {\em dziurę} w $v_{k+1}$.
+Sekwencję wejściową~$\sigma$ generujemy w
+tradycyjny sposób: żądanie jest generowane zawsze w tym punkcie ze zbioru $S$,
+w którym $\ALG$ ma dziurę. 
+
+Weźmy zbiór $k$ algorytmów $A_1, A_2, \ldots, A_k$. 
+W pierwszym kroku $A_i$ zmienia swoją konfigurację na taką, że ma dziurę w
+wierzchołku $v_i$. Każdy z nich płaci za to pewną stałą zależną tylko od 
+przestrzeni metrycznej, oznaczmy górne ograniczenie na wszystkie te stałe przez $\alpha$.
+Podzielmy teraz koncepcyjnie każdy krok $t$ na cztery etapy:
+\begin{enumerate}
+\item Występuje żądanie w punkcie $\sigma_t$.
+\item Algorytm $\ALG$ przesuwa swój (jeden) serwer do $\sigma_t$.
+\item Wszystkie algorytmy ($\ALG, A_1, \ldots, A_k$) obsługują żadanie. 
+\item Algorytmy $A_1, \ldots, A_k$ przesuwają swoje serwery.
+\end{enumerate}
+
+Działanie algorytmów $A_i$ określimy definiując następujący niezmiennik.
+Chcemy, żeby na końcu kroku 
+zbiór dziur algorytmów $\ALG, A_1, A_2, \ldots, A_k$ był równy $S$. 
+
+Powyższy niezmiennik jest spełniony w pierwszym kroku; pokażemy jak go zachować 
+w kolejnych. Załóżmy, że odwołanie występuje w wierzchołku $v_\ell$ i $\ALG$
+przesuwa tam stronę z wierzchołka $v_k$.  Istnieje dokładnie jeden algorytm
+(nazwijmy go $A_m$), który ma dziurę w wierzchołku $v_k$.  W następnym kroku $A_m$
+przesuwa serwer z wierzchołka
+$v_\ell$ do $v_k$ (czyli w dokładnie przeciwną stronę niż algorytm
+$\ALG$). Po takim ruchu niezmiennik nadal zachodzi, bo $\ALG$ i
+$A_m$ zamienią się dziurami. Zauważmy, że $A_m$ nie mógłby przenieść
+serwera od razu w tym samym kroku, gdyż wtedy nie odpowiadałby poprawnie na żądania 
+sekwencji wejściowej.
+
+
+Dodatkowo z symetryczności metryki wynika, że sumaryczny koszt wszystkich algorytmów
+$A_i$ w tym kroku jest taki sam jak koszt algorytmu $\ALG$. Dla całej
+sekwencji~$\sigma$ dostajemy zatem 
+\[ \ALG(\sigma) = \sum_{i=1}^k ( A_i(\sigma) - \alpha) \enspace. \] 
+Dlatego też jeden z algorytmów $A_i$ (nazwijmy go $A$) ma koszt co
+najwyżej $1/k \cdot \ALG(\sigma) + \alpha$.  Stąd $\OPT(\sigma) \leq
+A(\sigma) \leq 1/k \cdot \ALG(\sigma) + \alpha$.  Biorąc odpowiednio
+kosztowną sekwencję $\sigma$, składnik $\alpha$ staje się zaniedbywalny i
+otrzymujemy tezę lematu.
+\end{proof}
+

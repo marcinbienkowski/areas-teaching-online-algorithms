@@ -1,0 +1,36 @@
+\documentclass[a4paper,11pt]{scrartcl}
+\input{macros}
+\begin{document}
+\makeheader{5}
+
+\begin{description}
+
+\item[Zadanie 1] \textbf{(4 pkt.)} 
+	Rozważmy wariant problemu MTS ({\em Metrical Task System}) z metryką dyskretną 
+	\mbox{$n$-elementową}, gdzie w każdym kroku wektor kar może być dowolny.
+	Pokaż dolne ograniczenie $\Omega(\log n)$ na konkurencyjność dowolnego algorytmu 
+	randomizowanego.
+
+\item[Zadanie 2] \textbf{(3 pkt.)} 
+    Pokaż, że współczynnik ścisłej konkurencyjności dowolnego 
+    randomizowanego algorytmu dla problemu znajdowania krowy 
+    wynosi co najmniej~$2.01$.
+    % krowa może być w punktach -2, -1, 1, 2 w kazdym z takim samym ppb => lower bound 2.333
+
+\item[Zadanie 3] \textbf{(3 pkt.)} 
+	Pokaż dolne ograniczenie na konkurencyjność dowolnego randomizowanego 
+    algorytmu rozwiązującego problem wypożyczania nart wynoszące $\e/(\e-1)$, gdy $B \to \infty$.
+    Wskazówka: zastosuj zasadę minimaksową Yao stosując następujący rozkład:
+    narciarz łamie nogę dnia $1 \leq i \leq B$ z prawdopodobieństwem 
+    \begin{align*}
+    p_i = & \frac{1}{B} \cdot \left( \frac{B-1}{B}\right)^{i-1} \enspace,
+    \intertext{i nigdy nie łamie nogi z prawdopodobieństwem}
+    p_\infty = & \left( \frac{B-1}{B} \right)^B \enspace.
+    \end{align*}
+    % E[ALG] = B, E[OPT] = B(1-((b-1)/b)^b) 
+
+\end{description}
+
+\makefooter
+\end{document}
+

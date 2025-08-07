@@ -1,0 +1,80 @@
+\documentclass[a4paper,11pt]{scrartcl}
+\input{macros}
+\begin{document}
+\makeheader{4}
+
+\newtheorem{theorem}{Theorem}
+\newcommand{\RAND}{{\sc Rand}}
+
+
+
+\begin{theorem}
+Współczynnik konkurencyjności algorytmu $\RAND$ przeciwko adwersarzowi nieświadomemu wynosi co najmniej $k$.
+\end{theorem}
+
+\begin{proof}
+Oznaczmy strony, które są na początku w pamięci podręcznej przez 
+$a_1, a_2, \ldots, a_k$. Rozważmy następującą sekwencję:
+\[
+	\sigma = \underbrace{(b_1, a_2, a_3, \ldots, a_k)^\ell}_\textnormal{blok $1$}, 
+		\underbrace{(b_2, a_2, a_3, \ldots, a_k)^\ell}_\textnormal{blok $2$}, \ldots,
+		\underbrace{(b_\gamma, a_2, a_3, \ldots, a_k)^\ell}_\textnormal{blok $\gamma$} \enspace ,
+\]
+gdzie $\ell$ zostanie ustalone za chwilę, a wszystkie elementy $b_i$ są różne od elementów $a_j$ (dla 
+dowolnych $i,j$ mamy $b_i \neq a_j$). Koszt optymalnego algorytmu w każdym bloku to co najwyżej $1$. 
+Pokażemy, że dla dowolnego bloku zachodzi
+\begin{equation}
+\label{eq:rand_paging_oblivious}
+	\E[\RAND(\textsf{blok})] \geq k \cdot \left( 1 - \left( \frac{k-1}{k} \right)^\ell \right)
+\end{equation}
+Czynnik $(\frac{k-1}{k})^\ell$ zbiega do zera jeśli weźmiemy odpowiednio duże $\ell$; wtedy  
+$\E[\RAND(\textsf{blok})]$ jest dowolnie bliskie~$k$. 
+
+Rozważmy zatem dowolny $i$-ty blok, złożony z $\ell$ segmentów $(b_i, a_2, a_3, \ldots, a_k)$. 
+Na początku tego bloku $\RAND$ nie ma w swojej pamięci elementu $b_i$, więc pierwsze odwołanie 
+w bloku to chybienie.
+Mówimy, że chybienie algorytmu {\em kończy się sukcesem}, jeśli $\RAND$ 
+wybiera do wyrzucenia taką stronę, że po danym kroku w jego pamięci podręcznej są wszystkie 
+ze stron $\{ b_i, a_2, a_3, \ldots, a_k \}$ (od takiej chwili $\RAND$ nie płaci już nic w danym bloku). 
+Zauważmy, że chybienie kończy się sukcesem z prawdopodobieństwem nie większym niż $1/k$
+(jeśli w momencie chybienia $k-1$ stron jest ,,dobrych'', to jest to dokładnie prawdopodobieństwo, 
+że żadnej z nich nie wyrzucimy; w~przeciwnym przypadku nie mamy szans na sukces).
+
+Mamy zatem do czynienia z następującym procesem: jeśli $\RAND$ chybia to płaci
+$1$ i z prawdopodobieństwem co najwyżej $1/k$ osiąga sukces (i nie płaci już
+więcej). Z pozostałym prawdopodobieństwem za jakiś czas będzie musiał znowu
+chybić (najpóźniej wydarzy się to w kolejnym segmencie).  Jeśli zatem
+mielibyśmy nieskończenie wiele segmentów ($\ell = \infty$), to liczba chybień
+byłaby liczbą kroków do wystąpienia pierwszego sukcesu w procesie niezależnych
+prób Bernouliego z prawdopodobieństwem sukcesu $1/k$. Czyli w wartości
+oczekiwanej $\RAND$ chybiałby $k$ razy.  Jednak liczba segmentów w bloku jest
+jednak skończona i wynosi $\ell$.  Jeśli liczba chybień w bloku wyniesie
+powyżej $\ell$ to ,,wybaczamy'' algorytmowi koszt za odwołania powyżej
+$\ell$-tego chybienia. Mamy jednak gwarancję, że jeśli algorytmowi przyjdzie
+chybiać $\ell$ razy, to te razy zmieszczą się w bloku.  Rozważmy zatem proces
+Bernouliego ,,obcięty'' po losowaniu $n$; niech $W_n$ będzie zmienną losową
+oznaczającą liczbę kroków w takim procesie. Z powyższych rozważań wynika, że 
+$\E[\RAND(\textsf{blok})] \geq \E[W_\ell]$.
+Możemy zatem napisać
+\begin{align*}
+\E[W_\ell] = &\; \ell \cdot \Pr[W_\ell \geq \ell] + \sum_{i=1}^{\ell-1} i \cdot \Pr[W_\ell = i] \\
+			= &\; \ell \cdot (1-p)^{\ell-1} + \sum_{i=1}^{\ell-1} i \cdot p \cdot (1-p)^{i-1} \enspace, 
+\end{align*}
+gdzie $p = 1/k$ i po długich przekształceniach dojść do
+(\ref{eq:rand_paging_oblivious}) lub też przyjrzeć się czym jest $\E[W_n]$. Dla
+$n = 1$, $W_1 = 1$. Natomiast dla $n \geq 2$ mogą zajść dwa przypadki Albo ---
+z prawdopodobieństwem $p$ --- dostaniemy sukces i wtedy $W_n = 1$, albo też
+sukcesu nie będzie i wtedy czas oczekiwania jest równy $1 + \E[W_{n-1}]$. Zatem 
+\[
+	\E[W_n] = p + (1-p) \cdot (1 + \E[W_{n-1}]) = 1 + (1-p) \cdot \E[W_{n-1}] \enspace.
+\]
+Rozwijając tę zależność $\ell-1$ razy i podstawiając $\E[W_1] = 1$ otrzymujemy
+\[
+	\E[W_\ell] = 1 + (1-p) + (1-p)^2 + \ldots + (1-p)^{\ell-1} 
+	=  \frac{1-(1-p)^\ell}{1-(1-p)} = k \cdot (1-(1-1/k)^\ell) \enspace. \qedhere
+\]
+\end{proof}
+
+
+\end{document}
+

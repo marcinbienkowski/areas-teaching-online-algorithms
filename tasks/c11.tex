@@ -1,0 +1,62 @@
+\documentclass[a4paper,11pt]{scrartcl}
+\input{macros}
+\begin{document}
+\makeheader{11}
+
+\newcommand{\CONT}{\textsc{Cont}\xspace}
+
+\begin{description}
+
+\item[Zadanie 1]  \textbf{(2 pkt.)}
+Przypomnijmy, że algorytm \textsc{Move-To-Min} (MTM) dla problemu migracji pliku. 
+na końcu fazy przenosił plik do wierzchołka $\arg \min_x \sum_{i=1}^D d(x, r_i)$.
+Algorytm \textsc{Move-To-Local-Min} (MTLM) jest jego modyfikacją, która przenosi 
+plik do wierzchołka $\arg \min_x D \cdot d(v_\textsc{ALG}, x) + 2 \cdot \sum_{i=1}^D d(x, r_i)$.
+W powyższym wzorze $v_\textsc{ALG}$ jest wierzchołkiem, w którym algorytm ma plik w~trakcie fazy.
+Pokaż, że konkurencyjność algorytmu MTLM wynosi co najmniej $5$.\footnote{Możesz założyć,
+że $D$ jest wielokrotnością wybranej przez Ciebie liczby.}
+
+\emph{Wskazówka:} najprościej wykorzystać do tego celu program liniowy z poprzedniej listy. 
+Wystarczy dopisać w nim wymaganie \texttt{potential\_start = potential\_end;}
+i odpowiednio zmienić 3 wiersze definiujące algorytm.
+
+% A0 -----------4------------ O1=O2 -----------3------- R ---1----A1
+
+
+\item[Zadanie 2]  
+W tym i następnym zadaniu rozważamy problem migracji pliku na grafie o dwóch
+wierzchołkach $v_0$ i $v_1$ połączonych krawędzią długości $1$, gdzie rozmiar pliku jest równy 
+$D \in \mathbb{N}$, zaś algorytm bezpośrednio po zobaczeniu żądania w kroku $t$ i zapłaceniu za nie 
+oblicza funkcję pracy~$w_t$. 
+
+\begin{enumerate}[a)]
+\item 
+\textbf{(1 pkt.)}
+Niech $W_t = (w_t(v_0) + w_t(v_1)) / 2$.
+Udowodnij, że dla dowolnego wejścia $\sigma$ o długości~$T$ zachodzi $W_T \leq \OPT(\sigma) + O(D)$.
+
+\item 
+\textbf{(3 pkt.)}
+Niech $v_i$ będzie wierzchołkiem, w którym algorytm \DET ma obecnie plik.
+	Jeśli $w_t(v_i) \geq w_t(v_{1-i}) + D$, to \DET przenosi plik do $v_{1-i}$. Pokaż, 
+	że \DET jest $O(1)$-konkurencyjny. Jakie najlepsze oszacowanie potrafisz uzyskać?
+\end{enumerate}
+
+
+\item[Zadanie 3] \textbf{(4 pkt.)} 
+	Rozważmy model, w którym \OPT musi przechowywać plik w jednym z wierzchołków,
+	ale algorytm online może przechowywać plik w dowolnym miejscu krawędzi pomiędzy 
+	wierzchołkami $v_0$ i $v_1$. 
+	Zakładamy że $v_0$ ma współrzędną $0$ zaś $v_1$ współrzędną $1$.
+	Po obliczeniu funkcji pracy $w_t$, algorytm \CONT przenosi plik 
+	do punktu o współrzędnej
+	\[
+		p_t = \frac{1}{2} + \frac{w_t(v_0) - w_t(v_1)}{2 D} \,.
+	\]
+	Pokaż, że \CONT jest $O(1)$-konkurencyjny. Jakie najlepsze oszacowanie potrafisz uzyskać?
+
+\end{description}
+
+\makefooter
+\end{document}
+

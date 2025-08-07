@@ -1,0 +1,40 @@
+
+\section{Maksymalne skojarzenie online}
+
+\problem{Maksymalne skojarzenie}{
+Mamy dane dwa równoliczne zbiory dziewczyn $D$ i chłopców $C$, oba o mocy $n$. 
+Wiemy, że graf połączeń między $C$ i $D$ jest dwudzielny, lecz jest nieznany na początku;
+połączenie oznacza, że dane dwie osoby o różnej płci się znają.
+
+$\enspace\enspace$ 
+Wejście składa się z $n$ kroków; w jednym kroku $1 \leq i \leq n$ poznajemy wszystkie krawędzie prowadzące 
+od chłopca $c_i$ do znanych mu dziewczyn. Należy wybrać jedną niewybraną jeszcze dziewczynę z którą $c_i$ 
+jest połączony; tę parę nazywamy skojarzoną. Należy zmaksymalizować moc zbioru skojarzeń. 
+}
+
+Rozważmy algorytm zachłanny, tj.~taki, który wybiera do skojarzenia dowolną krawędź prowadzącą od
+danego chłopca do jeszcze wolnej dziewczyny.
+
+\begin{theorem}
+Przy założeniu, że w grafie istnieje doskonałe 
+skojarzenie (o mocy $n$), powyższa zachłanna strategia jest $2$-konkurencyjna.
+\end{theorem}
+
+\begin{proof}
+Zauważmy, że algorytm zachłanny zwraca skojarzenie, które jest maksymalne, tj.~nie daje się rozszerzyć.
+Dla instancji $I$ dopuszczającej doskonałe skojarzenie $\OPT(I) = n$.
+Zatem wystarczy pokazać, że $\ALG(I) \geq n/2$. 
+
+Załóżmy, że tak nie jest. Oznacza to, że podczas działania 
+algorytmu podzbiór chłopców $C'$ został połączony ze zbiorem dziewczyn $D'$, $|C'| = |D'| < n/2$
+a pozostali chłopcy (ze zbioru $C \setminus C'$) nie zostali połączeni.
+Maksymalność skojarzenia implikuje, że w grafie mogą oni sąsiadować wyłącznie z 
+już zajętymi dziewczynami (ze zbioru $D'$).
+
+Z drugiej strony $|C \setminus C'| > n/2$, a zatem z twierdzenia Halla\footnote{Jak założyliśmy, 
+w grafie istnieje skojarzenie doskonałe.} wynika, że zbiór sąsiadów tego zbioru musi mieć
+co najmniej tyle samo elementów. Otrzymana sprzeczność kończy dowód.
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

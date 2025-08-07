@@ -1,0 +1,87 @@
+\documentclass[a4paper,11pt]{scrartcl}
+\usepackage[margin=2cm,bottom=2cm]{geometry}
+\usepackage{amsmath,amsthm,amsopn,amsfonts}
+\usepackage{polski}
+\usepackage[utf8]{inputenc}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{xspace}
+\pagestyle{empty}
+
+
+\newcommand{\E}{\mathbf{E}}
+\newcommand{\OPT}{\textsc{Opt}\xspace}
+\newcommand{\MTF}{\textsc{Mtf}}
+\newcommand{\e}{\textnormal{e}}
+\newcommand{\RAND}{\textsc{Rand-Mtf}\xspace}
+\newcommand{\event}{\mathcal{E}}
+
+
+\begin{document}
+
+\noindent
+\textbf{Zadanie 4.2.} 
+Oznaczmy strony, które są na początku w pamięci podręcznej przez 
+$x_1, x_2, \ldots, x_\ell$
+i~rozważmy sekwencję wejściową $\sigma$ składającą się z $n$ faz $f_1, f_2, \ldots, f_n$, gdzie faza $f_i$ to ciąg 
+podfaz 
+\[
+	f_i = f_{i,\ell}, f_{i,\ell-1}, \ldots, f_{i,2}, f_{i,1},
+\]
+zaś podfaza $f_{i,j} = x_j^k$, gdzie wartość $k$ ustalimy później.
+Oszacowanie \OPT jest proste:
+\begin{equation}
+\label{eq:1}
+    \OPT(\sigma) \leq \MTF(\sigma) = \sum_{i=1}^n \sum_{j=1}^\ell \MTF(f_{i,j}) = 
+    \sum_{i=1}^n \sum_{j=1}^\ell (\ell + k - 1) < n \cdot \ell \cdot (\ell + k).
+\end{equation}
+
+Niech $\event_{i,j}$ oznacza zdarzenie, że bezpośrednio przed podfazą $f_{i,j}$
+element $x_j$ jest na ostatnim miejscu listy. Wtedy 
+\begin{align}
+    \E[\RAND(\sigma)] 
+        &= \sum_{i=1}^n \sum_{j=1}^\ell \E[\RAND(f_{i,j})] \nonumber \\
+        &= \sum_{i=1}^n \sum_{j=1}^\ell 
+            \left(\E[\RAND(f_{i,j}) \;|\; \event_{i,j}] \cdot \Pr[\event_{i,j}]
+            + \E[\RAND(f_{i,j}) \;|\; \neg \event_{i,j}] \cdot \Pr[\neg \event_{i,j}] \right) \nonumber \\
+        &\geq \sum_{i=1}^n \sum_{j=1}^\ell 
+            \E[\RAND(f_{i,j}) \;|\; \event_{i,j}] \cdot \Pr[\event_{i,j}].
+    \label{eq:2}
+\end{align}
+Zdarzenia $\event_{i,j}$ nie są niezależne, ale nie będzie to nam przeszkadzać. 
+Załóżmy, że zdarzenie $\event_{i,j}$ zachodzi i popatrzmy na żądania podfazy $f_{i,j} = x_j^k$.
+Po $m-1$ żądaniach z tej podfazy, element $x_j$ jest nadal na końcu z prawdopodobieństwem $1/2^{m-1}$. 
+Stąd 
+\begin{equation}
+\label{eq:3}
+    \E[\RAND(f_{i,j})  \;|\; \event_{i,j}] \geq \sum_{m = 1}^k \frac{1}{2^{m-1}} \cdot \ell = 2 \cdot (1-2^{-k}) \cdot \ell.
+\end{equation}
+Ignorujemy tutaj koszt odwołań w przypadkach kiedy $x_j$ znajdzie się już na początku.
+
+Mówimy, że podfaza $f_{i,j} = x_j^k$ \emph{zakończyła się sukcesem}, jeśli 
+na końcu $f_{i,j}$ element $x_j$ znajduje się na początku listy. 
+Popatrzmy na zdarzenie $\event_{i,j}$ dla $i \geq 2$. Warunkiem wystarczającym dla $\event_{i,j}$
+jest to, że $\ell-1$ podfaz poprzedzających podfazę $f_{i,j}$ zakończy się sukcesem. 
+A zatem 
+\begin{equation}
+    \label{eq:4}
+    \Pr[\event_{i,j}] \geq (1-2^{-k})^{\ell-1}.
+\end{equation}
+Powyższa nierówność zachodzi również dla $i=1$ i dowolnego $j$ (bo w takim przypadku wystarcza, 
+żeby $j-1$ pierwszych podfaz zakończyło się sukcesem).
+Łącząc oszacowania \eqref{eq:1}, \eqref{eq:2}, \eqref{eq:3} i \eqref{eq:4} i wykorzustując nierówność 
+Bernoulliego ($(1+x)^r \geq 1+xr$ dla $x \geq -1$ i $r > 1$) otrzymujemy
+\begin{align*}
+    \frac{\E[\RAND(\sigma)]}{\OPT(\sigma)} 
+    & \geq \frac{n \cdot \ell \cdot 2 \cdot (1-2^{-k})^\ell \cdot \ell}{n \cdot \ell \cdot (\ell + k)}
+    = 2 \cdot \left( 1 - \frac{1}{2^k} \right)^\ell \cdot \left(1 - \frac{k}{\ell+k}\right) \\
+    & \geq 2 \cdot \left( 1 - \frac{\ell}{2^k} \right) \cdot \left(1 - \frac{k}{\ell}\right) \\
+    & \geq 2 - 2 \cdot \left( \frac{\ell}{2^k} + \frac{k}{\ell} \right) .
+\end{align*}
+Biorąc $k = 2 \cdot \lceil \log \ell \rceil$ otrzymujemy 
+\begin{align*}
+    \frac{\E[\RAND(\sigma)]}{\OPT(\sigma)} 
+    \geq 2 - O \left( \frac{\log \ell}{\ell} \right) .
+\end{align*}
+\end{document}
+

@@ -1,0 +1,334 @@
+\section{Metoda zaznaczania: pamięć podręczna}
+
+\marginnote{W.2A\\+5m}
+
+\problem{Pamięć podręczna}{
+Rozmiar RAM to $N$ stron, rozmiar cache to $k$ stron.
+
+Wejście składa się z listy stron pamięci RAM, do których chce odwołać się procesor. 
+Jeśli żądana strona $X$ znajduje się już w pamięci cache, to koszt obsługi takiego żądania wynosi~$0$.
+W~przeciwnym razie, algorytm {\itshape musi wczytać $X$ do pamięci podręcznej} i koszt obsługi takiego żądania wynosi~$1$. 
+Przed wczytaniem $X$ do pamięci algorytm może wyrzucić dowolną liczbę stron z pamięci; jeśli pamięć podręczna przed 
+wczytaniem jest pełna, to {\itshape musi} wyrzucić co najmniej jedną.
+Celem jest minimalizacja sumarycznego kosztu.
+}
+
+Powyższy model to model {\em w pełni asocjacyjny}. Jest jeszcze model {\em direct-mapping}, gdzie miejsce w cache na daną komórkę jest determinowane przez jej adres 
+w RAM. W praktyce stosuje się mieszankę tych dwóch podejść.
+
+\noindent
+Istnieje wiele naturalnych i praktycznych algorytmów wykonujących to zadanie:
+\begin{itemize}
+\item $\LRU$ ({\em Least Recently Used}): wyrzuca stronę, do której odwołanie było najdalej w przeszłości
+\item $\FIFO$ ({\em First-In, First-Out}): wyrzuca stronę, która jest najdłużej w cache
+\item $\LFU$ ({\em Least Frequently Used}): wyrzuca stronę, która była najrzadziej używana
+\item $\FWF$ ({\em Flush When Full}): jeśli trzeba zrobić miejsce na stronę, wyrzuca wszystkie strony 
+	z pamięci podręcznej
+\item $\LFD$ ({\em Longest Forward Distance}): algorytm {\em offline}, który wyrzuca stronę do której następne odwołanie
+	w ciągu znajduje się jak najpóźniej.
+\end{itemize}
+Zamiast analizować poszczególne algorytmy, skupimy się na ich pewnych cechach wspólnych.
+
+\subsection{Fazy}
+
+Aby udowodnić kolejne twierdzenie wprowadzimy najpierw definicję fazy. Ustalmy
+dowolną sekwencję wejściową $\sigma$. Faza $0$ jest pustą sekwencją. Dla
+dowolnego $i \geq 1$, faza $i$ jest maksymalną sekwencją następującą po fazie
+$i-1$, zawierającą co najwyżej $k$ odwołań do {\em różnych} stron. Innymi
+słowy, faza $i+1$ (jeśli istnieje) zaczyna się na odwołaniu do $(k+1)$-szej
+różnej strony, licząc od początku fazy $i$. Zauważmy, że podział na fazy
+zależy tylko od sekwencji wejściowej.
+
+Przykład dla $k = 3$, $N = 5$:
+
+\begin{verbatim}
+A B A C B | D A A B D | C E C A A C | B C 
+\end{verbatim}
+
+\textbf{Co byśmy chcieli}: płacić za każdą stronę co najwyżej raz w fazie. 
+\textbf{Pomysł}: dla każdej strony utrzymuj jeden bit dodatkowych danych (zaznaczenie).
+przy odwołaniu do strony {\em zaznacz ją} (mark) i wyrzuć
+tę, która nie jest zaznaczona (dowolny podzbiór). Dokładniej:
+
+\begin{algorithmic}
+\State wystąpiło odwołanie do strony $X$
+\If{$X \notin \mathsf{cache}$}
+	\If{\textsf{cache} jest pełny}
+		\If{wszystkie strony \textsf{zaznaczone}}
+			\State \textsf{odznacz} wszystkie strony 
+		\EndIf
+		\State \textsf{wyrzuć} dowolną \textsf{niezaznaczoną} stronę lub dowolne \textsf{niezaznaczone} strony 
+	\EndIf 
+	\State \textsf{wczytaj} $X$ do \textsf{cache} 
+\EndIf
+\State\textsf{zaznacz} $X$
+\end{algorithmic}
+
+Mówimy o całej klasie algorytmów zaznaczających. Obserwacje:
+\begin{itemize}
+\item Strony poza pamięcią podręczną są zawsze niezaznaczone. 
+\item Algorytm zaznaczający zaczyna fazę ze wszystkimi stronami w cache niezaznaczonymi i kończy ze zaznaczonymi.
+\end{itemize}
+
+\subsection{Analiza algorytmu zaznaczającego}
+
+\begin{observation}
+\label{obs:paging_mark_upper_bound}
+Dla dowolnej fazy $f$, $\MARK(f) \leq k$.
+\end{observation}
+
+\begin{exercise}
+Pokaż, że $\FWF$ i $\LRU$ są algorytmami zaznaczającymi.
+\end{exercise}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\begin{proof} 
+%Wystarczy pokazać, że $\LRU$ nie wyrzuci nigdy strony, która
+%jest zaznaczona. Załóżmy nie wprost, że tak się stało, tj. $\LRU$ usunął z
+%pamięci podręcznej zaznaczoną stronę $X$ w jakiejś fazie $i$. Ta strona
+%została zaznaczona w fazie $i$, gdyż istniało wcześniej do niej w tej fazie
+%jakieś odwołanie. Warunkiem koniecznym usunięcia $X$ z pamięci podręcznej
+%przez $\LRU$ jest wystąpienie po tym odwołaniu $k$ odwołań do różnych stron (i
+%różnych od $X$; $k$-te odwołanie jest tym, które usuwa $X$). Zatem jeśli to
+%usunięcie miałoby nastąpić w fazie $i$, to faza $i$ musiałaby zawierać
+%odwołania do $k+1$ różnych stron.
+%\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{observation}
+\label{obs:paging_opt_lower_bound}
+Jeśli $f_{i}$ i $f_{i+1}$ są dwoma kolejnymi fazami, to $\OPT(f_i \cup f_{i+1}) 
+\geq 1$. 
+\end{observation}
+
+\begin{proof}
+W ciągu $f_{i} \cup f_{i+1}$ znajdują się odwołania do co najmniej $k+1$ różnych 
+faz. Zatem $\OPT$ musi podczas takiego ciągu zapłacić co najmniej raz. 
+\end{proof}
+
+Z \lref[Obserwacji]{obs:paging_mark_upper_bound} i 
+\lref[Obserwacji]{obs:paging_opt_lower_bound} można pokazać, że $\MARK$ 
+jest $2 k$-konkurencyjny. Chcielibyśmy poprawić trochę tę analizę.
+
+Wyobraźmy sobie fazę $i$ jako okienko o pewnej długości przez które widać
+pewien ciąg odwołań do pamięci i przesuńmy to okienko o jedno odwołanie w
+prawo; nowy ciąg nazywamy $i$-tą {\em fazą przesuniętą}. Innymi słowy $i$-ta
+faza przesunięta zaczyna się na drugim odwołaniu z fazy~$i$ i kończy na
+pierwszym odwołaniu z fazy $i+1$ (włącznie).
+
+\begin{lemma}
+Dla dowolnej fazy przesuniętej (poza być może ostatnią) $f'_i$
+zachodzi $\OPT(f'_i) \geq 1$. 
+\end{lemma}
+
+\begin{proof}
+Niech $q$ będzie stroną, do której jest odwołanie w pierwszym kroku $f_i$. Wtedy każdy algorytm (także $\OPT$) ma $q$ w swojej pamięci podręcznej na początku $f'_i$.
+$f'_i$ musi zawierać $k$ odwołań do różnych stron (dodatkowo różnych od $q$). Zatem w ciągu fazy przesuniętej $\OPT$ co najmniej raz musi załadować stronę z 
+pamięci RAM. 
+\end{proof}
+
+
+
+\begin{theorem}
+\label{thm:mark-competitive}
+Dowolny algorytm zaznaczający $\MARK$ jest $k$-konkurencyjny.
+\end{theorem}
+
+\begin{proof}
+Weźmy dowolną sekwencję wejściową $\sigma$ i jej podział na fazy. Załóżmy że
+tych faz jest $\ell + 1$; ostatnia faza jest być może nie zakończona.
+Wtedy $\MARK(\sigma) \leq (\ell + 1) \cdot k$ oraz
+$\OPT(\sigma) \geq \ell \cdot 1$.
+Stąd $\MARK(\sigma) \leq k \cdot \OPT(\sigma) + k$.
+\end{proof}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Dolne ograniczenie}
+
+Addytywny składnik w definicji konkurencyjności powoduje mały problem w 
+dowodzeniu dolnych ograniczeń na konkurencyjność. 
+Nie wystarczy już istnienie pojedynczego wejścia na którym algorym ma duży koszt 
+a~algorytm optymalny ma koszt odpowiednio mały; trzeba pokazać,
+że taka relacja zachodzi dla wejść o dowolnie dużym koszcie. 
+
+\begin{lemma}
+\label{lem:showing_lower_bounds}
+Ustalmy dowolny deterministyczny algorytm $\DET$. Jeśli istnieje nieskończony ciąg wejść $\sigma_1, \sigma_2, \ldots$ taki że:
+\begin{enumerate}
+\item $\lim_{n \to \infty} \DET(\sigma_n) / \OPT(\sigma_n) \geq R$ oraz
+\item $\lim_{n \to \infty} \DET(\sigma_n) = \infty$,
+\end{enumerate}
+to $R$ jest dolnym ograniczeniem na konkurencyjność $\DET$.
+\end{lemma}
+
+\begin{proof}
+Możemy założyć, że $\lim_{n \to \infty} \OPT(\sigma_n) = \infty$; w przeciwnym
+przypadku $\DET$ nie jest w ogóle konkurencyjny.
+
+Załóżmy nie wprost, że $\DET$ jest $(R-\eps)$-konkurencyjny. 
+Wtedy istnieje takie $\alpha$, że dla dowolnego wejścia $\sigma$
+zachodzi 
+\begin{equation}
+\label{eq:showing_lower_bounds}
+	\DET(\sigma) \leq (R - \eps) \cdot \OPT(\sigma) + \alpha
+	\enspace.
+\end{equation}
+
+Z ciągu wejść $(\sigma_i)_i$ wybierzmy wszystkie wejścia $\sigma'_i$
+dla których $\OPT(\sigma'_i) \geq 2 \alpha/\eps$. Tworzą one nieskonczony ciąg
+
+wejść $(\sigma'_i)_i$. Biorąc dowolne z nich i podstawiając do 
+\eqref{eq:showing_lower_bounds} otrzymujemy
+\[
+	\DET(\sigma'_i) / \OPT(\sigma'_i) \leq (R-\eps) + \alpha / \OPT(\sigma'_i)
+		\leq R-\eps+\eps/2 = R-\eps/2
+	\enspace.
+\] 
+Istnienie takiego nieskończonego podciągu 
+$(\sigma_i)_i$ przeczy warunkowi $\lim_{n \to \infty} \DET(\sigma_n) / \OPT(\sigma_n) \geq R$.
+\end{proof}
+
+
+Dla dowodu dolnego ograniczenia zakładamy $N$, rozmiar pamięci RAM, jest większy niż $k$. 
+Będziemy korzystać z pierwszych $k+1$ stron pamięci RAM. Zakładamy również, że na początku w pamięci podręcznej
+są strony $1,2,\ldots,k$. Zacznijmy od następującego lematu.
+
+\begin{lemma}
+\label{lem:lfd-lower}
+Jeśli $\LFD$ rozpoczyna z pełną pamięcią podręczną, to dla dowolnej sekwencji $\sigma$ 
+złożonej z odwołań do $k+1$ różnych stron zachodzi 
+\[
+	\LFD(\sigma) \,\leq\; 1+|\sigma| / k \enspace,
+\]
+gdzie $\LFD$ jest algorytmem (offline) Longest Forward Distance. 
+\end{lemma}
+
+\begin{proof}
+Ustalmy dowolne odwołanie w sekwencji $\sigma$, takie, że algorytm $\LFD$ usunął jakąś stronę (oznaczmy 
+ją~$Q$)
+z pamięci podręcznej. Z definicji algorytmu $\LFD$ wynika, że spośród wszystkich stron, które przed chwilą
+były w pamięci podręcznej odwołanie do $Q$ było najpóźniej. 
+Innymi słowy zanim przyjdzie pierwsze odwołanie 
+do $Q$, procesor odwoła się do wszystkich innych $k-1$ stron z cache.
+Dopiero odwołanie do $Q$ powoduje koszt, gdyż pozostałe $k$ stron mamy w pamięci podręcznej. 
+Zatem odwołanie do pamięci RAM pojawia się najwyżej raz na $k$ kroków.
+\end{proof}
+
+
+\begin{theorem}
+\label{thm:paging-lower-bound}
+Dolne ograniczenie na konkurencyjność dowolnego algorytmu deterministycznego 
+dla problemu pamięci podręcznej wynosi $k$.
+\end{theorem}
+
+\begin{proof}
+Ustalmy dowolny deterministyczny algorytm $\ALG$.
+Bez straty ogólności możemy założyć, 
+że na początku w pamięci podręcznej są strony $1,2,\ldots,k$.\footnote{Jeśli 
+pamięć podręczna jest na początku pusta, to możemy dodać do sekwencji prefiks ładujący te strony, 
+powodujący stały koszt $k$ zarówno u $\ALG$ jak i u $\OPT$. Ten stały koszt przestanie mieć 
+znaczenie przy odpowiednio kosztownej pozostałej części sekwencji.}
+Konstrukcja złośliwego ciągu wejściowego jest prosta --- adwersarz zawsze żąda dokładnie tej strony, 
+której $\ALG$ nie ma w pamięci podręcznej. Oczywiście taka sekwencja wejściowa może być dowolnie długa (i 
+dowolnie kosztowna). Ponieważ $\ALG$ płaci wtedy za każde odwołanie do strony, $\ALG(\sigma) = |\sigma|$.
+Łącząc to z \lref[Lematem]{lem:lfd-lower} otrzymujemy
+\[
+	\ALG(\sigma) = |\sigma| \leq k \cdot \LFD(\sigma) - k \,\geq\; k \cdot \OPT(\sigma) -k  \enspace. \qedhere
+\]
+\end{proof}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Randomizacja algorytmu zaznaczającego}
+
+\marginnote{W.2B}
+
+Algorytm $\RMARK$ jest prostym losowym algorytmem markującym, który gdy trzeba zrobić miejsce 
+w pamięci podręcznej usuwa z niej losową niezaznaczoną stronę. Każda niezaznaczona strona zostaje 
+wybrana z jednakowym prawdopodobieństwem.
+
+\begin{theorem}
+\label{thm:mark-hk-competitive}
+Algorytm $\RMARK$ jest $2 \cdot H_k$-konkurencyjny.
+\end{theorem}
+
+\begin{proof}
+Dowolny algorytm zaznaczający zaczyna każdą fazę ze
+wszystkimi stronami niezaznaczonymi i kończy ją ze wszystkimi zaznaczonymi.
+Tak jest również w przypadku algorytmu randomizowanego. \textbf{Strony, które są zaznaczone nie zależą od 
+randomizacji. }
+
+Rozpatrzmy dowolną fazę $f_i$ i przyjrzyjmy się tym stronom do których występuje
+odwołanie w $f_i$. Możemy ograniczyć się do analizy tylko pierwszego
+wystąpienia danej strony (potem strona zostaje zaznaczona i nie
+zostanie wyrzucona aż do końca fazy, zatem wszystkie następne odwołania nie generują kosztu).
+Strony dzielimy na trzy zbiory:
+\begin{enumerate}
+\item Strony nowe = $f_i \setminus f_{i-1}$. (Ich liczba to $n_i$).
+\item Strony stare = $f_i \cap f_{i-1}$.
+\item Strony bezużyteczne = $f_{i-1} \setminus f_i$. 
+\end{enumerate}
+
+Jaki jest koszt $\OPT(\sigma)$? W fazie pierwszej $\OPT$ płaci co najmniej $n_1$.
+Rozważmy dowolną fazę $i > 1$. W ciągu złożonym z fazy $i-1$ i fazy $i$ występuje 
+$k + n_i$ odwołań do różnych stron, zatem $\OPT$ chybia tam co najmniej $n_i$ razy. 
+Jeśli zsumujemy wszystkie takie ciągi zawarte w $\sigma$ i pierwszą fazę, to sumaryczny koszt 
+wynosi $\sum_i n_i$ a każda faza (poza ostatnią) jest liczona podwójnie. Dlatego też 
+\[ \OPT(\sigma) \geq \frac{1}{2} \cdot \sum_i n_i \enspace. \]
+
+Wystarczy pokazać, że $\E[\RMARK(\sigma)] \leq \sum_i n_i \cdot H_k$. Ustalmy dowolną fazę $i$.
+Każda z nowych stron to koszt $1$. Jaki jest koszt starych stron? 
+Oznaczmy je przez $S_1, S_2, \ldots, S_{k-n_i}$. 
+\[ 
+	\E[\RMARK(f_i)] = n_i + \sum_{j=1}^{k-n_i} \Pr\,[\,\textsf{przy pierwszym odwołaniu do strony 
+		$S_j$ nie ma jej w cache}\,] \enspace.
+\]
+
+Jak wyglądał cache na samym początku fazy? 
+Mieliśmy w nim:
+\begin{itemize}
+\item Strony stare: $S_1, S_2, \ldots, S_{k-n_i}$.
+\item Strony bezużyteczne: $B_1, B_2, \ldots, B_{n_i}$.
+\end{itemize}
+Idealna sytuacja: najpierw odwołania do starych, potem do nowych stron.
+Najgorsza sytuacja: najpierw nowe strony, potem stare.
+
+Jak wygląda cache na moment przed odwołaniem do $S_j$? 
+Mamy w nim:
+\begin{itemize}
+\item Strony stare: $S_1, S_2, \ldots, S_{j-1}$.
+\item Pewną liczbę stron nowych: $N_1, N_2, \ldots, N_{h(j)}$.
+\item Co jeszcze? W pozostałych $k - (j-1) - h(j)$ slotach mamy pewne strony ze zbioru $\{ S_j, S_{j+1}, \ldots, S_{k-n_i} \} \cup \{ B_1, B_2, \ldots, B_{n_i} \}$, przy czym ze względu na symetrię każdy podzbiór jest jednakowo prawdopodobny.
+\end{itemize}
+
+Jaka jest szansa, że w tych pozostałych $P := k - j + 1 - h(j)$ slotach mamy konkretną stronę $S_j$ ze
+zbioru o $Q := k - n_i - (j-1) + n_i = k - j + 1$ elementach? Jest ona równa $P / Q$, bo:
+\begin{enumerate}
+\item Wszystkich wyborów $P$-elementowych podzbiorów z $Q$-elementowego zbioru jest $\binom{Q}{P}$, zaś
+tych, które zawierają $S_j$ jest $\binom{Q-1}{P-1}$ i stąd 
+\[ \frac{\binom{Q-1}{P-1}}{\binom{Q}{P}} = \frac{P}{Q} \enspace. \]
+\item Albo inaczej: konkretna strona $s$ występuje z (takim samym) prawdopodobieństwem $p$. Definiujemy
+zmienną losową $X_s$ będącą indykatorem zdarzenia ,,$s$ jest w zbiorze $P$''. Wtedy $E[X_s] = p$. 
+Z drugiej strony $\sum_s X_s = P$ dla dowolnego losowania. A zatem
+\[ P = \E[\sum_s  X_s] = \sum_s \E[X_s] = Q \cdot p \]
+\end{enumerate}
+
+Stąd mamy
+\begin{align*}
+	\E[\RMARK(f_i)] 
+		& = n_i + \sum_{j=1}^{k-n_i} \left(1 - \frac{k-j+1-h(j)}{k-j+1)} \right) \\
+		& = n_i + \sum_{j=1}^{k-n_i} \frac{h(j)}{k-j+1} 
+		\leq n_i + \sum_{j=1}^{k-n_i} \frac{n_i}{k-j+1} \\
+		& \leq n_i + \sum_{j=1}^{k-1} \frac{n_i}{k-j+1} 
+		= n_i + \sum_{j=2}^k \frac{n_i}{j} 
+		= n_i \cdot H_k \enspace.
+\end{align*}
+Sumujące ten koszt po wszystkich fazach dostaniemy tezę twierdzenia.
+\end{proof}
+

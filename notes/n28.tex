@@ -1,0 +1,272 @@
+\section{Porównanie adwersarzy}
+
+
+
+\subsection{Silny adwersarz adaptujący się}
+
+Dotychczas rozważanego adwersarza, który nie widzi bitów losowych algorytmu
+nazywamy adwersarzem nieświadomym (ang. {\em oblivious}).
+
+Adwersarz adaptujący się tworzy sekwencję wejściową na podstawie
+dotychczasowego zachowania algorytmu. Ponieważ algorytm może wykorzystywać bity
+losowe, a wejście jest (deterministyczną) funkcją zachowania algorytmu, wejście
+jest zmienną losową. 
+
+Rozróżniamy zatem dwa typy adwersarzy.  {\em Silny adwersarz adaptujący się}
+oblicza rozwiązanie dla wygenerowanej sekwencji na końcu; możemy zatem założyć,
+że będzie to optymalne rozwiązanie dla wygenerowanej sekwencji. Mówimy zatem,
+że zrandomizowany algorytm $\ALG$ jest $k$-konkurencyjny przeciwko silnemu
+adwersarzowi adaptującemu się, jeśli istnieje taka stała~$\alpha$, że dla
+każdego w ten sposób generowanego wejścia~$I$ zachodzi 
+\[
+	\E[\ALG(I)] \leq k \cdot \E[\OPT(I)] + \alpha \enspace,
+\]
+gdzie wartość oczekiwana jest liczona po wyborach losowych algorytmu.
+
+
+\begin{theorem}
+Rozważmy dowolny algorytm $\ALG$ dla SRP. Jego współczynnik ścisłej konkurencyjności przeciwko 
+silnemu adwersarzowi adaptującemu się wynosi co najmniej $\R = 2 - 1/B$.
+\end{theorem}
+
+\begin{proof}
+Dowód jest identyczny jak dla przypadku dolnego ograniczenia dla deterministycznego algorytmu.
+Sekwencja $\sigma$ tworzona przez adwersarza zawsze kończy się w dniu, w którym algorytm decyduje się 
+na zakup nart. Załóżmy, że następuje to dniu $T \in \NAT \cup \{\infty\}$, gdzie $T$ jest zmienną losową zależną
+od wyborów losowych algorytmu.
+
+Wtedy $\ALG(\sigma) = T-1+B$. Z drugiej strony $\OPT(\sigma) = \min\, \{ B, T \}$. 
+Wystarczy udowodnić, że $\E[\ALG(\sigma)] \geq \R \cdot \E[\OPT(\sigma)]$. 
+My potrafimy udowodnić silniejsze twierdzenie, a mianowicie 
+\[ \ALG(\sigma) \geq \R \cdot \OPT(\sigma) \enspace. \]
+Powyższa nierówność zmiennych losowych jest spełniona dla każdego wyboru zdarzenia elementarnego.
+Wynika ona z prostej analizy dwóch przypadków ($B \geq T$ lub $B < T$).
+\end{proof}
+
+
+\begin{theorem}
+Rozważmy problem w którym $\ALG$ ma zawsze skończony zbiór odpowiedzi. Jeśli $\ALG$
+jest $R$-konkurencyjny przeciwko silnemu adwersarzowi adaptującemu się, to 
+istnieje $R$-konkurencyjny deterministyczny algorytm. 
+\end{theorem}
+
+
+Adwersarz adaptujący się musi generować rozwiązanie dla danej
+sekwencji w sposób {\em online}, wraz z algorytmem. Myślimy o tym, że adwersarz
+dostarcza swój własny deterministyczny algorytm $\ADV$, który jest funkcją
+dotychczas widzianego kawałka wejścia i przeszłych akcji algorytmu $\ALG$ (tj.
+decyzję w kroku $n$ może podjąć na podstawie odpowiedzi algorytmu do kroku
+$n-1$).  Mówimy, że algorytm $\ALG$ jest $k$-konkurenyjny przeciwko
+adwersarzowi adaptującemu się, jeśli istnieje taka stała $\alpha$, że dla
+każdego możliwego algorytmu adwersarza $\ADV$ i każdego generowanego w taki
+sposób wejścia $I$ zachodzi 
+\[
+	\E[\ALG(I)] \leq k \cdot \E[\ADV(I)] + \alpha \enspace,
+\]
+gdzie wartość oczekiwana jest liczona po wyborach losowych algorytmu.
+
+Jeśli weźmiemy dowolny algorytm $\ALG$ i przez 
+$\R_\mathrm{N}(\ALG)$, $\R_\mathrm{A}(\ALG)$ i $\R_\mathrm{SA}(\ALG)$ 
+oznaczymy osiągane przez niego współczynniki
+konkurencyjności przeciwko adwersarzowi nieświadomemu, adaptującemu się i silnemu adaptującemu się, 
+to zachodzi:
+\[
+	\R_\mathrm{N}(\ALG) \leq \R_\mathrm{A}(\ALG) \leq \R_\mathrm{SA}(\ALG)
+	\enspace.
+\]
+Druga nierówność jest oczywista, zaś pierwsza wynika z tego, że adwersarz adaptujący się jest w stanie 
+symulować dowolnego adwersarza nieświadomego 
+generując sekwencję i rozwiązanie dla niej na samym początku a~następnie ignorując 
+faktyczne zachowanie algorytmu.
+
+Powyższa nierówność zachodzi dla każdego algorytmu randomizowanego. Weźmy zatem
+dowolny problem online. Niech współczynniki konkurencyjności najlepszych algorytmów 
+zrandomizowanych rozwiązujących ten problem to odpowiednio
+$\R_\mathrm{N}$, $\R_\mathrm{A}$ i $\R_\mathrm{SA}$, 
+a współczynnik konkurencyjności najlepszego algorytmu 
+deterministycznego to $\R_\mathrm{DET}$. Wtedy otrzymujemy
+\begin{equation}
+\label{eq:adv_power}
+	\R_\mathrm{N} \leq \R_\mathrm{A} \leq \R_\mathrm{SA} \leq \R_\mathrm{DET}
+	\enspace.
+\end{equation}
+
+
+\begin{theorem}
+Rozważmy dowolny algorytm $\ALG$ dla SRP. Jego współczynnik ścisłej konkurencyjności przeciwko 
+adwersarzowi adaptującemu się wynosi co najmniej $\R = 2 - 1/B$.
+\end{theorem}
+
+\begin{proof}
+Wprowadzamy takie same oznaczenia jak w poprzednim dowodzie. Jak poprzednio adwersarz będzie tworzyć wejście
+$\sigma$ do dnia, w którym algorytm kupi narty.
+
+Ten dowód jest trochę trudniejszy niż poprzedni, gdyż adwersarz musi zdecydować o swojej strategii w 
+sposób {\em online}, nie znając wartości zmiennej losowej $T$. Jednak na podstawie kodu algorytmu
+adwersarz może wyliczyć wartość $\E[T]$. Jeśli $\E[T] \geq B$, to strategia adwersarza brzmi
+,,kup narty pierwszego dnia'',  a w~przeciwnym przypadku strategia to ,,zawsze pożyczaj narty''.
+
+W pierwszym z przypadków otrzymujemy
+\[
+	\E[\ALG(\sigma)] \;=\; \E[T] - 1 + B \;\geq\; 2 B - 1 \;\geq\; \R \cdot B \;=\; \R \cdot \ADV(\sigma) \enspace.
+\]
+Natomiast w drugim
+\[
+	\E[\ALG(\sigma)] \;=\; \E[T] - 1 + B \;=\; \frac{\E[T] - 1 + B}{\E[T]} \cdot \E[T] 
+		\;\geq\; \frac{B - 1 + B}{B} \cdot \E[T] \;\geq\; \R \cdot \E[\ADV(\sigma)] \enspace,
+\]
+co kończy dowód. 
+\end{proof}
+
+
+\marginnote{W.13A}
+
+W tej części połączymy konkurencyjność algorytmów
+przeciwko różnym typom adwersarzy w sposób bardziej precyzyjny niż ten
+dany przez nierówności~(\ref{eq:adv_power}). 
+
+Dla skrócenia zapisu, w tym rozdziale rozważymy definicję 
+konkurencyjności zadaną przez funkcje liniowe. 
+Niech $\gamma$ będzie funkcją liniową. Jeśli mówimy, 
+że deterministyczny algorytm $\ALG$ jest $\gamma$-konkurencyjny, to tozumiemy przez to 
+że dla dowolnego wejścia $I$, $\ALG(I) \leq \gamma(\OPT(I))$. 
+W analogiczny sposób definiujemy konkurencyjność algorytmów zrandomizowanych; 
+zauważmy, że funkcje liniowe są przemienne z wartością oczekiwaną.
+
+\subsection{Związek między adwersarzami przeciwko algorytmom zrandomizowanym}
+
+Na początku przyjrzymy się bliżej adwersarzom adaptującym się.  Adwersarz taki
+składa się z dwóch części: deterministycznej 
+części $Q$ dającej zapytania i deterministycznej części odpowiadającej
+na te zapytania $S$, równolegle do algorytmu.  Wtedy algorytm jest
+$\gamma$-konkurencyjny przeciwko adwersarzowi adaptującemu się, jeśli jest
+$\gamma$-konkurencyjny przeciwko dowolnemu adwersarzowi $(Q,S)$ gdzie $S$ jest
+algorytmem online, oraz jest $\gamma$-konkurencyjny przeciwko silnemu
+adwersarzowi adaptującemu się, jeśli jest $\gamma$-konkurencyjny przeciwko
+dowolnemu adwersarzowi $(Q,\OPT)$. 
+
+\begin{theorem}
+Niech $\ALG$ będzie zrandomizowanym algorytmem, który jest
+$\gamma$-konkurencyjny przeciwko adwersarzowi adaptującemu się, a $\ALG'$
+algorytmem, który jest $\delta$-kon\-ku\-ren\-cyj\-ny przeciwko adwersarzowi
+nieświadomemu. Wtedy $\ALG$ jest $(\gamma \circ \delta)$-konkurencyjny przeciwko
+silnemu adwersarzowi adaptującemu się.
+\end{theorem}
+
+\begin{proof}
+Niech $(Q,\OPT)$ będzie dowolnym adwersarzem adaptive-offline. Pokażemy, że
+$\ALG$ jest przeciwko niemu $(\gamma \circ \delta)$-konkurencyjny. 
+
+Najpierw pokażemy że $\ALG$ jest $\gamma$-,,konkurencyjny'' przeciwko 
+adwersarzowi $(Q,\ALG')$. Konkurencyjność jest tutaj w cudzysłowie, gdyż 
+$\ALG'$ jest algorytmem zrandomizowanym i nie zdefiniowaliśmy co to znaczy.
+$\ALG'$ jest pewnym rozkładem $\pi$ nad wszystkimi algorytmami deterministycznymi
+$\{S_j\}_j$, z kolei $\ALG$ jest pewnym innym rozkładem prawdopodobieństwa nad wszystkimi
+algorytmami deterministycznymi $\{ \DET_i \}_i$.
+
+Ponieważ $\ALG$ jest $\gamma$-konkurencyjny przeciwko dowolnemu adwersarzowi
+adaptującemu się, w szczególności jest $\gamma$-konkurencyjny przeciwko $(Q,S_j)$ 
+dla dowolnego $j$, tj.:
+\[
+\E_i[\DET_i(\sigma(Q,\DET_i)] \leq \gamma (\E_i[S_j(\sigma(Q,\DET_i)]) \enspace.
+\]
+Mnożąc obie strony przez $\pi(j)$ i sumując po wszystkich $j$ dostajemy
+\begin{align*}
+\E_i[\DET_i(\sigma(Q,\DET_i)] 
+	\;=\; & \sum\nolimits_j \pi(j) \cdot \E_i[\DET_i(\sigma(\DET_i,Q))] \\
+	 \;\leq\; & \sum\nolimits_j \pi(j) \cdot \gamma (\E_i[S_j(\sigma(\DET_i,Q))]) \\
+	 \;=\; & \E_j [ \gamma (\E_i[S_j(\sigma(\DET_i,Q))]) ] \\
+	 \;=\; & \gamma( \E_i\E_j[S_j(\sigma(\DET_i,Q))])  \enspace,
+\end{align*}
+Z $\delta$-konkurencyjności algorytmu $\ALG'$ wynika, że 
+$\E_j[S_j(\sigma)] \leq \delta (\OPT(\sigma))$ zachodzi dla dowolnego wejścia $\sigma$,
+które nie zależy od wyborów losowych algorytmu $\ALG'$. 
+Zatem 
+\begin{align*}
+\E_i[\DET_i(\sigma(\DET_i,Q))] 
+	\;\leq\; & \gamma (\E_i[\delta(\OPT(\sigma(\DET_i,Q)))]) \\
+	\;=\; & (\gamma \circ \delta)\; (\E_i[\OPT(\sigma(\DET_i,Q))]) \enspace. \qedhere
+\end{align*}
+\end{proof}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Silny adwersarz adaptujący się a algorytmy deterministyczne}
+
+W tej części pokażemy, że randomizacja przeciwko silnemu adwersarzowi
+adaptującemu się nie pomaga. Do poniższego dowodu potrzebne jest jednak jedno
+techniczne założenie, że dla każdego żądania adwersarza zbiór możliwych
+odpowiedzi jest skończony.
+
+\begin{theorem}
+\label{thm:adaptive-offline-deterministic}
+Niech $\ALG$ będzie zrandomizowanym algorytmem, który jest
+\mbox{$\gamma$-konkurencyjny} przeciwko adwersarzowi adaptive-offline. Wtedy
+istnieje deterministyczny $\gamma$-kon\-ku\-ren\-cyj\-ny algorytm.
+\end{theorem}
+
+Najpierw przyjrzymy się podejściu które nie działa.  Ponownie traktujemy $\ALG$
+jako rozkład prawdopodobieństwa nad wszystkimi algorytmami deterministycznymi
+$\DET_i$.  Z konkurencyjności algorytmu $\ALG$ wynika, że dla każdego
+adwersarza adaptive-offline $(Q,\OPT)$ dla dowolnego wejścia zachodzi
+$\E_i[\DET_i(\sigma(\DET_i,Q))] \leq \gamma(\E_i[\OPT(\sigma(\DET_i,Q))])$.
+Zatem 
+\[
+	\E_i[\,\DET_i(\sigma(\DET_i,Q)) - \gamma(\OPT(\sigma(\DET_i,Q))) ] \leq 0 \enspace.
+\]
+Stąd wynika, że istnieje algorytm $\DET_i$ taki, że
+\[
+	\DET_i(\sigma(\DET_i,Q)) \leq \gamma(\OPT(\sigma(\DET_i,Q))) \enspace.
+\]
+Niestety algorytm taki istnieje dla ustalonego $Q$; my potrzebujemy, żeby
+istniał jeden $\DET_j$ dobry dla wszystkich~$Q$.  Poniżej prezentujemy inne
+podejście do twierdzenia, tym razem skuteczne.
+
+\marginnote{W.13B}
+
+\begin{proof}[Dowód twierdzenia \ref{thm:adaptive-offline-deterministic}]
+Rozważmy drzewo gry pomiędzy adwersarzem a algorytmem. Zakładamy, że korzeń
+jest na poziomie $1$ i reprezentuje pustą sekwencję wejściową. Krawędzie
+wychodzące z poziomów nieparzystych reprezentują możliwe zapytania, a krawędzie
+wychodzące z poziomów parzystych możliwe odpowiedzi algorytmu.
+
+W tej terminologii $Q$ jest po prostu funkcją, która dla każdego wierzchołka na
+poziomie nieparzystym wybiera wychodzącą z niego krawędź, a $\ALG$ definiuje
+dla każdego wierzchołka na poziomie parzystym rozkład prawdopodobieństwa nad
+wszystkimi wychodzącymi z niego krawędziami.  Każdy wierzchołek jest
+identyfikowany przez parę $(\sigma, a)$, gdzie $\sigma$ jest wygenerowanym
+początkiem sekwencji wejściowej a $a$ jest odpowiedzią algorytmu. 
+Z wierzchołkiem takim wiążemy wartość $cost(\sigma,a)$, która jest 
+równa kosztowi rozwiązania $a$ na sekwencji $\sigma$.
+
+Należący do nieparzystego poziomu wierzchołek $(\sigma,a)$ nazywamy {\em
+natychmiast wygrywającym} (dla adwersarza) jeśli zachodzi dla niego
+$cost(\sigma,a) > \gamma (\OPT(\sigma))$. Jeśli algorytm dojdzie do takiego
+wierzchołka, adwersarz natychmiast przerywa grę. Należący do nieparzystego
+poziomu wierzchołek $(\sigma,a)$ nazywamy {\em wygrywającym} jeśli istnieje
+taka stała $B$, że przy optymalnej grze adwersarza każda ścieżka, którą może
+wybrać algorytm zawiera natychmiast wygrywający wierzchołek w ciągu co najwyżej
+$B$ kroków.  Powyższe definicje wierzchołków wygrywających i natychmiast
+wygrywających zależą tylko od struktury drzewa (i funkcji kosztu) a nie od
+konkretnych wartości $Q$ i $\ALG$.
+
+Zauważmy, że korzeń drzewa nie może być wierzchołkiem wygrywającym, bo
+oznaczałoby to, że niezależnie od działań algorytmu adwersarz może wygenerować
+sekwencję, nie dłuższą niż~$B$, która spowoduje, że algorytm skończy w
+wierzchołku natychmiast wygrywającym. Wtedy skonstruowanie
+$\gamma$-konkurencyjnego algorytmu byłoby niemożliwe, co przeczy założeniu. 
+
+Pokażemy teraz, że dla dowolnego niewygrywającego wierzchołka $x$ dowolne
+żądanie adwersarza może być obsłużone (deterministycznie) tak, że algorytm skończy nadal w
+wierzchołku niewygrywającym. Indukcyjnie będzie to prowadzić do
+deterministycznego algorytmu, który będzie się poruszać zawsze po wierzchołkach
+niewygrywających, a zatem będzie $\gamma$-konkurencyjny. Załóżmy nie wprost, że
+istnieje syn wierzchołka $x$, $y$, taki że każdy syn wierzchołka $y$ jest
+wygrywający. Ponieważ dla każdego syna $y$ istnieje zatem ograniczenie na
+liczbę kroków która doprowadza do wierzchołka natychmiast wygrywającego i synów
+jest skończona ilość, istnieje też ograniczenie na liczbę kroków która prowadzi
+z wierzchołka $x$ do wierzchołka natychmiast wygrywającego.  Zatem $x$ jest
+wygrywający, co przeczy założeniu.
+\end{proof}
+

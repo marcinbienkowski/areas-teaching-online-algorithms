@@ -1,0 +1,224 @@
+\section{Dolne granice dla algorytmów randomizowanych: zasada minimaksowa}
+
+\subsection{Wariant dla ścisłej konkurencyjności}
+
+\begin{lemma}[Zasada minimaksowa Yao, wersja dla ścisłej konkurencyjności]
+Rozważmy dowolny problem minimalizacyjny. Wybierzmy dowolny rozkład 
+prawdopodobieństwa $\pi$ nad zbiorem wszystkich możliwych sekwencji wejściowych $\I$.
+Jeśli dla dowolnego deterministycznego algorytmu $\DET$ zachodzi 
+\[ \E_\pi[\DET(\sigma)] \geq \R \cdot \E_\pi[\OPT(\sigma)] \enspace, \]
+to $\R$ jest dolnym ograniczeniem na ścisłą konkurencyjność dowolnego zrandomizowanego algorytmu.
+\end{lemma}
+
+Najpierw przykład: zastosowanie do problemu wypożyczania nart.
+
+
+\begin{example}
+Załóżmy, że $3 | B$. Wtedy dolne ograniczenie na konkurencyjność
+dowolnego algorytmu zrandomizowanego dla problemu wypożyczania nart wynosi co najmniej $6/5$.
+\end{example}
+
+\begin{proof}
+Rozkład prawdopodobieństwa $\pi$ jest następujący:
+z prawdopodobieństwem $2/3$ narciarz łamie nogę dnia $B/3$ (wejście $\sigma_1$) 
+a z prawdopodobieństwem $1/3$ nie łamie nogi nigdy (wejście $\sigma_2$). 
+
+Wtedy $\OPT(\sigma_1) = B/3$ i $\OPT(\sigma_2) = B$, a zatem 
+$\E_\pi[\OPT(I)] = \frac{2}{3} \cdot \OPT(\sigma_1) + \frac{1}{3} \cdot \OPT(\sigma_2) 
+= \frac{5}{9} B$.
+
+Jaki jest najlepszy algorytm deterministyczny dla takiego rozkładu $\pi$?
+Zauważmy, że na końcu dnia $B/3$ algorytm deterministyczny ,,wie'' już, 
+czy ma do czynienia z wejściem $\sigma_1$ czy $\sigma_2$. Dodatkowo jeśli algorytm decyduje się na 
+kupno nart dnia $B/3$ lub wcześniej, lepiej postąpi jeśli kupi je od razu dnia pierwszego.
+Zatem jedyne sensowne algorytmy deterministyczne to
+$\DET_1$ kupujący narty dnia $1$ i $\DET_2$ kupujący narty dnia $B/3+1$ (pod warunkiem, że 
+nogi są jeszcze niepołamane).
+
+Mamy $\E_{\pi} [\DET_1(\sigma)] = B$ oraz $\E_\pi [\DET_2(I)] 
+= \frac{2}{3} \cdot \DET_2(\sigma_1) + \frac{1}{3} \cdot \DET_2(\sigma_2) 
+= \frac{2}{3} \cdot B/3 + \frac{1}{3} \cdot (B/3 + B) = \frac{6}{9} B$. Zatem oczekiwany 
+koszt najlepszego algorytmu deterministycznego $\DET$ wynosi $\frac{6}{9} B$. Stąd 
+dolne ograniczenie na konkurencyjność dowolnego algorytmu randomizowanego wynosi
+co najmniej
+\[
+	\frac{\E_\pi[\DET(I)]}{\E_\pi[\OPT(I)]} = \frac{\frac{6}{9} \cdot B}{\frac{5}{9} \cdot B} = 
+		\frac{6}{5} \enspace.
+	\qedhere
+\]
+\end{proof}
+
+\begin{proof}[Dowód zasady minimaksowej]
+Ustalmy dowolny algorytm randomizowany $\ALG$.
+$\ALG$ jest pewnym rozkładem prawdopodobieństwa $\A$ nad wszystkimi możliwymi algorytmami 
+deterministycznymi,\footnote{Jest to prawda tylko dla algorytmów, których pamięć jest nieograniczona}
+tzn.~zamiast pisać $\E[\ALG(\sigma)]$ będziemy pisać $\E_{\DET \sim \A}[\DET(\sigma)]$.
+Popatrzmy na jego średni koszt na sekwencjach z $\pi$. 
+\begin{align*}
+	\E_{\sigma \sim \pi} \E_{\DET \sim \A}[\DET(\sigma)] \;
+		& =\;  \E_{\DET \sim \A} \E_{\sigma \sim \pi} [\DET(\sigma)]  \\
+		& \geq\;  \E_{\DET \sim \A} [\R \cdot \E_{\sigma \sim \pi} [\OPT(\sigma)]]  \\
+		& = \; \E_{\sigma \sim \pi} [R \cdot \OPT(\sigma)]],
+\end{align*}
+czyli 
+\[
+	\E_{\sigma \sim \pi} \left( \E_{\DET \sim \A}[\DET(\sigma)] - R \cdot \OPT(\sigma) \right) \geq 0 	
+\]
+Zatem istnieje $\sigma^*$ taka że
+\[
+	\E_{\DET \sim \A}[\DET(\sigma^*)] - R \cdot \OPT(\sigma^*) \geq 0 	
+\]
+czyli 
+\[
+	\E_{\DET \sim \A}[\DET(\sigma^*)] \geq R \cdot \OPT(\sigma^*)
+\]
+co kończy dowód.
+\end{proof}
+
+
+\subsection{Wariant dla zwykłej konkurencyjności}
+
+
+Tę wersję pozostawiamy bez dowodu (jest w komentarzu).
+
+
+\begin{lemma}[Zasada minimaksowa Yao]
+Rozważmy dowolny problem minimalizacyjny. Załóżmy, że istnieje ciąg 
+rozkładów prawdopodobieństwa $\pi_1, \pi_2, \pi_3, \ldots$ 
+nad zbiorem wszystkich możliwych sekwencji wejściowych $\I$, 
+taki że dla dowolnego algorytmu deterministycznego $\DET$ zachodzi
+\begin{enumerate}[(i)]
+\item $\lim_{t \to \infty} \E_{\sigma \in \pi_t} [\DET(\sigma)] = \infty$ oraz
+\item $\lim \inf_{t \to \infty} \E_{\sigma \in \pi_t} [\DET(\sigma)]  /
+\E_{\sigma \in \pi_t} [\OPT(\sigma)] = \R$.
+\end{enumerate}
+Wtedy $\R$ jest dolnym ograniczeniem na konkurencyjność dowolnego zrandomizowanego algorytmu. 
+\end{lemma}
+
+
+
+%\begin{proof}
+%Załóżmy nie wprost, że $\ALG$ jest zrandomizowanym algorytmem, który jest
+%$\R'$-konkurencyjny, gdzie \mbox{$\R' < \R$}. Zatem istnieje taka stała
+%$\alpha$, że dla każdego wejścia $\sigma$, $\E[\ALG(\sigma)] \leq \R' \cdot
+%\OPT(\sigma) + \alpha$. $\ALG$ jest pewnym rozkładem prawdopodobieństwa $\A$
+%nad wszystkimi możliwymi algorytmami deterministycznymi,\footnote{Jest to
+%prawda tylko dla algorytmów, których pamięć jest nieograniczona} więc dla
+%każdego wejścia $\sigma$ zachodzi:
+%\[
+%	\E_{\A}[\DET(\sigma)] \;\leq\; \R' \cdot \OPT(\sigma) + \alpha \enspace. 
+%\]
+%Ustalmy $\gamma > \alpha / (\R - \R')$ i rozkład $\pi$ zgodny z warunkami zadania.
+%Oczywiście powyższe równanie to zachodzi także jeśli $\sigma$ zostanie wylosowane, na przykład z rozkładem $\pi$:
+%\[
+%	\E_{\pi} \E_{\A}[\DET(\sigma)] \;\leq\; \R' \cdot \E_\pi[\OPT(\sigma)] + \alpha \enspace. 
+%\]
+%Z drugiej strony, 
+%\begin{align*}
+%	\E_{\pi} \E_{\A}[\DET(\sigma)] \;
+%		& =\;  \E_{\A} \E_\pi [\DET(\sigma)]  \\
+%		& \geq\;  \E_{\A} [\R \cdot \E_\pi [\OPT(\sigma)]]  \\
+%		& = \; \R \cdot \E_\pi [\OPT(\sigma)]  \\
+%		& > \; \R' \cdot \E_\pi [\OPT(\sigma)] + \alpha \enspace.
+%\end{align*}
+%Otrzymana sprzeczność kończy dowód lematu.
+%\end{proof}
+%
+%\noindent
+%{\bf Uwaga:} Warunek ,,$\E_\pi[\OPT(\sigma)] \geq \gamma$'' możemy zastąpić warunkiem 
+%,,$\E_\pi[\DET(\sigma)] \geq \gamma$''.
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Dolna granica na pamięć podręczną}
+
+\myparagraph{Idea}
+%
+Ustalmy dowolne $M$ będące długością generowanego ciagu.
+Wykorzystamy tylko $k+1$ pierwszych stron pamięci RAM a 
+sekwencja wejściowa będzie utworzona w następujący losowy sposób. 
+Pierwszą stronę wejścia $\sigma$ wybieramy losowo (jednostajnie) ze 
+zbioru wszystkich $k+1$ stron, $\{p_1, p_2, \ldots, p_{k+1} \}$. 
+Odwołanie do strony $i > 1$ jest wybierane losowo (jednostajnie) ze zbioru  $\{p_1, p_2, \ldots, p_{k+1} \} 
+\setminus I_{i-1}$, gdzie $I_{i-1}$ jest stroną która została wybrana w kroku $i-1$. Tak powstały rozkład 
+prawdopodobieństwa nad możliwymi wejściami oznaczamy $\pi(M)$.
+
+Ustalmy dowolny algorytm deterministyczny $\DET$ i obliczmy, ile wynosi $\E_{\pi(M)}[\DET(\sigma)]$.
+Odwołanie do pierwszej strony powoduje chybienie z prawdopodobieństwem $\frac{1}{k+1}$. 
+Weźmy odwołanie do strony w kroku $i > 1$. W tym kroku algorytm ma w cache na pewno stronę $I_{i-1}$ oraz 
+$k-1$ innych stron. Strona $I_i$ zostaje wybrana losowo ze zbioru   $\{p_1, p_2, \ldots, p_{k+1} \} 
+\setminus I_{i-1}$, a zatem jest w cache z prawdopodobieństwem $\frac{k-1}{k}$. 
+Zatem oczekiwana liczba chybień i zarazem oczekiwany koszt algorytmu na losowym wejściu $\sigma$ 
+to 
+\[ 
+	\E_{\pi(M)}[\DET(\sigma)] = \frac{1}{k+1} + (M-1) \cdot \frac{1}{k} = \frac{M}{k} - \frac{1}{k \cdot (k+1)} 
+	\enspace.
+\]
+A zatem $\E_{\pi(M)}[\DET(\sigma)]/M \to 1/k$.
+
+Co możemy powiedzieć o zachowaniu $\OPT$ na $\sigma$?
+Załóżmy przez chwilę, ze $M$ jest nieskończone i podzielmy $\sigma$ na fazy. Jaka jest oczekiwana długość 
+takiej fazy?
+
+\begin{lemma}
+\label{lem:coupon_collector}
+Oczekiwana długość fazy w sekwencji $\sigma$ wynosi $k \cdot H_k$.
+\end{lemma}
+
+\begin{proof}
+Weźmy dowolną fazę. W pierwszym jej kroku wylosowana zostaje pewna strona $I_0$. 
+W drugim kroku zgodnie z naszym procesem losowym wybieramy jakąś stronę $I_1 \neq I_0$.
+W kolejnych krokach będziemy wybierać strony aż napotkamy na stronę $I_2 \notin \{ I_0, I_1 \}$.
+Prawdopodobieństwo wylosowania takiej strony w jednym kroku to $(k-1)/k$, zatem oczekiwana 
+liczba kroków po której to nastąpi wynosi $k/(k-1)$. Analogicznie, oczekiwana liczba kroków od momentu
+napotkania strony $I_j$ do napotkania strony $I_{j+1}$ to $k/(k-j)$. 
+Ostatni krok (w którym odnajdujemy stronę~$I_k$) należy już do kolejnej fazy.
+Zatem 
+\begin{align*}
+	\E[\textsf{\#kroków w fazie}]\; 
+		= &\; 1 + 1 + \frac{k}{k-1} + \frac{k}{k-2} + \ldots + \frac{k}{1} - 1 \\
+		= &\; \frac{k}{k} + \frac{k}{k-1} + \frac{k}{k-2} + \ldots + \frac{k}{1} \\
+		= &\; k \cdot H_k \enspace. \qedhere
+\end{align*}
+\end{proof}
+
+
+\myparagraph{Ograniczanie kosztu OPT}
+%
+Jak z powyższego lematu obliczyć $\E_{\pi(M)}[\OPT(\sigma)]$?
+Ustalmy dowolne $M$, to nam definiuje $\pi(M)$, wylosujmy $\sigma$ zgodnie z $\pi(M)$.
+Niech $Y_i$ będzie zmienną losową oznaczającą długość fazy~$i$. Oczywiście wszystkie te zmienne mają identyczny 
+rozkład\footnote{Zakładamy tutaj, że tak naprawdę sekwencja wejściowa jest nieskończona, wtedy żadna z faz 
+nie jest ucięta, choć koncentrujemy się na początku tej sekwencji o długości $M$},
+a powyżej pokazaliśmy, że $\E[Y_i] = k \cdot H_k$. 
+
+Pokażemy teraz ograniczenie na koszt algorytmu optymalnego.
+Zdefiniujemy zmienną losową $N := \max \{ s : \sum_{j=1}^s Y_j \leq M \}$. Innymi słowy $N$ 
+jest liczbą faz, które jeszcze mieszczą się w sekwencji o długości $M$. 
+Ponieważ koszt $\OPT$ to dokładnie $1$ dla każdej rozpoczętej fazy, więc $N \leq \OPT(\sigma) \leq N+1$.
+Z {\em podstawowego twierdzenia o procesach odnawialnych} (patrz poniżej) wynika, że 
+\[
+	\lim_{M \to \infty} \frac{\E[N]}{M} = \frac{1}{\E[Y_i]} \enspace.
+\]
+
+\begin{theorem}[Podstawowe twierdzenie procesów odnawialnych]
+Niech $X_1, X_2, \ldots$ będą niezależnymi zmiennymi losowymi o takim samym rozkładzie, 
+takimi że $\Pr[X_i = 0] < 1$ i niech $X$ będzie dowolną z nich. Niech $S_n = \sum_{i=1}^n X_i$. 
+Niech $N(t) = \max \, \{  n : S_n \leq t  \}$
+Wtedy zachodzi 
+\[
+\lim_{t \to \infty} \frac{\E[N(t)]}{t} = \frac{1}{\E[X]}
+\enspace.
+\]
+\end{theorem}
+
+Przykład, że powyższe twierdzenie nie zachodzi bez $\lim$: $Y$ jest równe $1$ z ppb. $9/10$ i $100$ z ppb. $1/10$. Weźmy 
+$M = 11$. Wtedy $E[Y] \approx 11$ ale $E[N] > 1 \cdot (10/9) + 2 \cdot (10/9)^2 + 3 \cdot (10/9)^3 + ...$.
+
+\myparagraph{Wniosek}
+%
+Zatem $\lim_{M \to \infty} \E_{\pi(M)}[\OPT(\sigma)] = \infty$ oraz 
+$\lim_{M \to \infty} \E_{\pi(M)}[\DET(\sigma)] / \E_{\pi(M)}[\OPT(\sigma)] = H_k$.
+Stąd na mocy zasady minimaksowej wynika, ze $H_k$ jest dolnym ograniczeniem na konkurencyjność
+dowolnego algorytmu randomizowanego. 

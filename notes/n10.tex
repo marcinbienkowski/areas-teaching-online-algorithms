@@ -1,0 +1,246 @@
+\section{Programowanie liniowe: Set Cover}
+
+\subsection{Przykładowe programy liniowe}
+
+Rozważmy następujący program liniowy (P):
+
+\begin{align*}
+	\textnormal{zminimalizuj } & P = 2 x_1 + 4 x_2 + 4 x_3 &  \\
+	\textnormal{z zachowaniem ograniczeń: } 
+		& x_1 + x_2 \geq 3 & \\
+		& x_2 + x_3 \geq 1 & \\
+		& x_1, x_2, x_3 \geq 0 & 
+\end{align*}
+
+Ograniczenie optymalnej wartości P od góry jest proste: wystarczy 
+podać \emph{jakieś} $x_1$, $x_2$ i $x_3$ spełniające ograniczenia. 
+Przykładowo dla $x_1 = 1$, $x_2 = 2$ i $x_3 = 0$ otrzymujemy $P = 10$.
+
+Jak możemy wygenerować ograniczenie $P$ od dołu? 
+Zauważmy, że z warunków wynika, że: 
+\begin{align*}
+	2 x_1 + 2 x_2 & \geq 6 \\
+	2 x_2 + 2 x_3 & \geq 2
+\end{align*}
+czyli 
+\[
+	2 x_1 + 4 x_2 + 2 x_3 \geq 8	
+\]
+A zatem 
+\begin{align*}
+	P  & = 2 x_1 + 4 x_2 + 4 x_3 \\
+		& \geq  2 x_1 + 4 x_2 + 2 x_3 \\
+		& \geq  8	
+\end{align*}
+Co się tu wydarzyło? Pomnożyliśmy wymagane ograniczenia przez jakieś 
+\emph{nieujemne} współczynniki $y_1$ i $y_2$ (w naszym przypadku wzięliśmy 
+$y_1 = 2$ i $y_2 = 2$) i następnie zsumowaliśmy otrzymane nierówności.
+Otrzymaliśmy, że 
+\[ 
+	y_1 \cdot (x_1 + x_2) + y_2 \cdot (x_2 + x_3) \geq 3 y_1 + 1 y_2 
+\]
+czyli 
+\[ 
+	y_1 \cdot x_1 + (y_1 + y_2) \cdot x_2 + y_2 \cdot x_3 \geq 3 y_1 + 1 y_2 
+\]
+Kiedy taka nierówność jest dla nas przydatna do ograniczania $P$ od dołu?
+Potrzebujemy, żeby współczynniki przy $x_i$ w wyrażeniu $P$ jak i w powyższej nierówności 
+były w odpowiedniej relacji, tj.
+\begin{align*}
+	y_1 & \leq 2 \\
+	y_1 + y_2 & \leq 4 \\
+	y_2 & \leq 4
+\end{align*}
+Jeśli wybierzemy $y_j$ spełniające te nierówności, to wyrażenie $D = 3 y_1 + 1 y_2$ 
+będzie dolnym ograniczeniem na P. 
+Trochę bardziej formalnie możemy myśleć o $D$ jako o funkcji $y_1, y_2$ 
+zaś o $P$ jako o funkcji $x_1, x_2, x_3$. 
+Wtedy otrzymujemy, że dla odpowiednio ograniczonych wartości $y_j$ i $x_i$ mamy:
+\[
+	D(y_1,y_2) \leq P(x_1,x_2,x_3)	
+\]
+To jest słaba wersja dualności, a $D$ nazywamy programem dualnym do danego. 
+
+
+
+%How can we say that ANY solution to P has value at least 8?
+%Any solution to P must satisfy 2 x1 + 2 x2 ≥ 6 and 2 x2 + 2 x3  ≥ 2
+%Hence, any solution to P must satisfy 2 x1 + 4 x2 + 2 x3  ≥ 8
+%By non-negativity of xi,   2 x1 + 4 x2 + 4 x3 ≥ 8
+
+\subsection{Online Set Cover}
+
+\problem{Online Set Cover}{Dane jest skończone uniwersum $\U$. Dana jest również $m$-elementowa rodzina
+$\F$ podzbiorów $\U$ pokrywająca całe $\U$. Dla każdego ze zbiorów $S \in \F$,
+$c_S \geq 1$ oznacza jego koszt.  Wejście składa się z ciągu elementów $e_1,
+e_2, e_3, \ldots$. Po każdym elemencie musimy wypisać podzbiór $\F$ pokrywający
+wszystkie widziane dotychczas elementy.  Generowany ciąg podzbiorów $\F$ musi
+być wstępujący, tj.~możemy tylko dodawać zbiory do rozwiązania, a nie wyrzucać.}
+
+W tej części przedstawimy jak rozwiązać ułamkowy wariant tego problemu.
+Oznacza to, że nasze rozwiązanie w~każdym kroku jest funkcją $x : \F \to [0,1]$
+(będziemy pisać $x_S$ zamiast $x(S)$) i wymagamy, żeby dla każdego już
+widzianego elementu $e_i$ zachodziło $\sum_{S \ni e_i} x_S \geq 1$. Oczywiście
+znowu zakładamy, że generowane przez nas rozwiązanie jest ,,monotoniczne'', 
+tj. ułamkowe części zbiorów możemy tylko dodawać do rozwiązania ale nie usuwać z 
+niego.
+
+Wariant offline tego problemu (gdy mamy z góry dane $k$ elementów $e_1, \ldots, 
+e_k$ do pokrycia) jest rozwiązywalny w czasie wielomianowym, gdyż
+możemy napisać odpowiedni program liniowy, oznaczany niżej przez $(P_k)$. 
+Nasz algorytm online nie będzie go jednak rozwiązywać, lecz posługiwać się 
+pośrednio jego nierównościami.
+%
+\begin{align*}
+\textnormal{zminimalizuj } & \sum_{S \in \F} c_S \cdot x_S &  \\
+\textnormal{z zachowaniem ograniczeń: } 
+	& \sum_{S \ni e_i} x_S \geq 1 & \forall_{1 \leq i \leq k} \\
+	& x_S \geq 0 & \forall_{S \in \F} \\
+\end{align*}
+%
+Zauważmy, że dobrym rozwiązaniem programu $(P_0)$ jest wzięcie $x_S = 0$ dla
+każdego $S$. Takie rozwiązanie ma oczywiście koszt 0.  Naszym celem jest
+generowanie monotonicznych rozwiązań kolejnych programów liniowych $(P_1),
+(P_2), (P_3), \ldots$, tak żeby ich wartości były odpowiednio małe. 
+
+W tym celu napiszemy dualny program liniowy ($D_k$), tworząc dla $i$-tego
+równania $\sum_{S \ni e_i} x_S \geq 1$ zmienną~$y_i$. 
+%
+\begin{align*}
+\textnormal{zmaksymalizuj } & \sum_{1 \leq i \leq k} y_i & \\
+\textnormal{z zachowaniem ograniczeń: } 
+	& \sum_{e_i \in S} y_i \leq c_S & \forall_{S \in \F} \\
+	& y_i \geq 0 & \forall_{1 \leq i \leq k} \\
+\end{align*}
+%
+Zauważmy, że wartość optymalnego rozwiązania dla $(D_0)$ jest również równa zeru.
+Dodatkowo ze słabej własności dualności (która wprost wynika ze sposobu w jaki utworzyliśmy
+program ($D_k$) wynika, że $\OPT(D_k) \leq \OPT(P_k)$.
+
+Będziemy teraz konstruować ciąg rozwiązań $\ALG(P_i)$ i $\ALG(D_i)$ układów $(P_i)$ i $(D_i)$ taki, że
+prawdziwe są następujące kluczowe warunki.
+\begin{enumerate}
+\item[W1.] \label{item:w1} 
+Rozwiązanie $\ALG(P_i)$ spełnia wszystkie ograniczenia $(P_i)$ i dodatkowo jest monotoniczne.
+\item[W2.] \label{item:w2}
+Rozwiązanie $\ALG(D_i)$ spełnia wszystkie ograniczenia $(D_i)$.
+\item[W3.] \label{item:w3}
+$\Delta \ALG(P_i) \leq R \cdot \Delta \ALG(D_i)$.
+\end{enumerate}
+W powyższych relacjach $R = 2 \cdot \log(2m+2) = O(\log m)$.
+
+\begin{lemma}
+Jeśli algorytm generuje rozwiązania układów $(P_i)$ i $(D_i)$ zgodne z warunkami
+\hyperref[item:w1]{W1}, \hyperref[item:w2]{W2} oraz \hyperref[item:w3]{W3}, to 
+jego jest ściśle $R$-konkurencyjny.
+\end{lemma}
+
+\begin{proof}
+Wystarczy pokazać, że dla każdego kroku $k$ zachodzi $\ALG(P_k) \leq R \cdot \OPT(P_k)$.
+Sumując warunek \hyperref[item:w3]{W3} po pierwszych $k$ krokach orzymujemy
+\[
+	\ALG(P_k) = \sum_{i=1}^k \Delta \ALG(P_i) 
+		\leq \sum_{i=1}^k R \cdot \Delta \ALG(D_i) = R \cdot \ALG(D_k) 
+		\enspace,
+\]
+a stąd 
+\[
+	\ALG(P_k) \leq R \cdot \ALG(D_k) \leq R \cdot \OPT(D_k) \leq R \cdot \OPT(P_k)
+	\enspace.
+\]
+Środkowa nierówność wynika z warunku \hyperref[item:w2]{W2} (dopuszczalności rozwiązania 
+$\ALG(D_k)$).
+\end{proof}
+
+\myparagraph{Algorytm dla kroku k}
+W programie $(P_k)$ pojawia się nowy warunek 
+$\sum_{S \ni e_k} x_S \geq 1$ odpowiadający konieczności pokrycia elementu $e_k$.
+Natomiast w programie $(D_k)$ pojawiła się nowa zmienna $y_k$ początkowo równa $0$ 
+i zmodyfikowane zostały wszystkie warunki $\sum_{e_i \in S} y_i \leq c_S$, w których 
+zbiór $S$ zawiera wymagany od teraz element $e_k$. (Po lewej stronie tych
+warunków pojawiła się wartość $y_k$.) 
+
+Chcemy teraz zmodyfikować już istniejące rozwiązanie dla $(P_{k-1})$ i $(D_{k-1})$.
+Dopóki $\sum_{S \ni e_k} x_S < 1$ wykonujemy następujące dwie operacje:
+\begin{enumerate}
+\item Dla każdego zbioru $S$ zawierającego $e_k$ wykonujemy 
+	$x_S \leftarrow (1+1/c_S) \cdot x_S + 1/(m \cdot c_S)$.
+\item $y_k \leftarrow y_k + 1/\log (2m+2)$
+\end{enumerate}
+
+Zauważmy jednak już teraz, że żeby rozwiązanie $(D_k)$ było dopuszczalne,
+liczba o którą zwiększamy $y_k$ powinna być mała i mała powinna być liczba
+iteracji, a zatem zwiększanie $x_S$ powinno być jak najszybsze. Z drugiej
+strony, żeby minimalizować współczynnik konkurencyjności zależy nam na
+dokładnie odwrotnych zależnościach.
+
+\begin{lemma}
+Powyższy algorytm spełnia warunek \hyperref[item:w1]{W1}.
+\end{lemma}
+
+\begin{proof}
+Warunek~\hyperref[item:w1]{W1} zachodzi trywialnie. Wykonywana pętla nie psuje
+już spełnionych warunków, tylko stara się poprawić sytuację $\sum_{S \ni e_k}
+x_S < 1$.  Ponieważ w każdym kroku pętli algorytm zwiększa każdą ze stojących
+po lewej stronie równania wartości $x_S$ co najmniej o $1/(m \cdot c_S)$, po skończonej
+liczbie iteracji otrzymamy $\sum_{S \ni e_k} x_S \geq 1$.
+\end{proof}
+
+
+\begin{lemma}
+Powyższy algorytm spełnia warunek \hyperref[item:w3]{W3}.
+\end{lemma}
+
+\begin{proof}
+
+Dla warunku~\hyperref[item:w3]{W3} zauważmy, że w każdej iteracji pętli
+$\Delta\ALG(D_k) = 1/\log (2m+2)$, natomiast na
+zwiększenie wartości rozwiązania układu $(P_k)$ wpływa zwiększenie wartości
+$x_S$ dla zbiorów $S$ zawierających $e_k$.  Zatem 
+\[
+	\Delta\ALG(P_k) = \sum_{S \ni e_k} c_S \cdot \Delta x_S 
+		= \sum_{S \ni e_k} c_S \cdot \left( \frac{1}{c_S} \cdot x_S + \frac{1}{m \cdot c_S} \right) 
+		= \sum_{S \ni e_k} x_S + \sum_{S \ni e_k} \frac{1}{m} < 1 + 1 = 2
+		\enspace.
+\]
+gdzie nierówność wynika z tego, że przed aktualizacją zachodziło $\sum_{S \ni
+e_k} x_S < 1$ oraz z tego, że liczba różnych zbiorów do których należy $e_k$
+wynosi co najwyżej $m$. 
+\end{proof}
+
+
+\begin{lemma}
+Powyższy algorytm spełnia warunek \hyperref[item:w2]{W2}.
+\end{lemma}
+
+\begin{proof}
+Zobaczmy najpierw, dla dowolnego zbioru $S$, ile razy w ciągu działania algorytmu
+może wykonać się przypisanie $x_S \leftarrow (1+1/c_S) \cdot x_S + 1/(m \cdot c_S)$.
+Nazwijmy takie przypisanie ,,zwiększaniem $x_S$'' a wartość $x_S$ po $\ell$ zwiększeniach
+oznaczmy przez $x_S^{(\ell)}$. Łatwo zauważyć, że
+\[
+	x_S^{(\ell)} = 
+	\frac{1}{m} \cdot \left[ \left(1+\frac{1}{c_S}\right)^\ell - 1 \right]
+\]
+Niech $t_S$ oznacza liczbę zwiększeń $x_S$ w wykonaniu algorytmu. Zauważmy, że 
+$x_S^{t_S-1} < 1$ (żeby ostatnie zwiększenie miało szanse się wykonać).
+Możemy zatem wyznaczyć górne ograniczenie na $t_S$.
+\[	
+	t_S < \frac{\log(m+1)}{\log(1+1/c_S)} + 1 \leq \log(m+1) \cdot c_S + 1 \leq \log(2m+2) \cdot c_S
+	\enspace.
+\]
+W ograniczeniach wykorzystaliśmy, że $c_S \geq 1$ (co implikuje $\log(1+1/c_S) \geq 1/c_S$).
+
+Niech $k$ będzie całkowitą liczbą elementów do pokrycia w sekwencji wejściowej.
+Żeby pokazać warunek \hyperref[item:w2]{W2} wystarczy pokazać, że na końcu działania algorytmu
+wszystkie nierówności w ($D_k$) są spełnione. Weźmy dowolną taką nierówność 
+$\sum_{e_i \in S} y_i \leq c_S$ (dla dowolnego $S \in \F$).
+
+W momencie kiedy algorytm zwiększa dowolne $y_i$ wchodzące w skład lewej strony tej nierówności
+(zauważmy, że jest wtedy krok $i$) wykonywana jest operacja zwiększenia dla wszystkich zbiorów 
+$S$ zawierających $e_i$. W szczególności zwiększany jest wtedy $x_S$. Jak pokazaliśmy wyżej liczba 
+takich zwiększeń wynosi co najwyżej $\log(2m+2) \cdot c_S$, a zatem całkowity wartość lewej 
+strony nierówności (na końcu działania algorytmu) 
+wynosci co najwyżej $\frac{1}{\log (2m+2)} \cdot \log(2m+2) \cdot c_S = c_S$. 
+\end{proof}
+

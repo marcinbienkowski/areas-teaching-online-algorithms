@@ -1,0 +1,109 @@
+
+\section{Szeregowanie zadań}
+
+Choć szeregowanie zadań można rozpatrywać jako inny problem pakowania pojemników, przyjrzymy 
+się definicji tego problemu w oryginalnym kontekście.
+
+\problem{Szeregowanie zadań}{Danych jest $m$ identycznych procesorów. 
+Sekwencja wejściowa składa się z zadań o określonym 
+czasie wykonania. Należy przyporządkować dane zadanie do jednego z procesorów. Niech $\ell_i$ będzie sumą 
+zadań przypisanych do procesora $i$. Chcemy, żeby $\max_i \{ \ell_i \}$ było jak najmniejsze.
+}
+
+
+
+\begin{theorem}
+\label{lem:balance}
+Algorytm $\GREEDY$ dla problemu szeregowania zadań na $m$ procesorach jest 
+$(2 - 1/m)$-kon\-ku\-ren\-cyj\-ny
+\end{theorem}
+
+\begin{proof}
+Weźmy dowolny ciąg wejściowy $\sigma$. Bez straty ogólności możemy założyć, że najbardziej 
+obciążona będzie pierwszy procesor. Niech $w$ oznacza wagę ostatniego zadania na pierwszym procesorze, 
+a $s$ sumaryczną wagę pozostałych zadań przypisanych do tego procesora. Obciążenie każdego innego procesora
+musi również wynosić co najmniej $s$, bo inaczej $w$ zostałoby przypisane do innego procesora. 
+Zatem sumaryczna waga wszystkich zadań to $w + s \cdot m$ i stąd
+\[
+	\OPT(\sigma) \geq \frac{w + s \cdot m}{m} = \frac{w}{m} + s \enspace.
+\]
+Jednocześnie $\OPT(\sigma) \geq w$. Zatem:
+\begin{align*}
+	\GREEDY(\sigma) \;=\; & w + s \\
+		\leq\; & w + \OPT(\sigma) - \frac{w}{m} \\
+		\leq\; & \OPT(\sigma) + w \cdot \left (1 - \frac{1}{m} \right) \\
+		\leq\; & \OPT(\sigma) \cdot \left( 2 - \frac{1}{m} \right) \enspace. \qedhere
+\end{align*}
+
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Rozważmy teraz zmodyfikowany problem szeregowania zadań. Zadanie $i$ w sekwencji wejściowej 
+ma przypisaną wagę $w_i$ oraz zbiór procesorów $\P_i$. To zadanie można przyporządkowywać 
+tylko do procesora ze zbioru $\P_i$.  
+
+\begin{theorem}
+\label{lem:balance}
+Algorytm $\GREEDY$ dla problemu szeregowania ograniczonych zadań na $m$~procesorach jest 
+$(\lceil \log m \rceil + 1)$-konkurencyjny
+\end{theorem}
+
+\begin{proof}
+Mamy $m$ procesorów i wejście $\sigma$ składające się z $n$ zadań, gdzie $i$-te zadanie ma wagę $w_i$ i 
+zestaw dopuszczalnych procesorów $\mathcal{P}_i$. 
+Algorytm zachłanny szereguje je w sposób przedstawiony na rysunku \ref{fig:greedy_restricted}.
+Zapis ,,$w = x \; (\to j)$'' oznacza, że jest to zadanie o wadze $x$ i zostało przyporządkowane 
+w optymalnym rozwiązaniu do procesora $j$.
+
+Dla potrzeb analizy dzielimy obciążenie na warstwy, każda z warstw ma grubość $\OPT(\sigma)$. 
+Wystarczy, że pokażemy, że wielkość obciążenia każdego z procesorów mieści się w 
+$\lceil \log n \rceil + 1$ warstwach.
+W tym celu skoncentrujmy się na jednej warstwie (na rysunku jest to pierwsza warstwa);
+będziemy ją nazywać {\em bieżącą warstwą}, zbiór warstw które po niej następują będziemy nazywać 
+{\em następnymi warstwami}, a zbiór warstw je poprzedzających nazywamy {\em poprzednimi warstwami}.
+Niech $W_j$ będzie obciążeniem procesora $j$ w bieżącej warstwie a $R_j$ sumarycznym obciążeniem
+tego procesora w kolejnych warstwach. Oczywiście jeśli $W_j < \OPT(\sigma)$ to $R_j = 0$. 
+Poniżej pokażemy, że 
+\begin{equation}
+\label{eq:exponential_decrease}
+	\sum_{j = 1}^m W_j \;\geq\; \sum_{j = 1}^m R_j \enspace.
+\end{equation}
+
+\myfigure{greedy_restricted}{Przykładowe szeregowanie zadań przez algorytm \GREEDY}
+	{\includegraphics[scale=0.8]{pict/sched}}
+
+Aby udowodnić powyższą nierówność weźmy dowolny procesor $k$ (na rysunku $k = 1$). 
+Pokażemy, że część $\sum_{j = 1}^m R_j$, która jest przeznaczona w rozwiązaniu optymalnym na procesor  
+$k$ (jej wielkość oznaczamy przez $A_k$) jest mniejsza bądź równa $W_k$. 
+Ponieważ z definicji te części te są rozłączne i pokrywają zawartość następnych warstw dostaniemy, że
+$\sum_{k = 1}^m W_k \geq \sum_{k = 1}^m A_k = \sum_{j = 1}^m R_j$. 
+
+Jak duże jest $A_k$? Niech $O_k$ oznacza zbiór wszystkich zadań przeznaczonych w optymalnym rozwiązaniu
+na procesor $k$ (ciemniejsze zadania na rysunku). Oczywiście $A_k \leq \sum_{j \in O_k} w_j \leq \OPT(\sigma)$.
+Jeśli $W_k = \OPT(\sigma)$, to 
+nierówność $A_k \leq W_k$ jest trywialnie spełniona. Załóżmy więc, że $W_k < \OPT(\sigma)$. 
+
+Aby obliczyć $A_k$, należy wziąć 
+wartość $\sum_{j \in O_k} w_j$ i pomniejszyć ją o te zadania (lub ich części) z $O_k$, które leżą 
+w bieżącej warstwie lub warstwach poprzednich. 
+Zauważmy, że każde zadanie ze zbioru $O_k$ musi w rozwiązaniu produkowanym przez $\GREEDY$ 
+zaczynać się wcześniej niż w chwili $W_k$. W przeciwnym przypadku procesor $k$ zostałby wykorzystany
+dla obsługi tego zadania. Musimy od każdego zadania odjąć co najmniej $\OPT(\sigma) - W_k$, 
+a zatem otrzymujemy
+\[
+	A_k \leq \sum_{j \in O_k} w_j - (\OPT(\sigma) - W_k) \leq W_k \enspace.
+\]
+
+Teraz pokażemy jak z nierówności \ref{eq:exponential_decrease} wynika
+teza twierdzenia. Niech $L_i$ oznacza sumę wag zadań w warstwie $i$ i późniejszych. Wtedy 
+$L_1 = \sum_{i=1}^n w_i$. Z (\ref{eq:exponential_decrease}) mamy, że 
+\[ L_{i+1} \leq L_i / 2 \enspace, \]  
+a stąd
+\[ L_{\lceil \log m \rceil + 1} \leq \frac{L_1}{m} = \frac{\sum_{i=1}^n w_i}{m} \leq \OPT(\sigma) 
+\enspace. \]
+Oznacza to, że w 
+warstwie $\lceil \log m \rceil + 1$ mamy tak mało wagi do rozdysponowania między procesory, że dowolne
+przypisanie zadań (niekoniecznie zachłanne) gwarantuje zakończenie wykonywania zadań przed końcem tej warstwy.
+\end{proof}
+

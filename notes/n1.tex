@@ -1,0 +1,285 @@
+\section{Wstęp do algorytmów online}
+
+\marginnote{W.1A\\+10m}
+
+\problem{Problem optymalizacyjny}{
+\begin{compactitem}
+\item Zbiór wejść $\I$.
+\item Dla każdego wejścia $\sigma \in \I$: zbiór {\em dopuszczalnych} rozwiązań $\F(\sigma)$.
+\item Funkcja kosztu $\COST(\sigma,s) \in \REAL_{\geq 0}$ (gdzie $s \in \F(\sigma)$).
+\item $\min$ lub $\max$.
+\end{compactitem}
+}
+
+Będziemy rozważać głównie {\em problemy minimalizacyjne}.
+Dla algorytmu {\ALG} przez $\ALG(\sigma)$ czasem będziemy rozumieć koszt 
+rozwiązania generowanego przez {\ALG} na $\sigma$ a czasem samo rozwiązanie. 
+
+\begin{definition}{Rozwiązanie optymalne:}
+\[
+	\OPT(\sigma) = \min_{s \in \F(\sigma)} \COST(\sigma,s)
+\]
+\end{definition}
+
+\begin{definition}
+Deterministyczny {\ALG} jest $R$-aproksymacyjny jeśli dla każdego $\sigma \in \I$
+zachodzi 
+\[ \ALG(\sigma) \leq R \cdot \OPT(\sigma) \enspace. \]
+\end{definition}
+
+\noindent
+\textbf{Algorytm online:} algorytm, który dostaje wejście ,,po kawałku'' i ,,po kawałku'' musi 
+wypisywać wyjście. 
+
+\begin{definition}
+Deterministyczny {\ALG} jest {\em ściśle $R$-konkurencyjny}, 
+jeśli jest algorytmem online i jest $R$-aproksymacyjny.
+\end{definition}
+
+\noindent
+\textbf{Uwagi:}
+\begin{compactitem}
+\item Wciąż porównujemy nasz algorytm {\ALG} z najlepszym możliwym rozwiązaniem {\em offline}
+{\OPT}.
+\item Nie walczymy zazwyczaj z niewystarczającą mocą obliczeniową (jak w aproksymacji) tylko
+i wyłącznie z nieznajomością przyszłości.
+\end{compactitem}
+
+
+\subsection{Problemy typu wypożycz-lub-kup}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\problem{Problem wypożyczania nart (Ski Rental Problem, SRP)}{Codziennie rano podejmujemy decyzję, czy
+narty pożyczyć (za $1$) czy też kupić (za $B \in \NAT$). Jeździmy przez cały
+dzień a wieczorem łamiemy nogę (i kończymy swoją narciarską karierę) lub też
+nie. Cel: minimalizacja całkowitego kosztu.}
+
+\noindent
+Niech $T \in \mathbb{N}_{+} \cup \{ \infty \}$ oznacza wybrany przez adwersarza dzień, w którym łamana jest noga 
+
+\begin{observation}
+Rozwiązanie optymalne to kupno nart pierwszego dnia jeśli $B < T$, a wypożyczanie nart 
+każdego dnia w przeciwnym przypadku. Zatem $\OPT(\sigma) = \min\{B,T\}$.
+\end{observation}
+
+\noindent
+Jak konkurencyjna jest strategia ,,kup pierwszego dnia''? A strategia ,,zawsze pożyczaj''?
+
+\begin{theorem}
+\label{thm:srp-2-competitive}
+Niech {\ALG} pożycza narty przez $B-1$ dni, a dnia $B$ je kupi
+(pod warunkiem, że wcześniej nie złamie nogi).
+Wtedy $\ALG$ jest $(2 - 1/B)$-konkurencyjny.
+\end{theorem}
+
+\begin{proof}
+Weźmy dowolną sekwencję wejściową $\sigma$. Niech $T$ będzie liczbą dni w których
+narciarz ma jeszcze sprawne nogi (tzn.~noga jest łamana pod koniec dnia $T$).
+\[
+\ALG(\sigma) = \begin{cases}
+  T & \textnormal{jeśli $T \leq B - 1$} \\
+  B - 1 + B & \textnormal{jeśli $T \geq B$} 
+\end{cases} \enspace.
+\]
+Porównując to z $\OPT(\sigma) = \min\{B,T\}$ otrzymujemy, że 
+dla dowolnego wejścia $\sigma$
+\[
+  \ALG(\sigma) \leq \left(2 - \frac{1}{B}\right) \cdot \OPT(\sigma) \enspace. \qedhere
+\]
+\end{proof}
+
+\begin{theorem}
+Ścisła konkurencyjność dowolnego algorytmu deterministycznego dla problemu wypożyczania nart 
+wynosi co najmniej $(2 - \frac{1}{B})$.
+\end{theorem}
+
+\begin{proof}
+WLOG, {\ALG} jest zdefiniowany jako ,,kup narty dnia $i$'', 
+gdzie $i \in \NAT \cup \{ \infty \}$.
+Co robi adwersarz? Pozwala algorytmowi kupić narty dnia $i < B$ i w dniu $i$
+łamie mu nogę. Wtedy:
+\[
+  \frac{\ALG(I)}{\OPT(I)} \;=\; \frac{i-1+B}{\min\{i,B\}} \;\geq \; 2 - \frac{1}{B} 
+  \enspace .
+  \qedhere
+\]
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\problem{Problem spin-block}{
+Proces chce uzyskać dostęp do zasobu, który jest aktualnie zajęty. Jądro systemu 
+może najpierw czekać dowolny czas ({\em spin}) na zwolnienie zasobu, a następnie 
+--- jeśli zasób nie zostanie zwolniony --- zatrzymać proces ({\em block}) i przekazać sterowanie 
+do innego procesu, co trwa $B$ ms. Celem jest minimalizacja czasu przeznaczonego na uzyskanie dostępu do zasobu.
+}
+
+Decyzja algorytmu = ile należy czekać? 
+Deterministyczny algorytm online osiągający optymalny współczynnik konkurencyjności $2$ 
+jest analogiczny dla SRP: czeka $B$ ms na zwolnienie zasobu.
+Można go poprawić stosując randomizację.
+
+\begin{definition}
+Randomizowany algorytm online jest $R$-konkurencyjny, jeśli dla każdego wejścia 
+$\sigma$ zachodzi
+\begin{align}
+	\label{eq:konkurencyjnosc_rand}
+	\E[\ALG(\sigma)] & \leq \R \cdot \OPT(\sigma) 
+	\enspace,
+\end{align}
+gdzie wartość oczekiwana jest liczona po wszystkich wyborach losowych algorytmu.
+\end{definition}
+
+
+
+
+
+Poniżej pokażemy, że współczynnik ten można poprawić stosując randomizację.
+Niech $\RAND$ będzie algorytmem, który losuje (z rozkładem jednostajnym) liczbę $x$ z przedziału $[B/2,B]$
+i czeka $x$ ms na zwolnienie zasobu.
+
+\begin{theorem}
+Algorytm $\RAND$ jest $1,75$-konkurencyjny
+\end{theorem}
+
+\begin{proof}
+Weźmy dowolne wejście $I$; niech $T$ będzie momentem w którym zasób zostaje zwolniony. 
+Oczywiście $\OPT(I) = \min\{T,B\}$. 
+Rozpatrzmy trzy przypadki. 
+\begin{enumerate}
+\item $T > B$. Ponieważ zarówno $\OPT$ jak i $\RAND$ blokują zawsze przed czasem $B$, ich koszt nie zmieni się
+	jeśli założymy, że $T = B$ (przypadek rozpatrzony w kolejnym punkcie).
+\item $T < B/2$. W takim przypadku, $\RAND(I) = T = \OPT(I)$. 
+\item $B/2 \leq T \leq B$. Wtedy $\OPT(I) = T$.
+Zauważmy, że gęstość rozkładu prawdopodobieństwa w przedziale $[B/2,B]$ to $2/B$.
+Niech $\RAND(I,x)$ oznacza koszt algorytmu $\RAND$ na wejściu $I$ pod warunkiem, że $\RAND$ wylosował $x$. 
+Wtedy oczekiwany koszt algorytmu wynosi 
+\begin{align*}
+	\E[\RAND(\sigma)] 
+		= &\; \int_{B/2}^B \RAND(I,x) \cdot \frac{2}{B} \, dx 
+		= \frac{2}{B} \cdot \left(\int_{B/2}^T \RAND(I,x) \, dx +
+			  \int_T^B \RAND(I,x) \, dx \right)\\
+		= &\; \frac{2}{B} \cdot \left( \int_{B/2}^T (x+B) \, dx +
+			  \int_T^B T \, dx \right) 
+		=  \frac{2}{B} \cdot \left(\frac{T^2}{2}+B \cdot T - \frac{(B/2)^2}{2} - \frac{B^2}{2}
+			 + B \cdot T - T \cdot T \right)  \\
+		= &\; \frac{2}{B} \cdot \left(2 \cdot B \cdot T - \frac{5}{8} \cdot B^2 - T^2/2 \right)
+ 		= 4 \cdot T - \frac{5}{4} \cdot B - T^2/B 
+		\enspace.
+\end{align*}
+Stąd wynika, że $\E[\RAND(I)] / \OPT(I) = 4 - \frac{5}{4} \cdot B/T - T/B$.
+Obliczając pochodną, otrzymujemy, że wyrażenie po prawej stronie maksymalizowane jest 
+dla $T = \frac{\sqrt{5}}{2} \cdot B$. Jednak taka wartość jest poza przedziałem $[B/2,B]$ i dlatego  współczynnik jest największy na jednym z~końców (prawym) przedziału. Zatem
+\[
+	\frac{\E[\RAND(I)]}{\OPT(I)} \leq 4 - \frac{5}{4} \cdot B/B - B/B = 1,75
+	\enspace.
+	\qedhere
+\]
+\end{enumerate}
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Eksploracja terenu}
+\marginnote{W.1B}
+
+
+\problem{Wejście na pastwisko}{
+Krowa stoi  przy drodze w pewnej odległości do wejścia na pastwisko (większej od~$1$). 
+Krowa jest ślepa i chce po omacku znaleźć wejście przechodząc jak najmniejszą odległość.
+}
+
+\begin{algorithmic}
+\State $d \gets 1$
+\State $strona \gets lewo$ 
+\Repeat
+	\State Idź $d$ kroków w stronę $strona$ 
+	\State Wróć do punktu startowego 
+	\State $d \gets d \cdot 2$ 
+	\State $strona \gets lewo$ 
+\Until{kwejście znalezione}
+\end{algorithmic}
+
+\begin{theorem}
+Powyższy algorytm jest ściśle $9$-konkurencyjny.
+\end{theorem}
+
+\begin{proof}
+Weźmy dowolną instancję wejściową $\sigma$. 
+Niech $x$ oznacza odległość wejścia od krowy.
+Oczywiście, $\OPT(\sigma) = x$. Skoro $x > 1$ to istnieje liczba naturalna 
+$j$ spełniająca zależność 
+\[ 2^j < x \leq 2^{j+1} \enspace. \]
+W najgorszym przypadku krowa posługująca się powyższym algorytmem w iteracji $j$ przejdzie 
+$2^j$ kroków w stronę wejścia, zawróci do punktu startowego, przejdzie $2^{j+1}$ w przeciwnym kierunku,
+zawróci do punktu startowego i w końcu przejdzie $x$ kroków napotykając wejście na pastwisko.
+Całkowity koszt algorytmu wyniesie:
+\begin{align*} 
+\ALG(\sigma) \;& =\; 2 \cdot 1 + 2 \cdot 2 + 2 \cdot 4 + \ldots 2 \cdot 2^j + 2 \cdot 2^{j+1} + x \\
+	& = \;2 \cdot (1 + 2 + \ldots + 2^{j+1}) + x\\
+	& \leq\; 2^{j+3} + x 
+	\leq\; 8 \cdot 2^j + x 
+	<\; 9 \cdot x 
+	=\; 9 \cdot \OPT(\sigma) \enspace.
+\qedhere
+\end{align*}
+\end{proof}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Pakowanie pojemników}
+
+\problem{Pakowanie pojemników}{
+Mamy nieskończony zbiór pojemników o rozmiarach równych $1$. Ciąg
+wejściowy składa się z listy przedmiotów o wagach $w_i \leq 1$. 
+Algorytm musi decydować, gdzie umieścić dany przedmiot, tak żeby 
+suma wag w każdym pojemniku była co najwyżej $1$.
+Celem jest minimalizacja liczby zużytych pojemników.
+}
+
+Algorytm $\FF$ ($\FFS$) wkłada przedmiot do pierwszego pojemnika, do którego 
+włożenie jest możliwe.
+
+\begin{lemma}
+Dla dowolnego wejścia $\sigma$ zachodzi $\FF(\sigma) \leq 2 \cdot \OPT(\sigma) + 1$.
+\end{lemma}
+
+
+\begin{proof}
+Weźmy dowolny ciąg wejściowy $\sigma$ zawierający $m$ przedmiotów.
+Niech $B$ oznacza zbiór wykorzystanych przez $\FF$ pojemników. Pokażemy, że we wszystkich 
+pojemnikach, być może poza jednym, sumaryczna waga przedmiotów wynosi co najmniej $1/2$.
+Załóżmy nie wprost, że są dwa takie pojemniki $b_i$ i $b_j$ (gdzie $i \leq j$) 
+i rozważmy sytuację w momencie, w którym wkładany był pierwszy przedmiot do pojemnika $b_j$. 
+Przedmiot ten miał wagę co najwyżej $1/2$ a dodatkowo w pojemniku $b_i$ było wtedy co najmniej 
+$1/2$ miejsca. Zatem przedmiot ten nie powinien był zostać włożony do ,,późniejszego'' pojemnika $b_j$.
+
+Niech $k$ oznacza liczbę pojemników wykorzystanych przez algorytm $\FF$. Bez straty ogólności
+załóżmy, że wszystkie pojemniki poza ostatnim mają zgromadzoną wagę przynajmniej $1/2$. Zatem
+\[
+	\FFS(\sigma) \;=\; k \;=\; 1 + (k-1) 
+		\;\leq\; 1 + \sum_{i = 1}^{k-1} 2 \cdot w(b_i) 
+		\;\leq\; 1 + 2 \cdot \sum_{j=1}^m w(\sigma_j) 
+		\;\leq\; 1 + 2 \cdot \OPT(\sigma) \enspace.
+		\qedhere
+\]
+\end{proof}
+
+Powyższy wynik stanowi motywację do wprowadzenia konkurencyjności (nie-ścisłej).
+
+\begin{definition}
+Deterministyczny algorytm $\ALG$ jest $\R$-konkurencyjny jeśli istnieje stała $\alpha$, taka że 
+dla dowolnego wejścia $I$ zachodzi
+\begin{equation}
+	\ALG(I) \leq \R \cdot \OPT(I) + \alpha
+	\enspace. 
+\end{equation}
+W analogiczny sposób modyfikujemy definicję dla algorytmów zrandomizowanych. 
+\end{definition}
+
+\begin{corollary}
+$\FF$ jest $2$-konkurencyjny.
+\end{corollary}
+

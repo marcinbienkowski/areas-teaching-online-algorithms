@@ -1,0 +1,270 @@
+
+\section{Routing}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+W tym rozdziale zajmiemy się podproblemem routingu, tj.~wyborem tras. Dla uwagi
+ustalmy pewien graf $G = (V,E)$. Każda krawędź ma przepustowość $U$. Wejście dla
+problemu routingu składa się z par $(s_j,t_j)$, a dla każdej takiej pary
+algorytm musi zdecydować czy połączenie odrzucić czy zaakceptować i w tym drugim
+przypadku wybrać w grafie $G$ jakąś ścieżkę $P_j$ łączącą $s_j$ z $t_j$. (To
+jest tzw.~virtual circuit routing). Celem jest maksymalizacja liczby
+zaakceptowanych połączeń.
+
+Dla dowolnej krawędzi $e$ definiujemy $\ell_j(e)$, {\em obciążenie krawędzi} po
+kroku $j$, jako liczbę przechodzących przez nią scieżek. W generowanym przez
+algorytm rozwiązanie musi zachodzić $\ell_j(e) \leq U$.
+
+
+\subsection{Małe przepustowości}
+
+
+$N$-linią nazywamy graf z $N$ wierzchołkami numerowanych od $0$ do 
+$N-1$ połączonych w linię, gdzie $U = 1$.
+
+\begin{theorem}
+Rozważmy $N$-linię. Wtedy każdy deterministyczny algorytm online dla dopuszczania połączeń
+ma współczynnik ścisłej konkurencyjności co najmniej $N-1$. 
+\end{theorem}
+
+\begin{proof}
+Na początku adwersarz chce połączenia między wierzchołkiem $1$ a $N$. 
+Jeśli algorytm odrzuci to połączenie, to adwersarz kończy sekwencję: 
+optymalny zysk jest równy $1$, a zysk algorytmu jest równy $0$. 
+Jeśli algorytm przyjmie to połączenie, to adwersarz żąda połączenia między 
+wszystkimi $N-1$ parami sąsiadujących wierzchołków. Wtedy zysk algorytmu to $1$,
+a zysk optymalnego rozwiązania to przyjęcie tych $N-1$ połączeń.
+\end{proof}
+
+
+\subsection{Przypadek dużych przepustowości}
+
+Będziemy zakładać, że $U$ jest odpowiednio duże (potem się okaże że musi być co najmniej $\ln (m+1)$, gdzie $m$ jest liczbą krawędzi.)
+
+\paragraph{Intuicja.} Wybór ścieżki powinien optymalizować dwie rzeczy:
+\begin{itemize}
+	\item ścieżka powinna być jak najkrótsza
+	\item ścieżka powinna omijać już mocno obciążone krawędzie
+\end{itemize}
+Jaki wybór optymalizuje pkt.~pierwszy a jaki drugi? Pomiędzy tymi wyborami można 
+popatrzeć na wartości $w_e := 2^{\ell(e)}$ dla krawędzi $e$ i wybierać 
+ścieżkę, która ma jak najmniejszą sumaryczną wagę. Dodatkowo, jeśli 
+najmniejsza sumaryczna waga jest powyżej pewnego progu, to nie przyjmujemy tego połączenia.
+
+Uwaga: minimalizacja 
+$\sum_{e \in P} w_e$ minimalizuje też $Q_P = \log \sum_{e \in P} w_e$. Można zauważyć, że 
+\[ 
+	\log(\max_{e \in P} w_e) \leq Q_P \leq \log (m \cdot \max_{e \in P} w_e) = \log m + \log (\max_{e \in P} w_e)
+\]
+czyli
+\[ 
+	\max_{e \in P} \ell(e) \leq Q_P \leq \log m + \max_{e \in P} \ell(e)
+\]
+Oznacza to że minimalizujemy wielkość, która z dokładnością do addytywnego składnika $\log m$ jest 
+tak samo duża jak $\max_{e \in P} \ell(e)$ (load na najbardziej obciążonej krawędzi).
+
+
+
+\paragraph{Program liniowy.}
+Rozważmy (całkowitoliczbowy) program liniowy opisujący problem routingu online.
+Dla żądania $r_i = (s_i,t_i)$ przedstawionego w kroku~$i$ niech
+$\mathbb{P}(r_i)$ oznacza zbiór wszystkich możliwych ścieżek od $s_i$ do
+$t_i$. Dla danego żądania $r_i$ i ścieżki $P \in \mathbb{P}(r_i)$ zmienna
+$f(r_i,P)$ jest równa $1$ jeśli dla obsługi żądania $r_i$ wybraliśmy ścieżkę
+$P$ i $0$ w przeciwnym przypadku. Zatem po kroku $k$ algorytm musi wygenerować
+rozwiązanie którego zyskiem jest
+\begin{align*}
+ & \sum_{i=1}^k \sum_{P \in \mathbb{P}(r_i)} f(r_i,P) \enspace,& \\
+\textnormal{przy zachowaniu warunków: }
+	& \sum_{P \in \mathbb{P}(r_i)} f(r_i,P) \leq 1 & \textnormal{dla każdego $i \in \{1,\ldots,k\}$,} \\
+    & \sum_{i=1}^k \sum_{P \in \mathbb{P}(r_i) : e \in P} f(r_i,P) \leq U & \textnormal{dla każdego $e \in E$,} \\	
+    & f(r_i,P) \in \{0,1\} & \textnormal{dla każdego $i \in \{1,\ldots,k\}, P \in \mathbb{P}(r_i)$.}
+\end{align*}
+
+Program ten ma wykładniczą liczbę zmiennych, ale nie będziemy się tym przejmować. Co więcej nasz algorytm da się
+zaimplementować w czasie wielomianowym. Nazwijmy ten program $\mathcal{P}^{INT}_k$.
+Niech $\mathcal{P}_k$ będzie liniową relaksacją powyższego zagadnienia, w którym celem jest maksymalizacja 
+zysku, a warunek $f(r_i,P) \in \{0,1\}$ został zastąpiony przez $f(r_i,P) \geq 0$. 
+Uwaga: $f(r_i,P) \leq 1$ jest implikowane przez $\sum_{P \in \mathbb{P}(r_i)} f(r_i,P) \leq 1$ a zatem zbędne.
+
+Programem dualnym do $\mathcal{P}_k$ jest następujące zagadnienie minimalizacyjne $\mathcal{D}_k$:
+\begin{align*}
+\textnormal{minimalizuj: } & \sum_{i=1}^k z_i + U \cdot \sum_{e \in E} x_e \\
+\textnormal{przy warunkach: }
+	& z_i + \sum_{e \in P} x_e \geq 1 & \textnormal{dla każdych $i \in \{1,\ldots,k\}$, 
+			$P \in \mathbb{P}(r_i)$,} \\
+    & z_i \geq 0 & \textnormal{dla każdego $i \in \{1,\ldots,k\}$,} \\
+	& x_e \geq 0 & \textnormal{dla każdego $e \in E$.}
+\end{align*}
+
+Zauważmy, że ze słabej dualności i z tego, że $\mathcal{P}_k$ jest relaksacją $\mathcal{P}^\textrm{INT}_k$ wynika, że 
+\[
+	\OPT(\mathcal{P}^\textrm{INT}_k) \leq \OPT(\mathcal{P}_k) \leq \OPT(\mathcal{D}_k).
+\]
+Będziemy generować parę rozwiązań $\ALG(\mathcal{P}^\textrm{INT}_k)$ i $\ALG(\mathcal{D}_k)$. Oczywiście mamy wtedy
+\[
+	\ALG(\mathcal{P}^\textrm{INT}_k) \leq 
+	\OPT(\mathcal{P}^\textrm{INT}_k) \leq \OPT(\mathcal{P}_k) \leq \OPT(\mathcal{D}_k) 
+	\leq \ALG(\mathcal{D}_k).
+\]
+Wystarczy zatem, że odpowiednio zwiążemy ze sobą 
+$\ALG(\mathcal{P}^\textrm{INT}_k)$ i $\ALG(\mathcal{D}_k)$. 
+
+\paragraph{Algorytm.} 
+
+$A = 2 \ln(m+1) / U$.
+Algorytm jest parametryzowany przez $A$ i $T$, które zdefiniujemy potem.
+W kroku $k$ algorytm ustawia $z_k = 0$ i sprawdza, czy istnieje ścieżka $P \in \mathbb{P}(r_k)$, taka że 
+\mbox{$\sum_{e \in P} x_e < 1$}. (Można wybrać taką minimalizującą sumę $x_e$, ale nie trzeba). Jeśli tak, to
+\begin{itemize}
+\item zaakceptuj żądanie i zwróć $P$ jako odpowiedź,
+\item dla każdej krawędzi $e \in P$ przypisz $x_e \leftarrow x_e \cdot \left(1+A\right) + A/m$.
+\item przypisz $z_k \leftarrow 1$ (można oszczędniej, ale po co)
+\end{itemize}
+Jeśli taka ścieżka $P$ nie istnieje, to odrzuć żądanie $r_k$.
+
+\paragraph{Własności.}
+
+\begin{lemma}
+W każdym momencie zachodzi 
+\[ x_e = \frac{(1+A)^{\ell(e)}-1}{m}. \]
+\end{lemma}
+
+\begin{proof}
+Dowód indukcyjny. Prawda na początku, bo $\ell(e) = 0 = x_e$. 
+Kiedy wybieramy ścieżkę $P$ i inkrementujemy $\ell(e)$ dla każdego $e \in P$, to 
+wykonujemy też podstawienie $x_e \leftarrow x_e \cdot \left(1+A\right) + A/m$.
+Zatem 
+\begin{align*}
+	x'_e & = x_e \cdot \left(1+A\right) + A/m \\
+		& = \frac{(1+A)^{\ell(e)} - 1}{m} \cdot (1+A) + \frac{A}{m} \\
+		& = \frac{(1+A)^{\ell(e)+1} - 1 - A}{m} + \frac{A}{m} \\
+		& = \frac{(1+A)^{\ell'(e)} - 1}{m} 
+		\qedhere
+\end{align*}
+\end{proof}
+
+\begin{lemma}
+$\ALG(\mathcal{D}_k)$ jest dopuszczalnym rozwiązaniem.
+\end{lemma}
+
+\begin{proof}
+W kroku $k$ nowymi warunkami w $\mathcal{D}_k$ są nierówności $z_k + \sum_{e \in
+P} x_e$ (dla każdej ścieżki $P \in \mathbb{P}(r_k)$). Jeśli żądanie jest
+przyjęte, to nierówności te spełniają się przez ustawienie $z_k \leftarrow 1$.
+Jeśli jest odrzucone, to znaczy, że dla wszystkich ścieżek $P \in
+\mathbb{P}(r_k)$ zachodzi $\sum_{e \in P} x_e \geq 1$, więc nierówności są
+spełnione. 
+\end{proof}
+
+\begin{lemma}
+W kroku $k$, zachodzi $\Delta \ALG(\mathcal{D}_k) \leq (1 + 2 \cdot U \cdot A) \cdot \Delta \ALG(\mathcal{P}_k)$.
+\end{lemma}
+
+\begin{proof}
+Jeśli żądanie nie jest akceptowane, to $\Delta \ALG(\mathcal{D}_k) = \Delta \ALG(\mathcal{P}_k) = 0$.
+Jeśli żądanie jest akceptowane, to $\Delta \ALG(\mathcal{P}_k) = 1$, natomiast
+\[
+	\Delta \ALG(\mathcal{D}_k) = z_k + U \cdot \sum_{e \in P} \Delta x_e
+		= 1 + U \cdot (\sum_{e \in P} A \cdot x_e + \sum_{e \in P} A/m)
+	= 1 + U \cdot A + U \cdot A .
+	\qedhere
+\]
+\end{proof}
+
+\begin{lemma}
+$\ALG(\mathcal{P}_k)$ jest dopuszczalnym rozwiązaniem jeśli $U \geq \ln(m+1)$ i 
+$A = (2 \ln(m+1)) / U$.
+\end{lemma}
+
+\begin{proof}
+Zobaczmy, co się dzieje, w momencie kiedy dokładamy nową ścieżkę $P$. 
+Żeby tak się stało, musiało zachodzić $\sum_{e \in P} x_e < 1$, czyli:
+\[ 
+	\frac{(1+A)^{\ell(e)}-1}{m} < 1.
+\]
+Stąd 
+\[
+	\ell(e) < \frac{\ln(m + 1)}{\ln(1+A)} \leq \frac{2}{A} \cdot \ln(m+1) \leq U
+\]
+Przedostatnia nierówność jest prawdziwa jeśli $A \in [0,2]$ (wtedy $\ln(1+A) \geq A/2$).
+Ostatnia nierówność wymaga, żeby $A \geq (2 \ln(m+1)) / U$.
+\end{proof}
+
+Zatem jeśli $U \geq \ln(m+1)$, to wybierając $A = (2 \ln (m+1))/ U$ gwarantujemy, że rozwiązanie 
+algorytmu jest dopuszczalne i dodatkowo mamy 
+$\ALG(\mathcal{D}_k) \leq (1+2 \cdot U \cdot A) \cdot \ALG(\mathcal{P}_k) 
+= (1+4 \ln (m+1)) \cdot \ALG(\mathcal{P}_k^\mathrm{INT})$
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{TEGO NIE ZDAZYLEM: Małe przepustowości: randomizacja na linii}
+
+
+Rozważmy zatem następujący zrandomizowany algorytm 
+dla dopuszczania połączeń na $N$-linii. Dla uproszczenia założymy, że $N = 2^k$. 
+Niech $e_1$ będzie krawędzią powodującą rozbicie linii na dwie linie równej długości, 
+każdej posiadającej $2^{k-1}$ wierzchołków 
+i niech $E_1 = \{ e_1 \}$. Następnie niech $e_{2,1}, e_{2,2}$ są krawędziami
+które dzielą te dwie linie na połowy równej długości (każda o $2^{k-2}$ wierzchołkach),
+a $E_2 = \{ e_{2,1}, e_{2,2} \}$.
+Następnie postępujemy rekurencyjnie otrzymując ,,dzielące'' zbiory $E_1, E_2, E_3, \ldots
+E_k$. Krawędzie ze zbiorów $E_i$ nazywamy krawędziami poziomu~$i$.
+
+
+Mówimy, że połączenie należy do poziomu $i$, jeśli 
+\[
+	i = \min_j \{ E_j \cap E' \neq \emptyset \} \enspace,
+\]
+gdzie $E'$ jest zbiorem krawędzi na ścieżce określającej połączenie. 
+Innymi słowy połączenie należy do poziomu $i$, jeśli nie zawiera krawędzi 
+z poziomu $i-1$, ale zawiera krawędzie z poziomu $i$.\footnote{W tej definicji
+zakładamy, że istnieje poziom $0$ nie zawierający żadnych krawędzi.}
+
+\begin{quote}
+Algorytm {\sc Crs (Classify-and-Randomly-Select)}:
+Wybierz losowo (z jednostajnym rozkładem) poziom $i^* \in \{1, 2, \ldots, \log N\}$.
+Następnie akceptuj tylko połączenia z poziomu $i^*$ i tylko jeśli nie kolidują
+z już zaakceptowanymi połączeniami.
+\end{quote}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{theorem}
+Algorytm $\CRS$ jest $\lceil \log N \rceil$-konkurencyjny.
+\end{theorem}
+
+\begin{proof}
+Dla uproszczenia założymy, że $N = 2^k$. 
+Zauważmy najpierw, że jeśli wszystkie połączenia w sekwencji wejściowej 
+należałyby do jednego poziomu $j$, to zachłanne przyjmowanie tych połączeń byłoby
+optymalną strategią. Żeby to pokazać, zauważmy, że krawędzie poziomu $j-1$ i poziomów
+wyższych dzielą naszą linię na kawałki, z których każdy zawiera dokładnie jedną krawędź poziomu~$j$. 
+Dowolne połączenie poziomu $j$ zawiera się całkowicie w którymś z tych kawałków 
+i jednocześnie zawiera należącą do tego kawałka jedyną krawędź poziomu~$j$.
+Zatem dla danego kawałka optymalny algorytm jest w stanie zaakceptować co najwyżej 
+jedno połączenie zawarte w tym kawałku. Jednocześnie algorytm zachłanny też je zaakceptuje.
+
+Teraz niech $c_i$ będzie liczbą połączeń z poziomu $i$, które są możliwe jednocześnie do
+zaakceptowania. Wtedy z powyższej obserwacji wynika, że
+\[ \E[\CRS(\sigma)] = \sum_{i=1}^{\log N} 
+	  \Pr[\CRS \textnormal{ wybiera poziom } i] \cdot c_i \enspace.
+\]
+Niech $o_i$ oznacza liczbę połączeń z poziomu $i$, które zaakceptował
+$\OPT$. Oczywiście $o_i \leq c_i$ (nierówność pojawia się jeśli połączenia z różnych 
+poziomów kolidują ze sobą).
+Zatem 
+\[
+\E[\CRS(\sigma)] 
+	\geq   \sum_{i=1}^{\log N}
+		\frac{1}{\log N} \cdot o_i 
+	=  \frac{1}{\log N} \cdot \OPT(\sigma) \enspace. 
+\]
+Można rozszerzyć dowód na dowolne $N$, niekoniecznie będące potęgą dwójki, otrzymując tezę twierdzenia.
+\end{proof}
+
+
+

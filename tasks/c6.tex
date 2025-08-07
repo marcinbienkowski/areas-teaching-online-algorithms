@@ -1,0 +1,93 @@
+\documentclass[a4paper,11pt]{scrartcl}
+\input{macros}
+\begin{document}
+\makeheader{6}
+
+\begin{description}
+
+\item[Zadanie 1] Rozważmy problem szeregowania na $m$ identycznych maszynach (o takiej samej prędkości).
+Celem jest minimalizacja obciążenia najbardziej obciążonej maszyny.
+
+\begin{enumerate}[a)]
+
+\item \textbf{(2 pkt.)} 
+Pokaż, że strategia zachłanna (przypisujemy zadanie do najmniej obciążonej maszyny) ma współczynnik
+ścisłej konkurencyjności równy $2-1/m$ (tj.~pokaż dolne i górne ograniczenie).
+
+\item \textbf{(2 pkt.)} 
+Pokaż, że dla dowolnego $m \geq 2$, ścisła konkurencyjność dowolnego randomizowanego algorytmu dla problemu
+szeregowania zadań na $2$ identycznych maszynach wynosi co najmniej $4/3$.
+% optymalny lower bound = 4/3, dziala dla m >= 2.
+% dajemy m zadan wielkosci 1. Jesli ppb. ze algorytm ulozy je na m maszynach jest wieksze niz 2/3
+% to dajemy dodatkowe zadanie wielkosci 2.
+% można też z yao: zadania 1,1 z ppb 1/2 i zadania 1,1,2 z ppb 1/2.
+
+\end{enumerate}
+
+\item[Zadanie 2] \textbf{(3 pkt.)} 
+Pokaż, że ścisła konkurencyjność problemu \textsc{Online Bidding} wynosi co najmniej~$4$. 
+Możesz skorzystać z następującego schematu:
+\begin{enumerate}[i)]
+\item Ustal nieskończony ciąg $0 < d_1 < d_2 < d_3 \ldots $ definiujący algorytm i
+oznacz konkurencyjność algorytmu przez $R$.
+Zdefiniuj $s_j = \sum_{i=1}^j d_i$ i pokaż, że dla każdego $j$ 
+musi zachodzić $s_{j+2} \leq R \cdot (s_{j+1} - s_j)$.
+
+\item Zdefiniuj $b_j = s_{j+1} / s_j$ i pokaż, że 
+\begin{equation}
+	\label{eq:b_j}
+	(b_{j+1} - b_j) \cdot b_j \leq -b_j^2 + R b_j - R
+	\enspace.
+\end{equation}
+
+\item Pokaż, że dla $R < 4$ prawa strona \eqref{eq:b_j} jest ujemna, a zatem ciąg $\{b_j\}_j$ jest malejący. 
+
+\item Zaobserwuj, że ciąg $\{b_j\}_j$ jest zbieżny (dlaczego?). Niech $b = \lim_{j \to \infty} b_j$. 
+Do czego zbiega lewa i prawa strona \eqref{eq:b_j}?
+\end{enumerate}
+
+%\item[Zadanie 3 (bonusowe)] \textbf{(2 pkt.)} 
+%%
+%Rozważamy szeregowanie zadań na $m$ powiązanych maszynach, a~funkcją kosztu jest maksymalne obciążenie maszyny. 
+%Przedstawiony na wykładzie algorytm $\textsc{SlowFit}(\lambda)$ ma następujące własności:
+%\begin{itemize}
+%\item Przypisuje zadania do maszyn, tak że maksymalne obciążenie wynosi co najwyżej $2 \lambda$. Być może dla pewnego zadania zamiast przypisania
+%algorytm zwróci komunikat ,,FAIL''.
+%\item Jeśli zostanie uruchomiony na wejściu $\sigma$, dla którego $\textsc{Opt}(\sigma) \leq \lambda$, to wszystkie zadania zostaną przypisane (komunikat ,,FAIL'' nie wystąpi).
+%\end{itemize}
+%
+%Pokaż jak za jego pomocą skonstruować algorytm \textsc{SlowFit}, który będzie $8$-konkurencyjny.
+
+
+
+\item[Zadanie 3] \textbf{(3 pkt.)} 
+%
+(Problem inkrementalnych median). Dane są dwa zbiory: $K$ (klienci) i $M$ (miejsca na zbudowanie fabryk) oraz
+funkcja odległości $d(k,m)$ zdefiniowana dla dowolnej pary $(k,m) \in K \times
+M$. Możesz założyć, że funkcja~$d$ spełnia nierówność trójkąta, choć nie jest to
+potrzebne w tym zadaniu.
+Mówimy, że zbiór fabryk $F \subseteq M$ ma koszt 
+\[
+	\textsc{cost}(F) := \sum_{k \in K} d(k,F) := \sum_{k \in K} \min_{f \in F} d(k,f)
+	\enspace.
+\]
+Dla rozmiaru $s \in \{1,\ldots,|M|\}$ minimalny koszt zbioru $s$ fabryk
+oznaczamy przez $\OPT(s)$. Przykładowo $\OPT(|M|)$ jest kosztem postawienia
+fabryki w każdym dostępnym miejscu.
+
+Zadaniem algorytmu jest rozbudowa zbioru fabryk, 
+tj.~skonstruowanie ciągu zbiorów $F_1 \subseteq F_2 \subseteq \ldots \subseteq F_{|M|-1} \subseteq F_{|M|}$,
+takiego że dla każdego $i \in \{1,\ldots,|M|\}$ zachodzą warunki
+\begin{enumerate}[i)]
+\item $\textsc{cost}(F_i) \leq \OPT(i)$,
+\item $|F_i| \leq 4 \cdot i$.
+\end{enumerate}
+
+\emph{Wskazówka}: to zadanie jest proste, tylko ma długą treść. Być może do konstrukcji ciągu $F_i$ konieczne
+będzie rozwiązanie jakiegoś NP-trudnego problemu, ale nie należy się tym martwić. 
+
+\end{description}
+
+\makefooter
+\end{document}
+

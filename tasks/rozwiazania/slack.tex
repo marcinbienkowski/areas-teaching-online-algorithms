@@ -1,0 +1,281 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[margin=2cm,bottom=3cm]{geometry}
+\usepackage{amsmath,amsopn,amsfonts,amsthm}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[noend]{algpseudocode}
+\usepackage{enumerate}
+\usepackage{ifpdf}
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{marginnote}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Theorem-style environments
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newtheorem{theorem}{Twierdzenie}[section]
+\newtheorem{lemma}[theorem]{Lemat}
+\newtheorem{corollary}[theorem]{Wniosek}
+\newtheorem{definition}[theorem]{Definicja}
+\newtheorem{note}[theorem]{Uwaga}
+\newtheorem{observation}[theorem]{Obserwacja}
+\newtheorem{exercise}[theorem]{Ćwiczenie}
+\newtheorem{example}[theorem]{Przykład}
+
+%\newtheoremstyle{note}{6pt}{6pt}{\itshape}{}{\itshape}{.}{.5em}{}
+%\theoremstyle{note}
+%\newtheorem{observation}[theorem]{Obserwacja}
+%\theoremstyle{plain}
+
+\def\proofname{Dowód}
+\renewcommand{\openbox}{\leavevmode\rule{1.4ex}{1.4ex}}
+\makeatletter
+ \renewenvironment{proof}[1][\proofname]{\par
+ \pushQED{\qed}%
+ \normalfont \topsep6\p@\@plus6\p@\relax
+ \trivlist
+ \item[\hskip\labelsep
+ \bfseries
+ #1\@addpunct{.}]\ignorespaces
+ }{%
+ \popQED\endtrivlist\@endpefalse
+ }
+\makeatother
+
+\newcommand{\problem}[2]{
+\vspace{0.15cm}
+\noindent
+\fboxsep7pt
+\framebox[\textwidth]{
+\begin{minipage}{0.95\textwidth}
+\textsc{#1}. #2
+\end{minipage}
+}
+\medskip
+}
+
+
+\newcommand{\myfigure}[3]{
+\begin{figure}[t]
+\centering
+\fboxsep7pt
+\framebox[0.95\textwidth]{
+	\begin{minipage}{0.95\textwidth}
+		\centering #3
+	\end{minipage}
+}
+\caption{#2}
+\label{fig:#1}
+\end{figure}
+}
+
+\newcommand{\myfigurehere}[2]{
+\begin{figure}[h]
+\centering
+\fboxsep7pt
+\framebox[0.95\textwidth]{
+	\begin{minipage}{0.95\textwidth}
+		\centering #2
+	\end{minipage}
+}
+\label{fig:#1}
+\end{figure}
+}
+
+
+\newcommand{\rozdzial}[1]{
+\input n#1
+\vspace{0.3cm}
+\newpage
+}
+
+\newcommand{\etalchar}[1]{$^{#1}$}
+
+\newcommand{\myparagraph}[1]{%
+\medskip
+\noindent
+{\bf #1.}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Commands 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% editorial 
+
+\newcommand{\todo}[1]{\noindent\colorbox{red}{TODO: #1}}
+\newcommand{\COMMENTED}[1]{}
+
+% algorytmy generic
+
+\newcommand{\ADV}{\textsc{Adv}}
+\newcommand{\ALG}{\textsc{Alg}}
+\newcommand{\RAND}{\textsc{Rand}}
+\newcommand{\OPT}{\textsc{Opt}}
+\newcommand{\DET}{\textsc{Det}}
+\newcommand{\COST}{\textsc{Cost}}
+
+% algorytmy rozne
+
+\newcommand{\RMTF}{\textsc{Rand-MTF}}
+\newcommand{\HMTF}{\textsc{Half-MTF}}
+\newcommand{\FWF}{\textsc{Fwf}}
+\newcommand{\LRU}{\textsc{Lru}}
+\newcommand{\FC}{\textsc{FC}}
+\newcommand{\MARK}{\textsc{Mark}}
+\newcommand{\RMARK}{\textsc{R-Mark}}
+\newcommand{\LFD}{\textsc{Lfd}}
+\newcommand{\LIFO}{\textsc{Lifo}}
+\newcommand{\FIFO}{\textsc{Fifo}}
+\newcommand{\LFU}{\textsc{Lfu}}
+\newcommand{\TRANS}{\textsc{Trans}}
+\newcommand{\MTF}{\textsc{Mtf}}
+\newcommand{\BIT}{\textsc{Bit}}
+\newcommand{\FF}{\textsc{First-Fit}}
+\newcommand{\FFS}{\textsc{FF}}
+\newcommand{\GREEDY}{\textsc{Greedy}}
+\newcommand{\WFA}{\textsc{Wfa}}
+\newcommand{\CRS}{\textsc{CRS}}
+\newcommand{\EXP}{\textsc{Exp}}
+\newcommand{\FLIP}{\textsc{Flip}}
+\newcommand{\MTM}{\textsc{Mtm}}
+\newcommand{\MTLM}{\textsc{Mtlm}}
+\newcommand{\STAT}{\textsc{Stat}}
+\newcommand{\CNT}{\textsc{Count}}
+\newcommand{\EDGE}{\textsc{Edge}}
+\newcommand{\DC}{\textsc{DC}}
+\newcommand{\SC}{\textsc{SC}}
+\newcommand{\CIRC}{\textsc{Circ}}
+\newcommand{\CS}{\textsc{CostShare}}
+\newcommand{\SCS}{\textsc{SamplingCostShare}}
+
+
+\newcommand{\vflip}{v_\mathrm{FLIP}}
+\newcommand{\vopt}{v_\mathrm{OPT}}
+\newcommand{\PMTM}{P_\mathrm{MTM}}
+\newcommand{\PMTLM}{P_\mathrm{MTLM}}
+\newcommand{\POPT}{P_\mathrm{OPT}}
+\newcommand{\PCNT}{P_\mathrm{COUNT}}
+\newcommand{\w}{\mathcal{w}}
+\newcommand{\Mmin}{M_\mathrm{min}}
+
+% rozne
+
+\newcommand{\I}{\mathcal{I}}
+\newcommand{\A}{\mathcal{A}}
+\renewcommand{\O}{\mathcal{O}}
+\newcommand{\E}{\mathbf{E}}
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\U}{\mathcal{U}}
+\newcommand{\NAT}{\mathbb{N}}
+\newcommand{\REAL}{\mathbb{R}}
+\renewcommand{\Pr}{{\bf Pr}}
+\newcommand{\eps}{\varepsilon}
+
+\renewcommand{\P}{\mathcal{P}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\bb}{\mathbf{b}}
+
+\newcommand{\e}{\mathrm{e}}
+
+
+\begin{document}
+
+\subsection{Algorytm Slack Coverage}
+
+W tej sekcji zdefiniujemy algorytm \textsc{SlackCoverage (SC)}  działający dla $2$
+serwerów na płaszczyźnie i pokażemy, że jest on $3$-konkurencyjny. Dla
+dowolnego $\gamma \in [0,1]$ mamy:
+
+\begin{algorithmic}
+\State Serwery algorytmu są w $x$, $y$; serwer $x$ jest tym, który jest bliższy $\sigma_t$. 
+\State Niech $A$, $X$, $Y$ będą zdefiniowane jak na rysunku \ref{fig:slack_coverage}a. 
+\State $s \gets \gamma \cdot (X + A - Y)$. 
+\State Przesuń $y$ o $s$ w stronę $x$. 
+\State Przesuń $x$ do $\sigma_t$.
+\end{algorithmic}
+
+\myfigure{slack_coverage}{Pierwsza i druga częśc kroku algorytmu {\sc SlackCoverage}}{\includegraphics{pict/slack-coverage}}
+
+Zanim udowodnimy konkurencyjność algorytmu $\SC$ zauważmy, że $\SC_{1/2}$
+zastosowany na linii jest równoważny algorytmowi $\DC$. 
+
+\vspace{0.3cm}
+\begin{theorem}[\cite{slack-coverage}]
+Algorytm $\SC_{1/2}$ jest $3$-konkurencyjny.
+\end{theorem}
+
+\begin{proof}
+W dowodzie wykorzystamy podobną funkcję jak w dowodzie konkurencyjności algorytmu $\DC$.
+Niech $a$ i $b$ będą dowolnymi nieujemnymi liczbami rzeczywistymi, których wartości ustalimy później.
+Niech 
+\[
+	\Phi = a \cdot \Mmin + b \cdot d(x,y) \enspace,
+\]
+gdzie $\Mmin$ jest ponownie kosztem minimalnego skojarzenia między serwerami
+$\SC$ a serwerami $\OPT$.  Jak w poprzednim dowodzie dzielimy krok $t$ na dwie
+części i dla każdej z nich chcemy pokazać, że zamortyzowany koszt algorytmu
+jest nie większy niż koszt $\OPT$ razy współczynnik konkurencyjności.
+
+W pierwszej części $\OPT$ przesuwa swoje serwery. 
+Przy przesunięciu dowolnego z nich na odległość $d$, koszt minimalnego skojarzenia może 
+wzrosnąć o $d$, a zatem potencjał może wzrosnąć o $a \cdot \OPT$. 
+Zatem w pierwszej części kroku algorytm jest $a$-konkurencyjny. 
+
+Dla pokazania konkurencyjności w drugiej części kroku obliczmy najpierw koszt algorytmu $\SC$. 
+$\SC$ płaci $X$ za przesunięcie serwera $x$ oraz $s$ za przesunięcie serwera $y$. 
+\[
+	\SC = X + s \enspace.
+\]
+Jaka jest zmiana potencjału związana ze zmianą odległości między $x$ i $y$? 
+Na początku kroku ta odległość wynosiła $A$. Serwer $y$ przesuwa się o 
+$\gamma \cdot (X+A-Y) \leq \gamma \cdot A$ po prostej łączącej $x$ i $y$, przybliżając się do 
+$\sigma_t$. Niech $y'$ oznacza nową pozycję serwera $y$, tak jak na rysunku \ref{fig:slack_coverage}b. 
+Zatem $d(y',\sigma_t) \leq d(y,\sigma_t) = Y$. Stąd otrzymujemy
+\[
+	\Delta d(x,y) \leq Y - A \enspace.
+\]
+
+Jaka jest zmiana wartości $\Mmin$? Na początku drugiej części kroku $\OPT$ musi mieć jeden z serwerów 
+(nazwijmy go $opt_1$) w punkcie $\sigma_t$. Nazwijmy drugi z serwerów $opt_2$.
+Rozważmy dwa przypadki. 
+\begin{description}
+\item[\textnormal{\em Przypadek 1}.] Na początku drugiej części kroku $x$ jest skojarzony z $\sigma_t$.
+	Wtedy ruch $x$ powoduje zmniejszenie się kosztu skojarzenia o $X$, a ruch $y$ powoduje zwiększenie się 
+	$\Mmin$ o co najwyżej $s$. Stąd \[ 
+	\Delta\Mmin \leq s - X \enspace.
+	\]
+	Zatem dla dowodu konkurencyjności wystarczy, żeby
+	\begin{equation}
+	\label{eq:sc_case_1}
+	X + s + a \cdot (s - X) + b \cdot (Y - A) \leq 0 \enspace
+	\end{equation}
+
+\item[\textnormal{\em Przypadek 2}.] Na początku drugiej części kroku $x$ jest skojarzony z $opt_2$
+	(a więc $y$ jest skojarzony z $\sigma_t$). Zatem początkowa wartość $\Mmin$ to $d(x,opt_2) + Y$.
+	Po przesunięciu serwerów w minimalnym skojarzeniu $x$ zostaje skojarzony z $\sigma_t$, 
+	a $y$ z $opt_2$. Zatem końcowa wartość $\Mmin$ to $d(y', s_2) \leq (A-s) + d(x,opt_2)$.
+	Stąd w tym przypadku 
+	\[
+		\Delta\Mmin \leq A-s - Y \enspace.
+	\]	
+	Zatem dla dowodu konkurencyjności wystarczy, żeby
+	\begin{equation}
+	\label{eq:sc_case_2}
+	X + s + a \cdot (A - s - Y) + b \cdot (Y - A) \leq 0 \enspace 
+	\end{equation}
+
+\end{description}
+Łatwo sprawdzić, że dla $\gamma = 1/2$, $a = 3$ i $b = 2$ nierówności \ref{eq:sc_case_1} i 
+\ref{eq:sc_case_2} są spełnione, a zatem algorytm $\SC$ jest $a$-konkurencyjny.
+\end{proof}
+
+\end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

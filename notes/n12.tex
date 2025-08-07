@@ -1,0 +1,163 @@
+\section{Adwords}
+
+\problem{Problem Adwords}{Dany jest zbiór słów kluczowych $Q$ i zbiór $n$ graczy (reklamodawców). 
+Gracz $i$ ma budżet $b_i$ i definiuje ceny $c_{i,q}$ = ile chce zapłacić, za 
+to że przy próbie wyszukania słowa kluczowego $q \in Q$ wyświetli się jego reklama.  \\
+
+Input: ciąg $q_1, q_2, \ldots \in Q$
+
+Algorytm dla $q_j$ wybiera gracza $i$ i zyskuje $c_{i,q}$. Nie można przekraczać 
+budżetu graczy, chcemy zmaksymalizować swój zysk.}
+
+Będziemy rozpatrywać bardzo uproszczony przypadek:
+\begin{itemize}
+\item $b_1 = b_2 = \ldots = b_n = b$. 
+\item $c_{i,q} \in \{0,1\}$
+\end{itemize}
+
+Algorytm \BAL: Dla słowa kluczowego $q_j$, spośród zainteresowanych graczy 
+(takich z $c_{i,q_j} = 1$ wybierz zainteresowanego gracza, który dotąd wydał najmniej.
+
+Dodatkowo będziemy zakładać, że:
+\begin{itemize}
+\item $b$ jest duże (istotne: 
+	konkurencyjność będzie zbiegać do dobrego współczynnika dla $b \to \infty$)
+\item $\OPT = n \cdot b$ (mało istotne, upraszcza analizę)
+\end{itemize}
+
+\subsection{Notacje i obserwacje}
+
+\myfigure{adwords}{Zysk algorytmu \BAL: ilustracja dla $b = 7$. Niech $x_i$ = liczba graczy, 
+którzy wydali $i$ dolarów. Niech $\alpha_j$ = ile odsłon zostało kupione $j$-tym dolarem.}{\includegraphics{pict/adwords}}
+
+Zakładamy, że gracz ma ponumerowane dolary (od $1$ do $b$) i wydaje je po kolei. Przyjmijmy 
+notację z Rysunku~\ref{fig:adwords}. Wtedy
+\[
+	\BAL = \sum_{j = 1}^b \alpha_j \quad \text{oraz} \quad \OPT = n \cdot b
+\]
+
+\begin{lemma}
+\label{lem:balance_gain}
+Dla dowolnego $i \in \{0, \ldots, b-1\}$ zachodzi $b \cdot \sum_{j=0}^i x_j \leq 
+\sum_{j=1}^{i+1} \alpha_j$
+\end{lemma}
+
+\begin{proof}
+Warto zaznaczyć to jako obszary na rysunku. Niech $X_j$ będzie zbiorem graczy, którzy wydają
+$j$ dolarów ($|X_j| = x_j$). Popatrzmy na te słowa $q$ które \OPT przypisał graczom z 
+$\bigcup_{j=1}^i X_j$. Takich słów jest oczywiście $\sum_{j=1}^i b \cdot x_j$.
+
+Każde z tych słów jest obsłużone przez \BAL i co więcej obsłużone dolarem o 
+indeksie $\leq i+1$. Dlaczego? Załóżmy że $q$ jest w \OPT obsłużone przez gracza $g \in X_k$ 
+($k \leq i$). Wtedy w momencie gdy $q$ pojawia się, w rozwiązaniu \BAL, gracz $g$ wydał co 
+najwyżej $k$ dolarów (bo tyle wydał w ogóle): w rozwiązaniu \BAL ma kto kupić $q$ i ci 
+istnieją gracze, którzy są $q$ zainteresowani i wydali do tej pory $\leq k$ dolarów. 
+Więc $\BAL$ płaci za $q$ dolarem o indeksie co najwyżej $k+1$.
+\end{proof}
+
+
+\begin{corollary}
+\BAL jest $2$-konkurencyjny.
+\end{corollary}
+
+\begin{proof}
+Z Lematu~\ref{lem:balance_gain} dla $i = b-1$ mamy
+\[
+	\BAL = \sum_{j=1}^b \alpha_j \geq b \cdot \sum_{i=1}^{b-1} x_j = b \cdot (n-x_b)
+	= b \cdot n - b \cdot x_b
+\]
+Stąd
+\[
+	2 \cdot \BAL \geq \BAL + b \cdot x_b \geq b \cdot n = \OPT
+\]
+\end{proof}
+
+\subsection{Lepsza analiza}
+
+Przekształćmy Lemat~\ref{lem:balance_gain} wykorzystując definicję $\alpha_j$. 
+Otrzymamy, że dla 
+dowolnego $i \in \{0, \ldots, b-1\}$ zachodzi 
+\[ 
+	b \cdot \sum_{j=0}^i x_j 
+		\leq \sum_{j=1}^{i+1} \alpha_j 
+		= n \cdot (i+1) - \sum_{j=0}^i x_j \cdot (i+1-j)
+\]
+a stąd
+\begin{equation}
+\label{eq:adwords_lp}
+	\sum_{j=0}^i (b + i + 1 - j) \cdot x_j \leq n \cdot (i+1)
+\end{equation}
+
+Z drugiej strony zysk \BAL to $\BAL = n \cdot b - P(x_0,\ldots,x_{b-1})$, gdzie
+\[
+	P(x_0,\ldots,x_{b-1}) = \sum_{j=0}^{b-1} (b-j) \cdot x_j
+\]
+
+Chcemy teraz oszacować $P(x_0, \ldots, x_{b-1})$ od góry. Rozważmy to jako problem optymalizacyjny: zmaksymalizować $P(x_0, \ldots, x_{b-1})$ przy założeniu, że 
+nierówności \eqref{eq:adwords_lp} zachodzą. Po rozpisaniu te nierówności wyglądają tak:
+
+\begin{alignat*}{4}
+(b+1) \cdot x_0  &                    &                    &     &                       &                       & \;\leq\; & n \\
+(b+2) \cdot x_0  & + (b+1) \cdot x_1  &                    &     &                       &                       & \;\leq\; & 2 \cdot n \\
+(b+3) \cdot x_0  & + (b+2) \cdot x_1  & + (b+1) \cdot x_2  &     &                       &                       & \;\leq\; & 3 \cdot n \\
+...              &                    &                    & ... &                       & ...                   & ... & \\
+(2b-1) \cdot x_0 & + (2b-2) \cdot x_1 & + (2b-3) \cdot x_2 & + ... & + (b+1) \cdot x_{b-2} &                       & \;\leq\; & (b-1) \cdot n \\
+2b \cdot x_0     & + (2b-1) \cdot x_1 & + (2b-2) \cdot x_2 & + ... & + (b+2) \cdot x_{b-2} & + (b+1) \cdot x_{b-1} & \;\leq\; & b \cdot n 
+\end{alignat*}
+
+Można te nierówności uruchomić w dowolnym LP solverze i wywnioskować, że $P^*
+= \max_{x_i} P(x_0, \ldots, x_{b-1})$ wynosi około $n \cdot b / \mathrm{e}$.
+Udowodnienie tego formalnie jest trudniejsze, bo trzeba pokazać, że taka relacja
+zachodzi dla dowolnego wyboru $x_0, \ldots, x_{b-1}$ przez adwersarza.
+
+Napiszmy program dualny. Polega on na minimalizacji wyrażenia 
+$D(y_0, \ldots, y_{b-1}) = \sum_{j=0}^{b-1} n \cdot (j+1) \cdot y_j$ przy 
+warunkach:
+
+\begin{alignat*}{4}
+(b+1) \cdot y_{b-1} &                          &&                         &                   & \;\geq\; & 1 \\
+(b+2) \cdot y_{b-1} & + (b+1) \cdot y_{b-2}    &&                         &                   & \;\geq\; & 2 \\
+(b+3) \cdot y_{b-1} & + (b+2) \cdot y_{b-2}    && + (b+1) \cdot y_{b-3}   &                   & \;\geq\; & 3 \\
+\cdots              &                          && \cdots                  &                   & \cdots   & \\
+2b \cdot y_{b-1}    & + (2b-1) \cdot y_{b-2}   && + (2b-2) \cdot y_{b-3}  & \;+ \ldots + \; (b+1) \cdot y_0 & \;\geq\; & b
+\end{alignat*}
+
+Niech $D^* = \min_{y_i} D(y_0, \ldots, y_{b-1})$. Ze słabego twierdzenia o dualności dostajemy, że dla dowolnych $x_i$ i $y_i$ zachodzi:
+\[
+	P(x_0, \ldots, x_{b-1}) \leq P^* \leq D^* \leq D(y_0, \ldots, y_{b-1})
+\]
+Czyli jeśli ustalimy dowolne dopuszczalne rozwiązanie $\{y_i\}_{i=0}^{b-1}$, to $D(y_0, \ldots, y_{b-1})$ będzie górnym ograniczeniem na wartość 
+$P(x_0, \ldots, x_{b-1})$ dla \emph{każdego wyboru} $\{x_i\}_{i=0}^{b-1}$!
+
+Jak znaleźć odpowiednie $y_i$? Można spróbować zamienić wszystkie nierówności w programie dualnym na równości i rozwiązać. Otrzymujemy wtedy
+\[
+	y_i = \frac{1}{b+1} \cdot \left( \frac{b}{b+1} \right)^{b-i-1}\,.
+\]
+Łatwo zweryfikować że są one dopuszczalnym rozwiązaniem. 
+Wtedy oznaczając $q = b/(b+1)$ mamy
+\begin{align*}
+	D(y_0, \ldots, y_{b-1}) \;
+	= \;& \sum_{j=0}^{b-1} n \cdot (j+1) \cdot y_j 
+	= \; \frac{n}{b+1} \cdot \sum_{j=0}^{b-1} (j+1) \cdot q^{b-(j+1)} \\ 
+	= \;& \frac{n}{b+1} \cdot \sum_{j=0}^{b-1} (b-j) \cdot q^{j} 
+	= \; \frac{n}{b+1} \cdot \left( b \cdot \sum_{j=0}^{b-1} q^{j} - \sum_{j=0}^{b-1} j \cdot q^{j} \right) \\ 
+	= \;& \frac{n}{b+1} \cdot \left( 
+		b \cdot \frac{1-q^b}{1-q}  
+		- \frac{q \cdot \left( (b-1) \cdot q^b - b \cdot q^{b-1} + 1 \right)}{(1-q)^2} \right) 
+\end{align*}
+Zauważamy teraz, że $q/(1-q) = b$ a następnie $(b+1) \cdot (1-q) = 1$ otrzymując
+\begin{align*}
+	D(y_0, \ldots, y_{b-1}) \;
+	= \;& n \cdot \frac{b}{b+1} \cdot \left( 
+		\frac{1-q^b}{1-q}  
+		- \frac{(b-1) \cdot q^b - b \cdot q^{b-1} + 1}{1-q} \right) \\
+	= \;& n \cdot b \cdot \left( 1-q^b - (b-1) \cdot q^b + b \cdot q^{b-1} - 1 \right) \\
+	= \;& n \cdot b \cdot \left( b \cdot q^{b-1} \cdot (1-q) \right) 
+	= \; n \cdot b \cdot q^b \\
+	= \;& n \cdot b \cdot \left( \frac{b}{b+1} \right)^b
+\end{align*}
+A zatem zysk algorytmu to co najmniej $\BAL = n \cdot b - n \cdot b \cdot (b/(b+1))^b$.
+Zauważmy, że dla dużych $b$, $D(y_0, \ldots, y_{b-1})$ to wyrażenie zbiega do $n \cdot b \cdot (1 - 1/\mathrm{e}) = n \cdot b \cdot 
+((\e - 1)/\mathrm{e})$,
+czyli współczynnik konkurencyjności $\BAL$ wynosi asymptotycznie $\e/(\e-1) \approx 1.582$. 
+

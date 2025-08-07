@@ -1,0 +1,45 @@
+\usepackage[margin=2cm,bottom=2cm]{geometry}
+\usepackage{amsmath,amsthm,amsopn,amsfonts}
+\usepackage{polski}
+\usepackage[utf8]{inputenc}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\pagestyle{empty}
+
+\newcommand{\makeheader}[1]{
+\begin{center}
+{\Large\bf\sectfont Algorytmy online\\}
+\vspace{0.3cm}
+{\large\bf\sectfont Lista #1}\\
+\end{center}
+\vspace{0.7cm}
+}
+
+
+\newcommand{\myfigure}[3]{
+\begin{figure}[t]
+\centering
+\fboxsep7pt
+\framebox[0.95\textwidth]{
+    \begin{minipage}{0.95\textwidth}
+        \centering #3
+    \end{minipage}
+}
+\caption{#2}
+\label{fig:#1}
+\end{figure}
+}
+
+
+
+\newcommand{\makefooter}{
+\bigskip
+\hfill {\em Marcin Bieńkowski}
+}
+
+\newcommand{\E}{\mathbf{E}}
+\newcommand{\ALG}{\textsc{Alg}}
+\newcommand{\OPT}{\textsc{Opt}}
+\newcommand{\e}{\textnormal{e}}
+\newcommand{\CNT}{\textsc{Cnt}}
+

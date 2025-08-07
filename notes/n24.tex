@@ -1,0 +1,107 @@
+
+\section{Rozłączne ścieżki na prostej: dolne ograniczenie}
+
+\vspace{0.3cm}
+\begin{lemma}[wariant min-max Yao dla ścisłej konkurencyjności]
+Rozważmy dowolny problem maksymalizacyjny. 
+Załóżmy, że istnieje rozkład prawdopodobieństwa $\pi$ nad zbiorem 
+wszystkich możliwych sekwencji wejściowych $\mathcal{I}$,
+taki że dla dowolnego algorytmu deterministycznego $\DET$, jeśli 
+wybierzemy wejście $\sigma \in \mathcal{I}$ zgodnie z tym 
+rozkładem, zachodzi $\E_\pi [ \DET(\sigma) ] \leq \frac{1}{\mathcal{R}} 
+\cdot \E_\pi [\OPT(\sigma)]$.
+Wtedy współczynnik ścisłej konkurencyjności dowolnego zrandomizowanego algorytmu
+dla tego problemu wynosi co najmniej $\R$.
+\end{lemma}
+
+\begin{proof}
+Weźmy dowolny algorytm zrandomizowany $\ALG$ i załóżmy nie wprost, że osiąga on 
+współczynnik konkurencyjności $\R' < R$. Algorytm ten jest równoważny pewnemu
+rozkładowi prawdopodobieństwa $\mathcal{A}$ nad wszystkimi algorytmami deterministycznymi.
+Dla każdego $\sigma$ mamy zatem $\E_\mathcal{A}[\DET(\sigma)] \geq \frac{1}{\mathcal{R}'} \cdot 
+\OPT(\sigma) > \frac{1}{\mathcal{R}} \cdot \OPT(\sigma)$.
+Dlatego uśredniając po losowych wejściach $\sigma$
+\[
+	\E_\pi \E_\mathcal{A} [\DET(\sigma)] > \frac{1}{\mathcal{R}} \cdot \E_\pi [\OPT(\sigma)] \enspace.
+\]
+Jednocześnie z założenia lematu otrzymujemy 
+\[
+	\E_\mathcal{A} \E_\pi [\DET(\sigma)] \leq \frac{1}{\R} \cdot \E_\mathcal{A} \E_\pi[\OPT(\sigma)]
+	= \frac{1}{\R} \cdot \E_\pi[\OPT(\sigma)] \enspace.
+\]
+Ponieważ w powyższych dwóch wzorach możemy zamienić miejscami $\E_\A$ z $\E_\pi$, lewe strony
+nierówności są sobie równe i otrzymujemy sprzeczność.
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace{0.3cm}
+\begin{theorem}
+Żaden algorytm zrandomizowany $\ALG$ dla problemu rozłącznych ścieżek na prostej  
+nie może osiągać współczynnika konkurencyjności mniejszego niż 
+$\lfloor \frac{\log N}{2} \rfloor$.
+\end{theorem}
+
+\begin{proof}
+Dla uproszczenia załóżmy znowu, że $N = 2^k$. Skonstruujemy rozkład 
+prawdopodobieństwa $\pi$ nad możliwymi sekwencjami wejściowymi $\sigma$, taki że 
+dla dowolnego algorytmu deterministycznego $\DET$ zachodzi
+\begin{align*}
+	\E[\OPT(\sigma)] = \frac{\log N}{2} & & \textnormal{oraz} & & \E[\DET(\sigma)] \leq 1 \enspace,
+\end{align*}
+gdzie wartość oczekiwana brana jest po rozkładzie $\pi$. Z zasady min-max Yao dostaniemy 
+wtedy tezę twierdzenia.
+
+Rozważmy następujące zbiory połączeń, gdzie $[a,b]$ oznacza połączenie od $a$ do $b$. 
+\begin{align*}
+C_1 & \;=\; \{ [1,N] \} \\
+C_2 & \;=\; \left\{ [1,N/2], [N/2+1,N] \right\} \\
+\vdots & \enspace \enspace \enspace \enspace \vdots \\
+C_{\log N} & \;=\; \left\{ [1,2], [3,4], [5,6], \ldots, [N-1,N] \right\} 
+\end{align*}
+Oczywiście, wszystkie połączenia ze zbioru $C_i$ są połączeniami poziomu $i$. Wejście $\sigma$ jest 
+generowane w następujący sposób. Na początku $\ell$ jest wybierane ze zbioru $\{ 1, 2, \ldots, \log N \}$
+z prawdopodobieństwem $\frac{2^{-\ell}}{1 - 1/N}$. Następnie sekwencja składa się ze wszystkich połączeń
+ze zbiorów $C_1, C_2, \ldots, C_\ell$. 
+
+Najpierw obliczymy oczekiwany zysk $\OPT$ na takiej losowej sekwencji. 
+Jeśli wejście kończy się połączeniami poziomu $i$, to optymalne rozwiązanie akceptuje te właśnie połączenia
+odrzucając wszystkie poprzednie. Dlatego też
+\[
+	\E[\OPT(\sigma)] \;=\; \sum_{i=1}^{\log N} 2^{i-1} \cdot \frac{2^{-i}}{1 - 1/N} \;>\; \frac{\log N}{2}
+	\enspace.
+\]
+
+Pokażemy teraz, że dla dowolnej deterministycznej strategii $\DET$, $\E[\DET(\sigma)] \leq 1$. 
+W naturalny sposób połączenia ze zbiorów $C_i$ tworzą pełne drzewo binarne, w którego korzeniu jest 
+połączenie $[1,N]$ a w $N/2$ liściach elementy ze zbioru $C_{\log N}$. 
+Dla węzła $r$ odpowiadające mu połączenie oznaczamy przez $c_r$. 
+Mówimy, że węzeł drzewa jest aktywny, jeśli odpowiadające mu połączenie występuje w sekwencji wejściowej;
+Dla węzła $r$ definiujemy zmienną losową $X_r$ określającą zysk algorytmu wynikający z zaakceptowanych 
+połączeń występujących w poddrzewie o korzeniu w $r$, pod warunkiem że $r$ jest wierzchołkiem aktywnym i 
+pod warunkiem, że nie zostały zaakceptowane jeszcze połączenia kolidujące z $c_r$. 
+Pokażemy, że dla dowolnego $r$, $\E[X_r] \leq 1$. Ponieważ korzeń całego drzewa jest wierzchołkiem
+aktywnym będzie z tego wynikać, że $\E[\DET(\sigma)] \leq 1$. 
+
+Dowód będzie przez indukcję względem poziomu drzewa. Jeśli aktywny jest liść $r$, to algorytm 
+może albo odrzucić $c_r$ (co jest śmiałym i dość nierozsądnym posunięciem), wtedy $X_r = 0$
+lub przyjąć to połączenie, wtedy $X_r = 1$. 
+
+Załóżmy teraz, że aktywny jest węzeł $r$ naszego drzewa i niech $r_1$ i $r_2$ oznaczają jego synów.
+Jeśli algorytm przyjmie połączenie $c_r$ to $X_r = 1$. Jeśli algorytm odrzuci to połączenie
+(w nadziei, że dostanie więcej na niższych poziomach) to z definicji rozkładu $\pi$ 
+wynika, że wierzchołki $r_1$ i $r_2$ są aktywne z prawdopodobieństwem mniejszym $1/2$. 
+Formalnie mamy
+\[ 
+	\Pr[\ell \geq i+1 | \ell \geq i] \;=\; 
+		\frac{\Pr[\ell \geq i+1]}{\Pr[\ell \geq i]} \;=\;
+		\frac{\frac{1}{2^{i+1}} + \frac{1}{2^{i+2}} + \ldots + \frac{1}{2^{\log N}}}
+			{\frac{1}{2^{i}} + \frac{1}{2^{i+1}} + \ldots + \frac{1}{2^{\log N}}}
+		\;<\; \frac{1}{2} \enspace.
+\]
+Zauważmy, że przy odrzuceniu $c_r$ nie ma połączeń kolidujących z $c_{r_1}$ ani z $c_{r_2}$.
+Zatem wtedy $\E[X_r] < \frac{1}{2} \cdot \E[X_{r_1}] + \frac{1}{2} \cdot \E[X_{r_2}]$.
+Z założenia indukcyjnego dostajemy, że w tym wypadku $\E[X_r] \leq 1$, co kończy dowód indukcyjny.
+\end{proof}
+
+

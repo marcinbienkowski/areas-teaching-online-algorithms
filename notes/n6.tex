@@ -1,0 +1,149 @@
+\section{Metoda podwajania}
+
+\marginnote{W.6A}
+
+\problem{Online bidding}{
+Adwersarz wybiera pewną cenę przedmiotu $u \geq 1$. 
+Algorytm podaje ciąg $d_1,d_2,d_3,\ldots$.
+Gra kończy się na pierwszym elemencie o wartości co najmniej $u$.
+Koszt to suma elementów wypisanych do tej pory.
+}
+
+Bez straty ogólności algorytm online jest równoważny z nieskończonym monotonicznie rosnącym 
+ciągiem liczb $d_1 < d_2 < d_3 \ldots$. Rozwiązanie $\OPT$ to po prostu ciąg równy tożsamościowo $u$. 
+
+Niech $i$ będzie takie że $d_i < u \leq d_{i+1}$. 
+Wtedy 
+\[
+	\frac{\ALG}{\OPT} = \frac{ \sum_{j = 1}^{i+1} d_j}{u} 
+		\leq \frac{ \sum_{j = 1}^{i+1} d_j}{d_i}
+	\enspace.
+\]
+Jeśli $u < d_1$ to 
+\[
+	\frac{\ALG}{\OPT} = \frac{d_1}{u} \leq d_1
+	\enspace.
+\]
+A zatem współczynnik ścisłej konkurencyjności algorytmu to co najwyżej 
+$\max \{ d_1, \max_{i \geq 1} (\sum_{j = 1}^{i+1}  d_j) / d_i \}$.
+Z drugiej strony współczynnik ten nie jest lepszy, 
+bo adwersarz może wybierać $u = 1$ bądź $u = d_i+\eps$ dla dowolnie małego~$\eps$.
+Stąd 
+\[
+	CR(\ALG) = \max \left\{ d_1, \max_{i \geq 1} \frac{ \sum_{j = 1}^{i+1}  d_j }{ d_i } 
+	\right\}
+	\enspace. 
+\]
+
+Zauważmy, że biorąc $d_i = 2^{i-1}$ mamy $CR(\ALG) \leq (1+2+\ldots+2^i)/2^{i-1} \leq 4$.
+Można też pokazać, że nie da się skonstruować algorytmu o niższym współczynniku (ćwiczenie).
+
+\subsection{Bidding vs CowPath}
+
+Przypomnijmy problem poszukiwania wejścia na pastwisko. Tam $\ALG$ również odpowiada
+ciągowi $(d_i)_{i=1}^\infty$. Jeśli adwersarz wybierze $u < d_1$ to 
+\[
+	\frac{\ALG}{\OPT} = \frac{2 \cdot d_1 + u}{u} \leq 2 \cdot d_1 + 1 
+	\enspace.
+\]
+Natomiast jeśli istnieje $i$ takie, że $d_i < u \leq d_{i+1}$, to
+\[
+	\frac{\ALG}{\OPT} = \frac{ (\sum_{j = 1}^{i+1} 2 \cdot d_j) + u }{u} 
+		\leq 2 \frac{ \sum_{j = 1}^{i+1} d_j}{d_i} + 1
+	\enspace.
+\]
+A zatem współczynnik ścisłej konkurencyjności algorytmu to co najwyżej 
+$1 + 2 \cdot \max \{ d_1, \max_{i \geq 1} (\sum_{j = 1}^{i+1}  d_j) / d_i \}$.
+Podobnie jak poprzednio współczynnika tego nie można zmniejszyć. 
+Otrzymujemy zatem równoważność między problemami, 
+\[
+	CR(\textrm{CowPath}) = 2 \cdot CR(\textrm{Bidding}) + 1
+	\enspace.
+\]
+W szczególności implikuje to, że optymalnym współczynnikiem dla problemu CowPath jest 9.
+
+\subsection{Szeregowanie na identycznych maszynach}
+
+Dany jest ciąg zadań $a_1, a_2, \ldots$; $p_t^i = a_t$ jest czasem wykonania zadania $a_t$
+na maszynie $i$. 
+Niech $L_t(i)$ będzie obciążeniem maszyny $i$ po kroku $t$.
+
+\begin{theorem}
+Algorytm zachłanny jest ściśle $2$-konkurencyjny.
+\end{theorem}
+
+\begin{proof}
+Ustalmy input o $T$ krokach. Niech $j$ bedzie najbardziej obciążoną maszyną (na końcu). Rozważmy
+krok $t$ w którym dodajemy ostatnie zadanie do tej maszyny. A zatem 
+\begin{align*}
+	\ALG = &\; L_{t-1}(j) + a_t \\
+	\leq &\; \frac{1}{m} \cdot \sum_{i=1}^m {L_{t-1}(i)} + a_t \\
+	\leq &\; \frac{1}{m} \cdot \sum_{i=1}^m {L_T(i)} + a_t \\
+	\leq &\; \OPT + \OPT
+\end{align*}
+\end{proof}
+
+\subsection{Szeregowanie na powiązanych maszynach}
+
+\marginnote{W.6B}
+
+Mamy ciąg $m$ maszyn uszeregowanych od najwolniejszej (prędkość $v_1$) do najszybszej (prędkość $v_m$). 
+Obciążenie zadania $a_t$ na maszynie $j$ to $p_t = a_t / v_j$. 
+
+Algorytm $\SLOWFIT(\lambda)$: uruchom zadanie $a_t$ na najwolniejszej maszynie $j$, tak żeby po uruchomieniu
+jej obciążenie ($L_{t-1}(j) + p_t(j)$) było co najwyżej $2 \lambda$. Jeśli taka maszyna nie istnieje zwróć ,,FAIL''.
+
+\begin{lemma}
+Jesli $\OPT \leq \lambda$, to $\SLOWFIT(\lambda) \leq 2 \lambda$. 
+\end{lemma}
+
+\begin{proof}
+Załóżmy nie wprost: istnieje taki ciąg $\sigma$, że ostatnie zadanie z tego ciągu $a_t$ powoduje ,,FAIL''. 
+
+Maszyna $j$ jest \emph{przeładowana}, jeśli $L_{t-1}(j) > \lambda$. 
+Zauważmy, że najszybszą maszyna jest przeładowana ($L_{t-1}(m) > \lambda$ (w przeciwnym przypadku, 
+$a_t$ dałoby się uszeregować na maszynie $m$, bo $p_t(m) \leq \lambda$ (bo \OPT gdzieś daje to zadanie, więc 
+nie może być ono za duże). 
+
+Zdefiniujmy niepusty zbiór $\Gamma$ szybkich przeładowanych maszyn, tj.
+$\Gamma = \{ f+1,f+2, \ldots, m \}$, taki że maszyny $j \in \Gamma$ są przeładowane, zaś maszyna 
+$f$ nie jest przeładowana (lub $f = 0$).
+
+\medskip
+
+Pokażemy, że z przeładowania wynika, że $\SLOWFIT$ trzyma więcej zadań na maszynach z $\Gamma$, zaś z własności 
+algorytmu będzie wynikać, że trzyma tam mniej zadań.
+
+\begin{itemize}
+
+\item Obserwacja: Jeśli $\SLOWFIT$ wykonuje jakieś zadanie $a_\ell$ na maszynie z $\Gamma$, to $\OPT$
+wykonuje to zadanie też na maszynie z $\Gamma$. 
+
+Dlaczego tak jest? Jeśli $f = 0$ to jest to trywialnie spełnione. Załóżmy, że $f \geq 1$. 
+Zadanie $a_\ell$ nie zostało wykonane na maszynie $f$, choć jej obciążenie było co najwyżej $\lambda$ 
+(bo $L_{\ell-1}(f) \leq L_{t-1}(f) \leq \lambda$), zatem maszyna $f$ była na to zadanie za wolna ($p_t(f) > \lambda$).
+Więc $\OPT$ nie mógł wykonać zadania $a_\ell$ na maszynach $1,2,\ldots,f$. 
+
+\item Niech $S_j$ i $S^*_j$ będą indeksami zadań wykonanych przez $\SLOWFIT$ i $\OPT$ na maszynie $j$. 
+Z poprzedniego punktu wynika, że 
+$\bigcup_{j \in \Gamma} S_j \subseteq \bigcup_{j \in \Gamma} S^*_j$.
+Zatem:
+\[
+	\sum_{j \in \Gamma} \sum_{\ell \in S_j} a_\ell = \sum_{j \in \Gamma} v_j \sum_{\ell \in S_j} p_\ell(j) > 
+		\sum_{j \in \Gamma} v_j \cdot \lambda.
+\]
+Oraz
+\[
+	\sum_{j \in \Gamma} \sum_{\ell \in S^*_j} a_\ell = \sum_{j \in \Gamma} v_j \sum_{\ell \in S^*_j} p_\ell(j) \leq
+		\sum_{j \in \Gamma} v_j \cdot \lambda.
+\]
+Ale $\sum_{j \in \Gamma} \sum_{\ell \in S_j} a_\ell \leq \sum_{j \in \Gamma} \sum_{\ell \in S^*_j}$, a więc otrzymujemy
+sprzeczność.
+\end{itemize}
+\end{proof}
+
+
+
+
+
+ + podwajanie (spisane na kartce).

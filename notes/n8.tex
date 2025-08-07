@@ -1,0 +1,383 @@
+
+\section{Przenoszenie pliku}
+
+
+\subsection{Algorytm randomizowany}
+
+Mamy dany graf z odległościami między każdą parą wierzchołków zadanymi przez funkcję $d()$,
+spełniającą warunek trójkąta. W tym grafie przechowujemy jeden egzemplarz dużego niepodzielnego pliku o rozmiarze $D > 1$.
+
+\problem{Przenoszenie pliku ({\em file migration})}{
+Dany jest ciąg wierzchołków $v_i$, które chcą odwołać się do (fragmentu) pliku
+w kolejnych krokach. Jeśli w kroku $t$ plik jest w wierzchołku $u$, to
+algorytm płaci za to odwołanie $d(v_i,u)$. Następnie algorytm może przenieść
+plik do dowolnego wierzchołka $u'$, płacąc $D \cdot d(u,u')$. Należy
+zminimalizować sumaryczny koszt.
+}
+
+Rozważmy następujący algorytm $\FLIP$. Algorytm ten w kroku $t$ obsługuje żądanie z wierzchołka 
+$\sigma_t$ i przenosi plik do $\sigma_t$ z prawdopodobieństwem $\frac{1}{2 \cdot D}$.
+
+\begin{theorem}
+Algorytm $\FLIP$ jest $3$-konkurencyjny przeciwko adwersarzowi adaptującemu się.
+\end{theorem}
+
+\begin{proof}
+Zdefiniujmy następującą funkcję potencjału 
+\[ \Phi = 3 \cdot D \cdot d(\vflip, \vopt) \enspace, \]
+gdzie $\vflip$ i $\vopt$ są wierzchołkami, które przechowują pliki algorytmów $\FLIP$ i $\OPT$.
+Wybierzmy dowolną sekwencję wejściową $\sigma$.
+
+Funkcja $\Phi$ jest nieujemna, a jeśli $\FLIP$ i $\OPT$ zaczynają ze plikami w tym
+samym wierzchołku, jest równa początkowo zero.
+Wystarczy zatem pokazać, że dla dowolnego kroku $t$ zachodzi:
+\begin{equation}
+\label{eq:flip_competitive}
+\E[\FLIP(t)] + \E[\Delta\Phi(t)] \leq 3 \cdot \OPT(t) \enspace.
+\end{equation}
+Podobnie jak w poprzednich dowodach, dzielimy 
+krok $t$ na dwa etapy.
+\begin{enumerate}
+\item Algorytmy $\FLIP$ i $\OPT$ płacą za odwołanie do pliku; 
+algorytm $\FLIP$ (opcjonalnie) przenosi plik do wierzchołka $\vflip'$.
+\item Algorytm $\OPT$ (opcjonalnie) przenosi swój plik do wierzchołka $\vopt'$. 
+\end{enumerate}
+Pokażemy, że (\ref{eq:flip_competitive}) zachodzi dla każdego etapu z osobna.
+
+\myfigure{flip}{Ilustracja dla etapu 1 algorytmu $\FLIP$}{\includegraphics{pict/flip}}
+
+\begin{description}
+\item[\textnormal{\em Etap 1.}] 
+	Do pliku odwołuje się komputer $\sigma_t$. Sytuacja jest zaprezentowana na poniższym rysunku.
+	Mamy:
+	\begin{align*}
+		\OPT & = d(\vopt, \sigma_t) \\
+		\E[\FLIP] & = d(\vflip, \sigma_t) + \frac{1}{2 \cdot D} \cdot D \cdot d(\vflip, \sigma_t) \\
+			& = \frac{3}{2} \cdot d(\vflip, \sigma_t) \enspace.
+				& 
+	\end{align*}
+	Podobnie możemy ograniczyć zmianę potencjału. Z prawdopodobieństwem $1 - \frac{1}{2 \cdot D}$ nie zmienia
+	się on podczas tego etapu, a z prawdopodobieństwem $\frac{1}{2 \cdot D}$ zmienia się 
+	w związku z przeniesieniem pliku do $\sigma_t$ z 
+	$3 \cdot D \cdot d(\vflip, \vopt)$ na 	$3 \cdot D \cdot d(\sigma_t, \vopt)$.
+	Zatem 
+	\begin{align*}
+		\E[\Delta\Phi] & = \frac{1}{2 \cdot D} \cdot 3 \cdot D \cdot [ d(\sigma_t, \vopt) -  d(\vflip, \vopt) ] \\
+			& = \frac{3}{2} \cdot [ d(\sigma_t, \vopt) -  d(\vflip, \vopt) ] \enspace.
+	\intertext{Łącząc podane wyżej równości i korzystając z warunku trójkąta otrzymujemy}
+		\E[\FLIP] + \E[\Delta\Phi]  & = \frac{3}{2} \cdot \left[ 
+			d(\vflip, \sigma_t) +  d(\sigma_t, \vopt) -  d(\vflip, \vopt) 
+		\right] \\
+		& \leq \frac{3}{2} \cdot \left[ d(\sigma_t, \vopt) + d(\sigma_t, \vopt) \right ] \\
+		& = 3 \cdot \OPT \enspace.
+	\end{align*}
+	Zatem (\ref{eq:flip_competitive}) zachodzi.
+	
+\item[\textnormal{\em Etap 2.}]
+W tym przypadku $\FLIP$ znajduje się już w wierzchołku $\vflip'$ (być może
+$\vflip' = \vflip$). 
+Oczywiście $\FLIP = 0$, $\OPT = D \cdot d(\vopt, \vopt')$. 
+	Jednocześnie potencjał zmienia się z $3 \cdot D \cdot d(\vflip, \vopt)$ na $3 \cdot D \cdot d(\vflip, \vopt')$.
+	Z warunku trójkąta otrzymujemy:
+	\begin{align*}
+		\Delta\Phi & = 3\cdot D [ d(\vflip', \vopt') - d(\vflip', \vopt) ] \\
+				& \leq 3 \cdot D [ d(\vopt, \vopt') ] \\
+				& \leq 3 \cdot \OPT \enspace.
+	\end{align*}
+	Co kończy dowód (\ref{eq:flip_competitive}) dla drugiego etapu. \qedhere
+\end{description}
+
+\end{proof}
+
+Powiedzieć, że FLIP jest konkurencyjny również przeciwko adwersarzowi adaptującemu się. 
+
+\begin{theorem}
+Załóżmy, że $\ALG$ jest $R$-konkurencyjny przeciwko adwersarzowi adaptującemu się. 
+Załóżmy, ze istnieje algorytm $\ALG'$, który jest $R'$-konkurencyjny przeciwko adwersarzowi 
+nieświadomemu. Wtedy istnieje deterministyczny $(R \cdot R')$-konkurencyjny algorytm.
+\end{theorem}
+
+
+% To jest obecnie na ćwiczeniach
+%
+%\begin{theorem}
+%Niech $\ALG$ będzie dowolnym algorytmem deterministycznym dla problemu przenosin pliku. 
+%Konkurencyjność $\ALG$ wynosi co najmniej $3$.
+%\end{theorem}
+%
+%\begin{proof}
+%Rozważmy graf składający się tylko z dwóch wierzchołków $v_1$ i $v_2$ oddzielonych krawędzią o 
+%długości~$1$.\footnote{Dolne ograniczenie w wysokości 3 nie jest prawdziwe dla wszystkich grafów.}
+%Strategia adwersarza jest prosta: w kroku $t$ wierzchołek $\sigma_t$ jest ustalany jako wierzchołek 
+%różny od~$v_\mathrm{ALG}(t)$.
+%Rozważmy trzy następującee algorytmy:
+%\begin{description}
+%\item $A_1$: przechowuje plik zawsze w wierzchołku $v_1$;
+%\item $A_2$: przechowuje plik zawsze w wierzchołku $v_2$;
+%\item $A_3$: przechowuje plik w wierzchołku różnym od $v_\mathrm{ALG}$.
+%\end{description}
+%Bez straty ogólności załóżmy, kroku $t$ algorytm zaczyna w wierzchołku $v_1$; zatem procesorem 
+%żądającym dostępu do pliku jest $v_2$. 
+%Koszt obsługi żądania do $v_2$ dla algorytmów $A_1$ i $A_3$ wynosi~$0$, dla algorytmu $A_2$ wynosi $1$. 
+%Jeśli algorytm nie przenosi się, to żaden z algorytmów $A_i$ nie ponosi dodatkowego kosztu, w
+%przeciwnym przypadku zarówno algorytm $\ALG$ jak i $A_3$ ponosi koszt $D$.
+%Zatem dla każdego kroku $t$ zachodzi
+%\begin{equation}
+%\label{eq:a_i_comparison}
+%\end{equation}
+%a stąd 
+%\[ 
+%	\ALG(\sigma) = A_1(\sigma) + A_2(\sigma) + A_3(\sigma) \enspace.
+%\]
+%Zatem istnieje taki algorytm $A_k$, że $A_k(\sigma) \leq \frac{1}{3} \cdot \ALG(\sigma)$
+%i stąd $\ALG(\sigma) \geq 3 \cdot \OPT(\sigma)$
+%
+%
+%\begin{theorem}
+%Niech $\ALG$ będzie dowolnym algorytmem randomizowanym dla problemu przenosin pliku. 
+%Konkurencyjność $\ALG$ wynosi co najmniej $3-\Theta(1/D)$.
+%\end{theorem}
+%
+%\begin{proof}
+%Strategia tworząca wejście jest taka sama jak poprzednio. Zauważmy, że algorytmy $A_1$ i $A_2$ są algorytmami
+%online. Algorytm $A'_3$ online nie jest, ale można zrobić algorytm $A'_3$, taki który przesuwa się w momencie,
+%kiedy żądania zmienią miejsce, a zatem robi to co $A_3$, tylko turę później. Wtedy dla dowolnego 
+%wejścia $\sigma$ zachodzi $A'_3(\sigma) = (1+1/D) \cdot A_3(\sigma)$ a zatem 
+%$A'_3(\sigma) = (1+1/D) \cdot A_3(\sigma)$ a zatem $A_3(\sigma) = (1-1/(D-1)) \cdot A_3'(\sigma)$.
+%Zatem 
+%\begin{align*} 
+%	\ALG(\sigma) 
+%	= &\; A_1(\sigma) + A_2(\sigma) + A_3(\sigma) \\
+%	= &\; A_1(\sigma) + A_2(\sigma) + (1-1/(D-1)) \cdot A'_3(\sigma) \\
+%	\geq &\; \textstyle\left(1-\frac{1}{D-1} \right) \cdot \left( A_1(\sigma) + A_2(\sigma) + A'_3(\sigma) \right)
+%\end{align*}
+%a stąd  
+%\[
+%	\E[\ALG(\sigma)] \geq \textstyle\left(1-\frac{1}{D-1} \right) \cdot 
+%		\left( \E[A_1(\sigma)] + \E[A_2(\sigma)] + \E[A'_3(\sigma)] \right)
+%\]
+%Adwersarz może obliczyć wartości
+%$\E[A_1(\sigma)]$, $\E[A_2(\sigma)]$ i $\E[A'_3(\sigma)]$
+%i wybrać minimalną z nich i ten algorytm przedstawić jako swój. 
+%(Ta konstruktywnośc w ostatnim zdaniu nie jest potrzebna: wystarczy, ze istnieje taki algorytm, jeden z nich 
+%jest na pewno dobry).
+%\end{proof}%
+
+
+\subsection{Algorytm deterministyczny Move-To-Min}
+
+Rozważmy teraz następujący algorytm deterministyczny {\sc Move-To-Min} ($\MTM$). 
+Algorytm ten dzieli całą sekwencję na fazy długości $D$. W każdej fazie algorytm przebywa w jednym wierzchołku, który
+oznaczamy $\PMTM$ a pod koniec fazy przenosi się do tzw.~{\em centrum grawitacji}, $v^*$. Wierzchołek $v^*$ jest wierzchołkiem
+w którym byłoby najlepiej przebywać w danej fazie, tj.~jest wirzchołkiem minimalizującym sumę $\sum_{i=1}^D d(v^*, \sigma_i)$.
+
+\begin{theorem}
+\label{thm:mtm-competitive}
+Algorytm $\MTM$ jest $7$-konkurencyjny.
+\end{theorem}
+
+\myfigure{mtm}{Ilustracja algorytmu $\MTM$ w jednej fazie}{\includegraphics{pict/mtm}}
+
+Aby pokazać powyższe twierdzenie, zdefiniujemy funkcję potencjału równą $2 \cdot D \cdot d(\PMTM, \POPT)$ i 
+pokażemy że zamortyzowany koszt w pojedynczej fazie $f$ jest ograniczony. 
+
+Poniżej koncentrujemy się na pojedynczej fazie $f$. Numerujemy kroki w tej fazie od $1$ do $D$. 
+Wprowadzimy dodatkowe oznaczenie, które zilustrowane zostało na Rysunku 
+\ref{fig:mtm}. Mianowicie oznaczamy wierzchołek w którym $\OPT$ ma plik na początku kroku $j$ przez $a_{j-1}$,
+a wierzchołek w którym $\OPT$ ma plik na końcu kroku $j$ przez~$a_j$. W szczególności $a_0$ i $a_D$ są wierzchołkami,
+w których $\OPT$ ma plik odpowiednio na początku i końcu fazy.
+
+Na początku pokażemy następujący pomocniczy lemat.
+Mówi on, że dolnym ograniczeniem na koszt algorytmu optymalnego jest koszt algorytmu, który 
+całą fazę spędzi w dowolnym wierzchołku $a_\ell$. 
+
+\begin{lemma}
+\label{lem:page_migration_opt_lower}
+Dla dowolnej fazy $f$ i dowolnego kroku $0 \leq \ell \leq D$, zachodzi $\OPT(f) \geq \sum_{i=1}^D d(a_\ell, \sigma_i)$.
+\end{lemma}
+
+\begin{proof}
+Zgodnie z oznaczeniami z rysunku koszt algorytmu optymalnego wynosi $\sum_{i=1}^D (d(a_{i-1}, \sigma_i) + 
+D \cdot d(a_{i-1},a_i))$. W powyższej sumie każda z odległości pomiędzy kolejnymi $a_i$ jest liczona $D$ razy. 
+Z nierówności trójkąta otrzymujemy, że 
+\begin{align*}
+\OPT(f) = &\; \sum_{i=1}^D \left(d(a_{i-1}, \sigma_i) + D \cdot d(a_{i-1},a_i)\right) \\
+		\geq &\; \sum_{i=1}^D \left(d(a_{i-1}, \sigma_i) + d(a_{i-1},a_\ell)\right) \\
+		\geq &\; \sum_{i=1}^D d(a_\ell,\sigma_i) \enspace. \qedhere 
+\end{align*}
+\end{proof}
+
+Podzielmy koszt $\MTM(f)$ na dwie składowe: $\MTM^\mathrm{REQ}(f)$ jest kosztem obsługi żadań 
+w fazie~$f$, a $\MTM^\mathrm{MOVE}(f)$ jest kosztem przenosin pliku do wierzchołka $v^*$. 
+Dodatkowo definiujemy $\Phi_\mathrm{B}(f)$ i $\Phi_\mathrm{F}(f)$ jako potencjał odpowiednio na początku i końcu fazy $f$.
+Należy zatem pokazać, że prawdziwe jest następujące stwierdzenie.
+
+\begin{lemma}
+\label{lem:mtm_upper_1}
+Dla dowolnej fazy $f$ zachodzi 
+\[
+	\MTM^\mathrm{REQ}(f) + \MTM^\mathrm{MOVE}(f) 
+		+ \Phi_\mathrm{F}(f) \leq \Phi_\mathrm{B}(f) + 7 \cdot \OPT(f).
+\]
+\end{lemma}
+
+\begin{proof}
+Z warunku trójkąta oraz Lematu~\ref{lem:page_migration_opt_lower} wynikają następujące nierówności:
+\begin{align}
+\label{eq:mtm_bound_1}
+	\MTM^\mathrm{REQ}(f) = &\; \sum_{i=1}^D d(\PMTM,\sigma_i) 
+			\leq \sum_{i=1}^D \left( d(\PMTM, a_0) + d(a_0, \sigma_i) \right) \\
+\nonumber
+			\leq &\; D \cdot d(\PMTM,a_0) + \sum_{i=1}^D (a_0, \sigma_i) 
+			\leq \Phi_B / 2 + \OPT(f)  \\
+\bigskip
+\label{eq:mtm_bound_2}
+	\MTM^\mathrm{MOVE}(f) = &\; D \cdot d(\PMTM, v^*) 
+			\leq D \cdot d(\PMTM, a_0) + D \cdot d(a_0, v^*) \\
+\nonumber
+			\leq &\; \Phi_B / 2 + D \cdot d(a_0,v^*) \\
+\bigskip
+\label{eq:mtm_bound_3}
+	\Phi_F = &\; 2 \cdot D \cdot d(a_D, v^*) 
+\end{align}
+Wystarczy zatem ograniczyć $d(a_\ell,v^*)$ dla $0 \leq \ell \leq D$.
+\begin{align*}
+D \cdot d(a_\ell, v^*) \; 
+			= &\;  \sum_{i=1}^D d(a_\ell,v^*) 
+			\leq \sum_{i=1}^D d(a_\ell,\sigma_i) + \sum_{i=1}^D d(v^*,\sigma_i)
+			\enspace.
+\intertext{Ponieważ $v^*$ został wybrany jako wierzchołek który minimalizuje sumaryczną odległość 
+od żądań w całej fazie, otrzymujemy:}
+D \cdot d(a_\ell, v^*) \; \leq & \;2 \cdot \sum _{i=1}^D d(a_\ell,\sigma_i) \leq 2 \cdot \OPT(f)
+\end{align*}
+Podstawiając to ograniczenie do nierówności (\ref{eq:mtm_bound_1}), 
+(\ref{eq:mtm_bound_2}) i (\ref{eq:mtm_bound_3}), otrzymujemy tezę lematu.
+\end{proof}
+
+\begin{proof}[Dowód twierdzenia \ref{thm:mtm-competitive}]
+Weźmy dowolną sekwencję $\sigma$ i jej podział na fazy $\sigma = (f_1, f_2, \ldots, f_k, f_{k+1})$. 
+Ostatnia faza ma być może mniej niż $D$ kroków. Zauważmy, że zamortyzowany koszt w dowolnej z faz może zostać ograniczony
+przez funkcję zależną $D$ i średnicy grafu $G$. Oznaczmy to ograniczenie przez $\beta$.
+Otrzymujemy wtedy
+\begin{align*}
+\MTM(\sigma) + \Delta\Phi(\sigma) 
+	= & \; \sum_{i=1}^k\left( \MTM(f_i) + \Delta\Phi(f_i) \right) + 
+			 \MTM(f_{k+1}) + \Delta\Phi(f_{k+1}) \\
+	\leq &\; \sum_{i=1}^k \left( 7 \cdot \OPT(f_i) \right) + \beta \\
+	\leq &\; 7 \cdot \OPT(\sigma) + \beta
+\end{align*}
+Ponieważ $\Delta\Phi(\sigma)$ jest nieujemne otrzymujemy 
+$\MTM(\sigma) \leq 7 \cdot \OPT(\sigma) + \beta$, co kończy dowód konkurencyjności algorytmu $\MTM$.
+\end{proof}
+
+\subsubsection{Algorytm Move-To-Local-Min}
+
+Na to nie starczy czasu, ale zostawiam w notatkach.
+
+Zauważmy, że $\MTM$ kiepsko radzi sobie z sytuacją, w której jest wiele minimów będących kandydatami na $v^*$. 
+Wtedy $\MTM$ wybiera jedno z nich, podczas gdy mógłby wybierać najbliższe. Warto również wybrać wierzchołek
+prawie minimalny jeśli jest on znacznie bliżej aktualnej pozycji pliku niż globalne minimum.
+Prowadzi nas to do algorytmu \textsc{Move-To-Local-Min} ($\MTLM$), który różni się od $\MTM$ tylko wyborem $v^*$.
+$\MTLM$ wybiera na  $v^*$ ten wierzchołek $v$, który minimalizuje sumę 
+$2 \cdot \sum_{i=1}^D d(v,\sigma_i) + D \cdot d(\PMTLM,v)$. 
+
+\begin{theorem}
+$\MTLM$ jest $5$-konkurencyjny.
+\end{theorem}
+
+\begin{proof}
+Wystarczy pokazać odpowiednik Lematu~\ref{lem:mtm_upper_1}, reszta dowodu jest identyczna jak w przypadku 
+algorytmu $\MTM$. Ograniczenie na $\MTLM^\mathrm{REQ}(f)$ jest identyczne, tj.
+\begin{align*}
+	\MTLM^\mathrm{REQ}(f) \;\leq&\; \Phi_\mathrm{B}/2 + \OPT(f) \enspace. \\
+\intertext{Z kolei}
+	\MTLM^\mathrm{MOVE}(f) + \Phi_\mathrm{F} \;
+	\leq &\; D \cdot d (\PMTLM,v^*) + 2 \cdot D \cdot d(a_D, v^*) \\
+	\leq &\; D \cdot d (\PMTLM,v^*) + 2 \cdot \sum_{i=1}^D d(v^*, \sigma_i) + 2 \cdot \sum_{i=1}^D d(a_D, \sigma_i) \\
+	\leq &\; D \cdot d (\PMTLM,v^*) + 2 \cdot \sum_{i=1}^D d(v^*, \sigma_i) + 2 \cdot \OPT(f)
+\end{align*}
+Z minimalności $v^*$ w pierwszych dwóch składnikach powyżej możemy zamienić $v^*$ na $a_0$ otrzymując
+\begin{align*}
+	\MTLM^\mathrm{MOVE}(f) + \Phi_\mathrm{F} \;
+	\leq &\; D \cdot d (\PMTLM,a_0) + 2 \cdot \sum_{i=1}^D d(a_0, \sigma_i) + 2 \cdot \OPT(f) \\
+	\leq &\; \Phi_\mathrm{B}/2 + 4 \cdot \OPT(f) \enspace.
+\qedhere
+\end{align*}
+\end{proof}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\subsection{Randomizacja przeciwko adwersarzowi nieświadomememu}
+%
+% TUTAJ JEST ALGORYTM WESTBROOKA, obecnie na ćwiczeniach
+%Jeśli przyjrzymy się algorytmowi $\MTM$ zauważymy, że dzieli on sekwencję wejściową na fazy po $D$ kroków i 
+%przenosi plik na końcu takiej fazy. Gdybyśmy zaczęli fazę nie na początku sekwencji wejściowej, lecz po paru krokach
+%nie zmieniłoby to analizy algorytmu. Nie pomogło (ani też nie przeszkodziłoby) nam to przeciwko 
+%adwersarzowi adaptującemu się. 
+%Natomiast może to pomóc przeciwko adwersarzowi oblivious, który nie wie gdzie dana faza się kończy czy zaczyna.
+%
+%Te obserwacje są podstawą algorytmu $\CNT_k$. Algorytm ten przechowuje globalny licznik $C$, który przyjmuje wartości z zakresu
+%$[0,k]$. Jest on inicjowany wylosowaną (z rozkładem jednostajnym) liczbą naturalną z przedziału $[1,k]$.
+%Przy dowolnym odwołaniu do pliku, $C$ jest zmniejszane o $1$. Jeśli w efekcie $C = 0$, plik jest 
+%przesuwany do wierzchołka,
+%który właśnie zażądał do niej dostępu, a następnie licznikowi $C$ jest przypisywane~$k$.
+%
+%\begin{lemma}
+%Algorytm $\CNT_k$ jest $\max\{2 + \frac{2 d}{k}, 1+\frac{k+1}{2d} \}$-konkurencyjny przeciwko adwersarzowi oblivious.
+%\end{lemma}
+%
+%\begin{proof}
+%Dowód jest podobny do dowodu konkurencyjności algorytmu $\FLIP$. Mianowicie definiujemy funkcję potencjału 
+%równą 
+%\[
+%	\Phi = (D + C) \cdot d(\PCNT,\POPT) \enspace.
+%\]
+%Tak jak w dowodzie algorytmu $\FLIP$ dzielimy każdy krok na dwa etapy; pokażemy, że zamortyzowany koszt algorytmu
+%w każdym etapie jest ograniczony.
+%\begin{description}
+%\item[\textnormal{\em Etap 1.}] 
+%	Przyjrzyjmy się najpierw zamortyzowanemu kosztowi obsługi żądania w $\sigma_t$. 
+%	Oczywiście \[ \CNT_k^\mathrm{odwołanie} = d(\PCNT, \sigma_t) \enspace. \]
+%	Za obsługę tego żądania płaci spadek potencjału (związany ze spadkiem
+%	wartości licznika), tj.~$\Delta\Phi = -d(\PCNT,\POPT)$. Otrzymujemy 
+%	\[ \CNT_k^\mathrm{odwołanie} + \Delta\Phi \leq d(\POPT,\sigma_t) = \OPT \enspace. \]
+%
+%	Dodatkowo, z prawdopodobieństwem $\frac{1}{k}$, po obsłudze żądania zachodzi $C = 0$. 
+%	Z takim prawdopodobieństwem
+%	następuje przeniesienie pliku, którego koszt jest równy $D \cdot d(\PCNT, \sigma_t)$ 
+%	a związana z nią zmiana potencjału to $\Delta\Phi = (D+k) \cdot d(\sigma_t, \POPT) - D \cdot d(\PCNT, \POPT)$.
+%	Otrzymujemy zatem, że 
+%	\begin{align*}
+%		 \E[\CNT_k^\mathrm{przenosiny} + \Delta\Phi] 
+%		 	= & \; \frac{1}{k} \cdot \left[ 
+%				D \cdot d(\PCNT, \sigma_t) - D \cdot d(\PCNT, \POPT)  + (D+k) \cdot d(\sigma_t, \POPT)
+%			\right]  \\
+%			\leq & \; \frac{1}{k} \cdot \left[ D \cdot d(\POPT,\sigma_t) + (D+k) \cdot d(\sigma_t, \POPT) \right] \\
+%			= & \; \frac{2 D + k}{k} \cdot \OPT \enspace.
+%	\intertext{Sumując otrzymujemy}
+%		\E[\CNT_k + \Delta\Phi] \leq & \; \left(2 + \frac{2 D}{k}\right) \cdot \OPT \enspace. 
+%	\end{align*}
+%
+%\item[\textnormal{\em Etap 2.}] 
+%	Załóżmy teraz, że $\OPT$ przenosi plik z wierzchołka $\POPT$ do $\POPT'$. Wtedy zmiana potencjału to 
+%	$(D+C) \cdot [d(\PCNT, \POPT') - d(\PCNT, \POPT)] \leq (D+C) \cdot d(\POPT, \POPT')$.
+%	Zauważmy teraz, że wartość oczekiwana licznika $C$ wynosi $\frac{k+1}{2}$, a zatem oczekiwana zmiana potencjału to
+%	\begin{align*}
+%		\E[\Delta\Phi] = &\; \left(D + \frac{k+1}{2}\right) \cdot d(\POPT,\POPT')  \\
+%			= &\; \left(1 + \frac{k+1}{2 D}\right) \cdot \OPT \enspace.
+%	\end{align*}
+%
+%\end{description}
+%Porównując wyniki w dwóch etapach otrzymujemy tezę lematu.
+%\end{proof}
+%
+%Poniższe twierdzenie pozostawiamy bez dowodu jako proste ćwiczenie rachunkowe.
+%
+%\begin{theorem}
+%Istnieje taki wybór $k$ (jako funkcji $D$), że dla $D$ dążącego do nieskończoności, konkurenyjność algorytmu $\CNT_k$
+%zbiega do $(1 + \phi)$, gdzie $\phi = \frac{1+\sqrt{5}}{2}$ jest złotym podziałem. 
+%\end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

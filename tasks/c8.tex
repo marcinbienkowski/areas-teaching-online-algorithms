@@ -1,0 +1,109 @@
+\documentclass[a4paper,11pt]{scrartcl}
+\input{macros}
+\begin{document}
+
+\makeheader{8}
+
+\begin{description}
+
+\item[Zadanie 1] \textbf{(3 pkt.)} 
+Rozważmy problem routingu na linii o $n$ wierzchołkach, gdzie każda krawędź ma
+pojemność $U$. Pokaż dolne ograniczenie na ścisłą konkurencyjność dowolnego
+algorytmu deterministycznego w wysokości $\Omega(n^{1/U})$.
+
+% Trzeba wziąć takie k, że k^U < n <= (k+1)^U. Wtedy k^U <= n-1 a n-1 to liczba krawedzi na linii. 
+% Da się wymusić współczynnik k, a k+1 >= n^(1/U)
+
+%\item[Zadanie 2] 
+%Chcemy za pomocą jednej transakcji zamienić jedngo bitcoina na złotówki w ciągu najbliższych 42 dni. 
+%Każdego dnia dowiadujemy się, jaki jest kurs danego dnia; jest on 
+%dowolną liczbą rzeczywistą z zakresu $[1,M]$, gdzie $M$ jest znane algorytmowi od początku.
+%\begin{enumerate}[a)]
+%\item \textbf{(1 pkt.)} Skonstruuj deterministyczny algorytm, który będzie  
+%    ściśle $\sqrt{M}$-konkurencyjny.
+%\item \textbf{(2 pkt.)} Skonstruuj randomizowany algorytm, który będzie  
+%    ściśle $O(\log M)$-konkurencyjny.
+%\end{enumerate}
+
+
+\item[Zadanie 2]
+
+W problemie szeregowania zadań na $m$ \emph{niepowiązanych} maszynach
+dany jest ciąg zadań, gdzie zadanie $t$ jest zdefiniowane wektorem 
+$p_t = (p_{t,1}, p_{t,2}, \dots, p_{t,m})$: jeśli zadanie przypiszemy
+maszynie $j$, to jej obciążenie $\ell_j$ zwiększy się o $p_{t,j}$. 
+Celem jest minimalizacja $\max_{j=1}^m \ell_j$.
+Tak jak w przypadku algorytmu dla powiązanych maszyn chcemy stworzyć procedurę
+$\ALG_\lambda$, która będzie przypisywać zadania \emph{przy założeniu, że $\OPT \leq \lambda$}.
+
+
+Niech $y_{t,j} = 1$ jeśli zadanie $t$ przypisujemy do maszyny $j$, zaś $0$ w przeciwnym przypadku.
+W~kroku $k$ zdefiniujmy następujący program całkowitoliczbowy $\mathcal{P}^{\mathrm{int}}_k$, 
+którego celem jest maksymalizacja liczby przypisanych zadań.
+\begin{align*}
+\textnormal{maksymalizuj:} & \sum_{t=1}^k \sum_{j=1}^m y_{t,j} \enspace,& \\
+\textnormal{przy zachowaniu warunków: }
+	& \sum_{j=1}^m y_{t,j} \leq 1 & \textnormal{dla każdego $t \in \{1,\ldots,k\}$,} \\
+    & \sum_{t=1}^k p_{t,j} \cdot y_{t,j} \leq \lambda & \textnormal{dla każdego $j \in \{1,\ldots,m\}$,} \\
+	& y_{t,j} \in \{0,1\} & \textnormal{dla każdego $t \in \{1,\ldots,k\}, j \in \{1,\ldots,m\}.$} 
+\end{align*}
+
+Niech $\mathcal{P}_k$ będzie liniową relaksacją $\mathcal{P}^{\mathrm{int}}_k$,
+w którym warunek $y_{t,j} \in \{0,1\}$ 
+został zastąpiony przez $y_{t,j} \geq 0$
+(Warunek $y_{t,j} \leq 1$ jest zbędny, bo implikowany przez 
+$\sum_{j=1}^m y_{t,j} \leq 1$).
+Programem dualnym do $\mathcal{P}_k$ jest następujące zagadnienie minimalizacyjne $\mathcal{D}_k$:
+\begin{align*}
+\textnormal{minimalizuj: } & \sum_{j=1}^m \lambda \cdot x_j + \sum_{t=1}^k z_t \\
+\textnormal{przy warunkach: }
+	& z_t + p_{t,j} \cdot x_{j} \geq 1 & 
+	\textnormal{dla każdego $t \in \{1,\ldots,k\}, j \in \{1,\ldots,m\}.$} \\
+	& x_j \geq 0 & \textnormal{dla każdego $j \in \{1,\ldots,m\}$,} \\
+    & z_t \geq 0 & \textnormal{dla każdego $t \in \{1,\ldots,k\}$.} 
+\end{align*}
+
+\paragraph{Algorytm $\textsc{ALG}_\lambda$.}
+Na początku niech $x_j = 1/(2 \lambda \cdot m)$ dla każdego $j \in \{1, \dots, m\}$.
+W kroku $k$ niech $\mathcal{S}_k = \{ j :
+p_{k,j} \leq \lambda \}$. Następnie:
+\begin{itemize}
+\item Jeśli $\mathcal{S}_k = \emptyset$ lub jeśli $x_j > 1/\lambda$ dla pewnego $j$, to zwróć \texttt{FAIL}. 
+\item W przeciwnym
+przypadku niech $j^*$ będzie maszyną z $\mathcal{S}_k$ minimalizującą $p_{k,j^*} \cdot x_{j^*}$.
+\begin{enumerate}[i)]
+\item przypisz zadanie $k$ do maszyny $j^*$ 
+\item $z_t \leftarrow 1 - p_{k,j^*} \cdot x_{j^*}$
+\item $x_{j^*} \leftarrow x_{j^*} \cdot \left(1 + \frac{p_{k,j^*}}{2 \cdot \lambda} \right)$
+\end{enumerate}
+\end{itemize}
+
+\begin{enumerate}[a)]
+\item \textbf{(2 pkt.)} Załóżmy, że \ALG nie zwróci \texttt{FAIL}. Ustalmy $j$. Pokaż, że w dowolnym momencie zachodzi 
+\[
+		x_j \geq \frac{1}{2\lambda \cdot m} \cdot C^{\ell_j / \lambda}
+\]
+dla pewnego $C > 1$.\footnote{Wskazówka: hasło do wyszukiwarki ,,useful inequalities''.} 
+Wykorzystaj tę nierówność do pokazania, że $\ell_j = O(\log m) \cdot \lambda$.
+
+\item \textbf{(2 pkt.)} Załóżmy, że \ALG nie zwróci \texttt{FAIL}. Pokaż, że w dowolnego kroku $k$, \ALG generuje dopuszczalne rozwiązanie dla $\mathcal{D}_k$ i 
+zachodzi
+\[
+	\ALG(\mathcal{D}_k)	= k + 1 - \lambda \cdot \sum_{j=1}^m x_j.
+\]
+
+\item \textbf{(3 pkt.)} Pokaż, że jeśli \ALG zwróci \texttt{FAIL}, to \OPT nie jest w stanie przypisać wszystkich zadań 
+tak, żeby obciążenie każdej maszyny było co najwyżej $\lambda$.
+
+%Pokaż, że na końcu dowolnego kroku $k$ zachodzi $\ALG(\mathcal{D}_k) \leq 
+%O(\log d) \cdot \ALG(\mathcal{P}_k)$.
+%\item \textbf{(3 pkt.)} Pokaż, że w dowolnym kroku $k$ generowane przez algorytm rozwiązania 
+%$\ALG(\mathcal{P}_k)$ i $\ALG(\mathcal{D}_k)$ są dopuszczalne. Przydatna może być nierówność $\ln (1+y) \geq y/2$,
+%która jest prawdziwa dla $y \in [0,2]$.
+\end{enumerate}
+
+\end{description}
+
+\makefooter
+\end{document}
+

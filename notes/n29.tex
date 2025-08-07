@@ -1,0 +1,213 @@
+\section{Routing bez primal-dual}
+
+Niech $m = |E|$
+Skonstruujemy algorytm $O(U)$-konkurencyjny, jeśli $U \geq \log 2 m$. Da się go poprawić, żeby był 
+$O(\log m)$ konkurencyjny. 
+
+Intuicyjnie chcemy wybierać takie ścieżki, które omijają przeciążone krawędzie. 
+Z drugiej strony może to prowadzić do wyboru długich ścieżek. Nieopłacalne ścieżki będziemy odrzucać.
+Chcemy zatem optymalizować miarę $F_j = \sum_{e \in E} 2^{\ell_j(e)} - 1$.
+
+Nasz algorytm będzie sprawdzać w kroku $j$ czy istnieje ścieżka $P$ od $s_j$ do $t_j$, dla której
+zachodzi
+\[
+	\sum_{e \in P} 2^{\ell_{j-1}(e)} \leq m
+	\enspace,
+\]
+W takim przypadku akceptuje połączenie wybierając powyższą ścieżkę, inaczej połączenie jest odrzucane. Zauważmy, że
+algorytm zaakceptuje pierwszą podaną ścieżkę. Poniżej $T$ oznacza długość wejścia.
+
+\begin{lemma}
+Rozwiązanie generowane przez algorytm jest dopuszczalne.
+\end{lemma}
+
+\begin{proof}
+Ustalmy krawędź $e$. 
+Niech $P_k$ będzie ostatnią ścieżkę, która przechodzi przez $e$. 
+Ponieważ ścieżka ta została zaakceptowana zachodzi
+\[
+	\sum_{e \in P_k} 2^{\ell_{k-1}(e)} \leq m
+	\enspace,
+\]
+a zatem w szczególności $\ell_{k-1}(e) \leq \log m$ i stąd $\ell_k(e) = \ell_{k-1}(e)+1 \leq \log 2 m \leq U$.
+\end{proof}
+
+\medskip
+
+Zauważmy, że na początku $F_0 = 0$.
+Porównamy zysk \ALG i \OPT do~$F_T$.
+
+\begin{lemma}
+Niech $A$ będzie zbiorem połączeń zaakceptowanych przez \ALG. Wtedy 
+$m \cdot |A| \geq F_T$.
+\end{lemma}
+
+
+\begin{proof}
+Zauważmy, że jeśli \ALG odrzuca połączenie w kroku $j$ to $F_j = F_{j-1}$.
+Natomiast jeśli \ALG akceptuje połaczenie, to 
+\begin{align*}
+	F_j - F_{j-1} 
+	= \sum_{e \in P_j} \left( 2^{\ell_{j}(e)} - 2^{\ell_{j-1}(e)} \right) 
+	= \sum_{e \in P_j} 2^{\ell_{j-1}(e)} \leq m
+	\enspace.
+\end{align*}
+W ostatniej nierówności skorzystaliśmy z definicji algorytmu.
+\end{proof}
+
+
+\begin{lemma}
+Niech $B$ będzie zbiorem połączeń odrzuconych przez \ALG ale zaakceptowanych przez \OPT.
+Wtedy $m \cdot |B| \leq F_T \cdot U + U \cdot m$.
+\end{lemma}%
+\begin{proof}
+Weźmy dowolne połączenie $j \in B$, niech $P^*_j$ będzie ścieżką użytą przez \OPT. 
+Ponieważ \ALG odrzucił to żądanie, zachodzi
+\[
+	m < \sum_{e \in P^*_j} 2^{\ell_{j-1}(e)} \leq 
+	\sum_{e \in P^*_j} 2^{\ell_{T}(e)}
+	\enspace.
+\]
+Wysumujmy teraz powyższą nierówność po wszystkich $j \in B$. Ponieważ
+\OPT jest rozwiązaniem dopuszczalnym, każda krawędź pojawi się w sumie co najwyżej $U$ razy:
+\begin{align*}
+	m \cdot |B| < 
+	\sum_{j \in B} \sum_{e \in P^*_j} 2^{\ell_{T}(e)}
+	& = \sum_{e \in E} \sum_{j: e \in P^*_j} 2^{\ell_{T}(e)} 
+	\leq \sum_{e \in E} U \cdot 2^{\ell_{T}(e)} \\
+	& = \sum_{e \in E} U \cdot (2^{\ell_{T}(e)} - 1) + \sum_{e \in E} U \cdot 1 \\
+	& = U \cdot F_T + U \cdot m \enspace.
+	\qedhere
+\end{align*}
+\end{proof}
+
+\begin{theorem}
+Jeśli Algorytm jest ściśle $O(U)$-konkurencyjny.
+\end{theorem}
+
+\begin{proof}
+Używamy $|A| \geq 1$. Mamy
+$\OPT \leq |B| + |A| \leq U \cdot (F_t/m) + U + |A| \leq U \cdot |A| + U \cdot |A| + |A| = (2U+1) \cdot |A| 
+= (2U+1) \cdot \ALG$. 
+\end{proof}
+
+Dla $U \geq \log 2d$ można optymalizować $F_j = \sum_{e \in E} (4m)^{\ell_{j}(e) / U} - 1$ i cały dowód będzie 
+prawie identyczny, ale na końcu dostaniemy $O(\log m)$-konkurejncyjność.
+
+
+%Niech 
+%\[
+%	c_j(e) = (4d)^{\ell_{j}(e) / U} 
+%\]
+%(Zauważmy, że dla $U = \log 4d$ zachodzi $c_{j-1}(e) = 2^{\ell_{j-1}(e)}$).
+%Nasz algorytm będzie sprawdzać w kroku $j$ czy istnieje ścieżka $P$ od $s_j$ do $t_j$, dla której
+%zachodzi
+%\[
+%	\sum_{e \in P} c_{j-1}(e) \leq 2 d  
+%	\enspace,
+%\]
+%W takim przypadku akceptuje połączenie wybierając powyższą ścieżkę, inaczej połączenie jest odrzucane.
+%Poniżej $m$ oznacza długość wejścia.%
+
+%\begin{lemma}
+%Rozwiązanie generowane przez algorytm jest dopuszczalne.
+%\end{lemma}%
+
+%\begin{proof}
+%Ustalmy krawędź $e$.
+%Niech $P_k$ będzie ostatnią ścieżkę, która przechodzi przez $e$. Pokażemy, ze $\ell_k(e) \leq U$.
+%Ponieważ żądanie $k$ zostało zaakceptowane zachodzi	$\sum_{e \in P_k} c_{k-1}(e) \leq 2 d$
+%a zatem w szczególności $(4d)^{\ell_{k-1}(e) / U}  = c_{k-1}(e) \leq 2 d$.
+%	
+%A zatem bezpośrednio $\ell_{k-1}(e) / U < 1$. To jeszcze nie wystarcza, ale
+%\[
+%	(4d)^{\ell_{k}(e) / U} = (4d)^{\ell_{k-1}(e) / U} \cdot (4d)^{1/U} \leq 2d \cdot (4d)^{1/U}
+%	\leq 2d \cdot (4d)^{1/(4d)} = 4d
+%	\enspace,
+%\]
+%a zatem $\ell_{k}(e) \leq U$.
+%\end{proof}%
+
+%Będziemy teraz porównywać wielkość $\sum_e c_m(e)$ do zysku \ALG i \OPT.
+%Wartość $X_j(m) \sum_e c_m(e)$%
+
+%\begin{lemma}
+%Jeśli algorytm akceptuje połączenie %
+%
+
+%Niech $A$ będzie zbiorem zaakceptowanych połączeń.
+%Po wykonaniu algorytmu zachodzi $U \cdot \sum_e c_m(e) \leq 4 d \log 4 d \cdot |A|$.
+%\end{lemma}%
+%
+
+%\begin{lemma}
+%Niech $A$ będzie zbiorem zaakceptowanych połączeń.
+%Po wykonaniu algorytmu zachodzi $U \cdot \sum_e c_m(e) \leq 4 d \log 4 d \cdot |A|$.
+%\end{lemma}%
+
+%\begin{proof}
+%Pokażemy, że po zaakceptowaniu połączenia w kroku $j$ 
+%zachodzi
+%\begin{equation}
+%	U \cdot \sum_{e \in P_j} (c_j(e) - c_{j-1}(e)) \leq 4 d \log 4d
+%	\enspace.
+%\end{equation} 
+%Ta nierówność wysumowana po wszystkich akceptujących krokach da tezę lematu.%
+
+%Ustalmy dowolną krawędź $e \in P_j$. 
+%Wtedy 
+%\begin{align*}
+%c_j(e) - c_{j-1}(e)
+%	\leq &\; (4d)^{\ell_{j}(e) / U} - (4d)^{\ell_{j-1}(e) / U} \\
+%	= &\; (4d)^{\ell_{j-1}(e) / U} \cdot \left( (4d)^{1 / U} - 1 \right) \\
+%	= &\; (4d)^{\ell_{j-1}(e) / U} \cdot \left( 2^{\log (4d) / U} - 1 \right) \\
+%	\leq &\; (4d)^{\ell_{j-1}(e) / U} \cdot 2 \cdot \log (4d) / U
+%\end{align*}
+%(Druga nierówność wynika z $2^x - 1 \leq 2x$ dla dowolnego $x \in [0,1]$).
+%Sumując to po wszystkich krawędziach z $P_j$ otrzymujemy
+%\begin{align*}
+%	U \cdot \sum_{e \in P_j} (c_j(e) - c_{j-1}(e)) 
+%	\leq &\; 2 \cdot \log 4d \cdot \sum_{e \in P_j} (4d)^{\ell_{j-1}(e) / U}  \\
+%	\leq &\; 2 \cdot \log 4d \cdot 2 d 
+%	\enspace.
+%\end{align*}
+%W ostatniej nierówności skorzystaliśmy z definicji algorytmu.
+%\end{proof}%
+%
+
+%\begin{lemma}
+%Niech $B_m$ będą indeksami tych połączeń, które są odrzucone przez \ALG ale zaakceptowane przez \OPT.
+%Wtedy $d \cdot |B_m| \leq U \cdot \sum_e c_m(e)$.
+%\end{lemma}%
+
+%\begin{proof}
+%Dla każdego połączenia $j$ odrzuconego przez \ALG i puszczonego przez \OPT ścieżką $P^*_j$ zachodzi 
+%\[
+%	2 d < \sum_{e \in P^*_j} c_{j-1}(e) \leq \sum_{e \in P^*_j} c_m(e)
+%	\enspace.
+%\]
+%Wysumujmy teraz powyższą nierówność po wszystkich takich ścieżkach $P^*j$. Ponieważ
+%\OPT jest rozwiązaniem dopuszczalnym dla każdej krawędzi $e$ wyrażenie $c_m(e)$
+%pojawi się po prawej stronie co najwyżej $U$ razy.
+%\[
+%	2 d \cdot |B_m| < \sum_e U \cdot c_m(e) 
+%	\enspace.
+%	\qedhere
+%\]
+%\end{proof}%
+
+%\begin{theorem}
+%Algorytm jest $O(\log d)$-konkurencyjny.
+%\end{theorem}%
+
+%\begin{proof}
+%Niech $C = U \cdot \sum_e c_m(e) / d$. Wtedy
+%\[
+%	\OPT = |A_m| + |B_m| \leq C + |A_m| \leq (4 \log d + 1) \cdot |A_m| = (4 \log d + 1) \cdot \ALG 
+%\enspace.
+%\qedhere
+%\]
+%\end{proof}
+
+
+

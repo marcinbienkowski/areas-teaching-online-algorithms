@@ -1,0 +1,153 @@
+
+\section{Funkcje pracy: metryczne systemy zadań}
+
+\marginnote{W.9A}
+
+\problem{Metryczne systemy zadań}{
+Dany jest skończony zbiór stanów $S$ i metryka $d$ na tym zbiorze. Dany jest również stan początkowy $s_0 \in S$.
+W każdym kroku $t$ algorytm otrzymuje wektor kar $r_t$, określający ile trzeba zapłacić za bycie w danym stanie.
+Algorytm zmienia swój stan z $s_{t-1}$ do $s_t$ płacąc $d(s_{t-1},s_t)$ (możliwe, że $s_t = s_{t-1}$)
+a następnie płaci $r_t(s_t)$. 
+Należy zminimalizować sumaryczny koszt.
+}
+
+Pokażemy teraz $(2n-1)$-konkurencyjny algorytm dla metrycznych systemów zadań (dla dowolnej metryki). 
+\begin{itemize}
+\item Bez straty ogólności możemy pozwolić, żeby \OPT zmieniał stan również na końcu kroku (tj.~po zapłaceniu za żądanie).
+\item Bez straty ogólności, \OPT może zmieniać stan na końcu kroku $0$.
+\item Bez straty ogólności $\OPT$ zmienia stan tylko na końcu kroku.
+\end{itemize}
+
+Dla dowolnego kroku $t$ i stanu $x$ definiujemy funkcję pracy $w_t(x)$ jako minimalny koszt 
+obsłużenia sekwencji wejściowej do kroku $t$ włącznie i zakończenia w stanie $x$. 
+Wtedy $w_0(s) = d(s_0,s)$ oraz
+\begin{equation}
+	w_{t+1}(s) = \min_{x \in S} \{ w_t(x) + r_{t+1}(x) + d(x,s) \}
+	\enspace.
+\end{equation}
+Zauważmy, że dla sekwencji $\sigma$ o długości $m$ zachodzi $\OPT(\sigma) = \min_{s \in S} w_m(s)$ 
+(w szczególności $\OPT$ nie przesuwa się po ostatnim żądaniu).
+
+\subsection{Intuicje}
+
+\myparagraph{Ewolucja funkcji pracy}
+
+\begin{observation}
+\label{obs:wf1}
+Dla każdego czasu $t$ i pary stanów $x$ i $y$ zachodzi 
+$|w_t(x) - w_t(y)| \leq d(x,y)$
+\end{observation}
+
+\begin{observation}
+\label{obs:wf2}
+Dla każdego czasu $t$ i stanu $x$ zachodzi 
+$w_{t+1}(x) \leq w_t(x) + r_{t+1}(x)$.
+\end{observation}
+
+O ewolucji funkcji $w$ w czasie wygodnie myśleć w ten sposób, że w chwili $t+1$ obliczamy $w_{t+1}(\cdot)$ w następujący sposób. Najpierw obliczamy $\widetilde{w}_{t+1}(x) = w_t(x) + r_{t+1}(x)$. 
+Następnie jeśli jakieś wartości $\widetilde{w}_{t+1}$ są za duże, to je przycinamy: jeśli istnieje 
+para $y$ i $x$ taka, że $\widetilde{w}_{t+1}(y) > \widetilde{w}_{t+1}(x) + d(x,y)$ to przypisujemy
+$\widetilde{w}_{t+1}(y) \leftarrow \widetilde{w}_{t+1}(x) + d(x,y)$. Następnie wartości $\widetilde{w}_{t+1}(\cdot)$
+stają się wartościami $w_{t+1}(\cdot)$
+
+
+\myparagraph{Kombinacja liniowa funkcji pracy}
+%
+Na końcu kroku $t$ wartość optymalnego rozwiązania to $\min_{s \in S} w_t(s)$. 
+Ale biorąc pod uwagę \lref[Obserwację]{obs:wf1} zamiast minimum można rozważać dowolną 
+kombinację liniową $\sum_{i=1}^n p_i \cdot w_t(v_i)$ gdzie $\sum_{i=1}^n p_i = 1$. Kombinacja
+taka jest odległa od $\OPT$ o co najwyżej addytywny czynnik zależny od średnicy grafu.
+
+Wynika z tego, że niebezpieczne dla algorytmu są takie sytuacje, że ponosi on koszt, choć cała
+funkcja pracy pozostaje bez zmian. Albo gdy nie potrafimy powiązać jego kosztu ze zmianami funkcji pracy.
+
+Nazwijmy stan $x$ {\em górnym} w chwili $t$ jeśli
+$w_t(x) = w_t(y) + d(x,y)$ dla pewnego $y \neq x$. Problem pojawia się,
+jeśli algorytm jest i pozostaje w takim górnym stanie $x$ 
+i w kroku $t+1$ zachodzi $r_{t+1}(x) > 0$ i $r_{t+1}(y) = 0$, bo wtedy algorytm ponosi 
+koszt $r_{t+1}(x)$ natomiast funkcja pracy może się nie zmienić.
+Nasz algorytm będzie zatem pilnować, żeby kroku $t$ nigdy nie kończyć w górnym stanie.
+
+
+\subsection{Algorytm WFA}
+
+Zdefiniujemy algorytm {\WFA} ({\em work function algorithm}) dla kroku $t+1$. Dla uproszczenia 
+notacji w tej podsekcji będziemy zakładać, że $w = w_t$, $w' = w_{t+1}$, $s = s_t$, $s' = s_{t+1}$
+oraz $r = r_{t+1}$. 
+
+Algorytm jest w stanie $s$ na początku kroku. Następnie po obliczeniu 
+$w'(s)$ sprawdza jakie jest $\xi$, które ,,wyznaczyło'' wartość $w'(s)$, czyli $\xi$ spełniające
+\[
+	w'(s) = w(\xi) + r(\xi) + d(\xi,s)
+\]
+Może się wydarzyć, ze $\xi = s$. Jeśli jest wiele takich $\xi$ wybieramy jedno z nich. Następnie 
+(przed obsłużeniem żądania) algorytm zmienia stan na $\xi$, tj.~$s' = \xi$. 
+
+
+\subsection{Konkurencyjność WFA}
+
+\marginnote{W.9B}
+
+Sytuację dla $\xi \neq s$ ilustruje poniższy obrazek. 
+
+\myfigurehere{wfa}{\includegraphics{pict/wfa}}
+
+Jaka jest wartość $w'(\xi)$? Z definicji funkcji pracy $w'(\xi) \leq w(\xi) + r(\xi)$.
+Natomiast z \lref[Obserwacji]{obs:wf1} wynika, że $w'(\xi) \geq w'(s) - d(\xi,s) = w(\xi) + r(\xi)$.
+Stąd
+\[
+	w'(\xi) = w(\xi) + r(\xi)
+	\enspace.
+\]
+Czyli po przenosinach do wierzchołka $\xi$ płacimy tam tyle samo o ile wzrasta tam funkcja pracy ($r(\xi)$).
+Taka sama własność (bezpośrednio) zachodzi jeśli $\xi = s$. 
+
+\begin{lemma}
+$\WFA(t+1) = w_{t+1}(s_t) - w_t(s_{t+1})$
+\end{lemma}
+
+\begin{proof}
+Dowód obrazkowy: jeśli algorytm nie zmienia stanu ($s_{t+1} = s_t$), to płaci 
+$r(s_t) = w_{t+1}(s_t) - w_t(s_t)$. W przeciwnym przypadku płaci $d(s_t,s_{t+1}) + r(s_{t+1}) = w_{t+1}(s_t)
+-  w_t(s_{t+1})$ (patrz rysunek).
+
+Dowód syntaktyczny: $\WFA(t+1) = d(s_t,s_{t+1}) + r(s_{t+1}) = w_{t+1}(s_t) - w_t(s_{t+1})$ (gdzie 
+ostatnia równość wynika z definicji algorytmu).
+\end{proof}
+
+\begin{theorem}
+Algorytm $\WFA$ jest $2n$-konkurencyjny.
+\end{theorem}
+
+\begin{proof}
+Posumujmy koszt algorytmu po $m$ krokach
+\begin{align*}
+\WFA(\sigma) 
+	= &\; w_1(s_0) - w_0(s_1) \\
+	+ &\; w_2(s_1) - w_1(s_2) \\
+	+ &\; w_3(s_2) - w_2(s_3) \\
+	+ &\; ... \\
+	+ &\; w_{m-2}(s_{m-3}) - w_{m-3}(s_{m-2}) \\
+	+ &\; w_{m-1}(s_{m-2}) - w_{m-2}(s_{m-1}) \\
+	+ &\; w_m(s_{m-1}) - w_{m-1}(s_m) 
+\end{align*}
+Traktując pierwszy wyraz osobno, pomijając (ujemny) ostatni wyraz, oraz grupując dostajemy
+\begin{align*}
+\WFA(\sigma) 
+	\leq &\; w_1(s_0) + \sum_{t=0}^{m-2} \left( w_{t+2}(s_{t+1}) - w_t(s_{t+1}) \right) \\
+	= &\; \Delta w_1(s_0) + \sum_{t=0}^{m-2} \left( \Delta w_{t+2}(s_{t+1}) + \Delta w_{t+1}(s_{t+1}) \right)
+	\enspace,
+\end{align*}
+gdzie $\Delta w_t(s) = w_{t}(s) - w_{t-1}(s)$. 
+Zauważmy, że w powyższym wyrażeniu $w_t(\cdot)$ pojawia się co najwyżej $2$ razy dla każdego $v_i$ a stąd
+\begin{align*}
+\WFA(\sigma) 
+	\leq &\; \sum_{i=1}^n 2 \sum_{t=1}^T \Delta w_t(s_i) \\
+	= &\; \sum_{i=1}^n 2 w_T(s_i) \\
+	\leq &\; \sum_{i=1}^n 2 (\OPT(\sigma) + O(\textsc{diam}(G)) \\
+	= &\; 2n \cdot \OPT(\sigma) + O(n \cdot \textsc{diam}(G)) \,.
+\end{align*}
+
+Licząc dokładniej można pokazać, że $\WFA$ jest $(2n-1)$-konkurencyjny.
+\end{proof}
+

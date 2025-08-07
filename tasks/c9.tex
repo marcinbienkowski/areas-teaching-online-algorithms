@@ -1,0 +1,83 @@
+\documentclass[a4paper,11pt]{scrartcl}
+\input{macros}
+\begin{document}
+
+\makeheader{9}
+
+
+\newcommand{\CIRC}{\textsc{Circ}}
+
+\begin{description}
+
+\item[Zadanie 1] 
+Chcemy za pomocą jednej transakcji zamienić jedngo bitcoina na złotówki w ciągu najbliższych $T$ dni. 
+Każdego dnia dowiadujemy się, jaki jest kurs danego dnia; jest on 
+dowolną liczbą rzeczywistą z zakresu $[1,M]$. Wartości $T$ i $M$ są znane algorytmowi od początku.
+\begin{enumerate}[a)]
+\item \textbf{(1 pkt.)} Skonstruuj deterministyczny algorytm, który będzie  
+    ściśle $\sqrt{M}$-konkurencyjny.
+\item \textbf{(2 pkt.)} Skonstruuj randomizowany algorytm, który będzie  
+    ściśle $O(\log M)$-konkurencyjny.
+\end{enumerate}
+
+
+%\item[Zadanie 1] \textbf{(2 pkt.)}
+%Dla dowolnych dwóch punktów $x$ i $y$ na prostej przez $x \preceq y$ oznaczamy, że $x$
+%leży na lewo od $y$ lub w tym samym miejscu co $y$.  Ustalmy dowolną pozycję
+%punktów $a_1 \preceq a_2 \preceq \ldots \preceq a_k$ i $o_1 \preceq o_2 \preceq
+%\ldots \preceq o_k$. Załóżmy, że dla pewnych $i$ oraz $j$
+%zachodzi $a_j \preceq o_i \preceq a_{j+1}$. Pokaż, że istnieje doskonałe 
+%skojarzenie o minimalnej 
+%wadze między zbiorami $\{a_i\}_i$ i $\{o_i\}_i$, takie, że $o_i$ jest skojarzony albo 
+%z $a_j$ albo z $a_{j+1}$.
+
+
+\item[Zadanie 2] \textbf{(2 pkt.)}
+Rozważmy problem $k$ serwisantów na okręgu, tj.~przestrzeń, w której występują
+odwołania jest okręgiem, a~odległość między dwoma punktami okręgu
+jest najkrótszą odległością liczoną wzdłuż
+okręgu. Rozważmy następujący randomizowany algorytm $\CIRC$:
+\begin{quote}
+Na początku sekwencji wejściowej wybierz losowo jeden punkt $P$ z
+okręgu. $P$ jest barierą, która dzieli okrąg na odcinek  (o
+początku i końcu w punkcie $P$). Następnie do obsługi żądań $\CIRC$ uruchamia
+algorytm \textsc{Double Coverage} na tym odcinku (tj.~nigdy nie przekracza punktu
+$P$). 
+\end{quote}
+Pokaż, że $\CIRC$ jest $2 k$-konkurencyjny.
+
+
+\item[Zadanie 3] \textbf{(3 pkt.)}
+Rozważmy następujący algorytm rozwiązujący problem 2 serwisantów na płaszczyźnie 
+euklidesowej. Aby obsłużyć żądanie w punkcie $r$, algorytm wykonuje następujące kroki:
+\begin{enumerate}[i)]
+\item Niech $x$ będzie serwisantem bliższym $r$ zaś $y$ dalszym (remisy rozstrzygamy 
+dowolnie).
+\item Przesuń $y$ o $\frac{1}{2} \cdot (d(x,r) + d(x,y) - d(y,r))$ 
+w stronę $x$.\footnote{Na prostej algorytm zachowuje się jak \textsc{Double Coverage}.}
+\item Przesuń $x$ do $r$. 
+\end{enumerate}
+Pokaż że powyższy algorytm jest $O(1)$-konkurencyjny. \emph{Wskazówka:} wykorzystaj funkcję 
+potencjału podobną do tej wykorzystywanej w algorytmie \textsc{Double Coverage}. 
+
+
+\item[Zadanie 4] \textbf{(2 pkt.)}
+Rozważmy graf czterowierzchołkowy będący kwadratem o równych długościach
+krawędzi.  Rozważmy następujący algorytm randomizowany $\ALG$ dla problemu
+dwóch serwisantów w tym grafie.  $\ALG$ rozpoczyna z serwisantami w dwóch różnych
+wierzchołkach. Aby obsłużyć żądanie w punkcie $r$:
+\begin{enumerate}[i)]
+\item jeśli $\ALG$ ma serwisanta w $r$, to nic nie robi;
+\item w przeciwnym przypadku do $r$ przesuwany jest ten z serwisantów, który jest bliższy $r$;
+\item jeśli obaj serwisanci mają taką samą odległość do $r$, to serwisant do
+przesunięcia wybierany jest przez rzut monetą.
+\end{enumerate}
+Pokaż, że $\ALG$ jest $O(1)$-konkurencyjny. 
+Jakie jest najlepsze ograniczenie jakie potrafisz podać?
+
+
+\end{description}
+
+\makefooter
+\end{document}
+

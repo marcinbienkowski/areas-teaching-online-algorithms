@@ -1,0 +1,82 @@
+
+
+\section{Metoda obserwacji rozkładu prawdopodobieństwa}
+
+Choć adwersarz nie zna bitów losowych algorytmu, 
+może obliczyć jego rozkład prawdopodobieństwa. 
+
+\begin{theorem}
+\label{thm:rand_paging_lower_bound}
+Konkurencyjność każdego zrandomizowanego algorytmu dla problemu pamięci podręcznej wynosi co najmniej $H_k$.
+\end{theorem}
+
+Ustalmy dowolny algorytm zrandomizowany $\ALG$. 
+Pokażemy, jak adwersarz może wygenerować sekwencję $\sigma$ o dowolnie dużym koszcie dla algorytmu 
+optymalnego, taką że $\E[\ALG(\sigma)] / \OPT(\sigma)$ będzie dowolnie bliskie $H_k$. 
+W dowodzie będziemy wykorzystywać tylko strony o numerach $1,2,3, \ldots,k,k+1$. 
+Konstrukcja $\sigma$ składa się z prefiksu $1,2,3, \ldots,k,k+1$ po którym następuje ciąg faz. 
+Dla każdej fazy $f$ pokażemy, że $\E[\ALG(f)] \geq H_k$ oraz $\OPT(f) = 1$.
+Faza $f$ składać się będzie z $k$ podfaz $f_1, f_2, \ldots, f_k$. 
+
+\myparagraph{Idea}
+%
+Na początku podfazy $f_j$
+$j$ elementów będziemy nazywać pomalowanymi. W podfazie $f_j$ pytamy o te elementy wiele razy, 
+zmuszając $\ALG$ do utrzymania ich w cache. Następnie pytamy o niepomalowany element~$x$ (taki, do którego odwołanie spowoduje u $\ALG$ jak największy koszt) i malujemy $x$. 
+
+Element pomalowany na początku podfazy $f_1$ to ten do którego odwołanie było na końcu poprzedniej fazy.
+
+\myparagraph{Przykład}
+%
+Weźmy $k = 3$. Prefiks $\sigma$ to {\tt A B C D}. Pierwsza faza może wyglądać następująco
+\begin{quotation}
+{\tt | \{D\}$^*$ B | \{B,D\}$^*$ A | \{A,B,D\}$^*$ C |}
+\end{quotation}
+%
+Zauważmy, że jeśli $\ALG$ w podfazie $f_j$ ma wszystkie strony pomalowane, to istnieje taka 
+niepomalowana strona, której nie ma z prawdopodobieństwem $1/(k+1-j)$. Zatem taki algorytm 
+w fazie zapłaci $\sum_{j=1}^k 1/(k+1-j) = H_k$.
+
+\myparagraph{Górne ograniczenie na OPT}
+%
+Ustalmy fazę $f$. 
+Zauważmy, że faza poza ostatnim żądaniem (do $q_f$) składa się z $k$ różnych stron. Dodatkowo $q_f$ 
+jest różny od ostatniego żądania w poprzedniej fazie. Zatem $\OPT$ przy obsłudze 
+ostatniego żądania w poprzedniej fazie może wyrzucić $q_f$ z cache, obsłużyć całą fazę $f$ poza 
+ostatnim żądniem bezstratnie i zapłacić $1$ za $q_f$.
+
+\myparagraph{Dolne ograniczenie na ALG}
+%
+Wystarczy pokazać, że w podfazie $f_j$ możemy wymusić koszt $1/(k+1-j)$.
+
+Dla dowolnej strony $s$ niech $p_s$ będzie prawdopodobieństwem, że $\ALG$ nie ma tej strony 
+w pamięci podręcznej. Oczywiście $\sum_s p_s = 1$. 
+Niech $M$ będzie zbiorem stron pomalowanych na początku podfazy $f_j$; $|M| = j$.
+Rozważamy dwa przypadki
+\begin{enumerate}
+\item $\sum_{s \in M} p_s = 0$. Oznacza to, że algorytm ma wszystkie pomalowane strony
+	w swojej pamięci podręcznej (dowolny algorytm zaznaczający miałby taką własność). 
+	Podfaza $f_j$ to po prostu odwołanie do strony $a = \arg \max_{s} \{ p_s \}$. 
+	Wtedy $\E[\ALG] = p_a \geq 1/(k+1-|M|) = 1/(k+1-j)$. 
+	
+\item $\sum_{s \in M} p_s > 0$. 
+	Niech $\varepsilon = \max_{m \in M} p_m$. 
+	Adwersarz wykonuje następującą pętlę: dopóki $\sum_{s \in M} p_s \geq \varepsilon$ i 
+	$\E[\ALG(f_j)] < 1/(k+1-j)$, pytamy o najbardziej ,,prawdopodobną'' pomalowaną stronę. 
+	Po wyjściu z pętli adwersarz pyta o $a = \arg \max_{s} \{ p_s \}$. 
+
+	Po pierwsze zauważmy, że pętla zawsze się kończy: w każdym kroku istnieje strona $b \in M$, dla 
+	której $p_b \geq \sum_{s \in M} p_s / |M| > \varepsilon / |M|$, 
+	więc koszt $\ALG$ w końcu osiąga zadaną wartość.
+	\begin{itemize}
+	\item Jeśli pętla kończy się, gdyż koszt $\E[\ALG] \geq 1/(k+1-i)$, 
+	to ograniczenie zachodzi trywialnie.
+	\item Jeśli pętla kończy się, gdyż $\sum_{s \in M} p_s < \varepsilon$, 
+	to wtedy patrzymy na oczekiwany koszt $\ALG$ związany z odwołaniem do strony $m$ i strony $a$:
+	\[	
+		p_m + p_a \geq \varepsilon + \frac{1-\varepsilon}{k+1-|M|} \geq \frac{1}{k+1-|M|} = 
+			\frac{1}{k+1-j}
+		\enspace.
+	\]
+	\end{itemize}
+\end{enumerate}

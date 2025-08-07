@@ -1,0 +1,174 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{K-Server: Algorytm Balance}
+
+W tej sekcji pokażemy, że algorytm \textsc{Balance} jest $k$-konkurencyjny dla dowolnych $k+1$-punktowych 
+przestrzeni metrycznych. Definiujemy $D(v_i)$ jako długość drogi, którą przebył serwer obecnie znajdujący się 
+w wierzchołku $v_i$ (jest tylko jeden taki serwer). 
+Najpierw pokażemy następujący lemat.
+
+\vspace{0.3cm}
+\begin{lemma}
+\label{lem:balance}
+Dla dowolnych $v_i$ i $v_j$, w których są jakieś serwery zachodzi
+\[
+	|D(v_i) - D(v_j)| \leq d(v_i, v_j)
+\]
+\end{lemma}
+
+\begin{proof}
+Udowodnimy ten lemat przez indukcję względem liczby kroków. 
+Na początku $D(\cdot) \equiv 0$ i nierówność jest trywialnie spełniona.
+Załóżmy, że nierówność jest spełniona do początku pewnego kroku i pokażemy, że zachodzi też na jego końcu.
+Bez straty ogólności możemy założyć, że na początku kroku serwera nie ma w punkcie $v_0$. Jeśli żądanie przychodzi
+z wierzchołka innego niż $v_0$, $\BAL$ nie przesuwa żadnego ze swoich serwerów; możemy zatem założyć, że 
+żądanie jest w wierzchołku $v_0$. Załóżmy, że $\BAL$ przesuwa do $v_0$ serwer, który był do tej pory w $v_\ell$. 
+
+Dla porządku będziemy oznaczać wartości $D$ na końcu kroku przez $D'$.
+Zauważmy, że dla $i \neq 0,\ell$ wartość $D'(v_i)$ jest taka sama jak $D(v_i)$ oraz $D'(v_0) = D(v_\ell) + 
+d(v_0, v_\ell)$.\footnote{$D(v_0)$ było niezdefiniowane, na końcu kroku $D'(v_\ell)$ jest 
+niezdefiniowane.} Zatem wystarczy pokazać, że na końcu kroku $|D'(v_0) - D'(v_j)| \leq d(v_0, v_j)$ zachodzi
+dla dowolnego $j \neq 0,\ell$.
+
+Z założenia indukcyjnego oraz nierówności trójkąta otrzymujemy
+\begin{align}
+\label{eq:distance_bounded_1}
+	D'(v_j) - D'(v_0) &\;=\; D(v_j) - D(v_\ell) - d(v_0, v_\ell) \;\leq\; d(v_j,v_\ell) - d(v_0, v_\ell)
+	\;\leq\; d(v_j, v_0) 
+	\enspace.
+%\end{align*}
+\intertext{Z drugiej strony}
+%\begin{align*}
+\nonumber
+	D'(v_0) - D'(v_j) & \;=\; D(v_\ell) + d(v_0, v_\ell) - D(v_j) \enspace.
+\intertext{
+Ponieważ $v_\ell$ został wybrany przez algorytm $\BAL$ do przesunięcia, musiała zachodzić nierówność 
+$D(v_\ell) + d(v_\ell,v_0) \leq D(v_j) + d(v_j,v_0)$. 
+Zatem}
+\label{eq:distance_bounded_2}
+	D'(v_0) - D'(v_j) & \;\leq\; D(v_j) + d(v_0, v_j) - D(v_j) = d(v_0,v_j) \enspace.
+\end{align}
+Z nierówności \ref{eq:distance_bounded_1} i \ref{eq:distance_bounded_2} wynika teza lematu.
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Zauważmy, że $\BAL$ zawsze pokrywa swoimi serwerami $k$ wierzchołków. Niepokryty wierzchołek nazywamy 
+{\em dziurą}. Wierzchołek, w którym $\BAL$ ma obecnie dziurę będziemy oznaczać przez $\curr$ a wierzchołek,
+w którym $\BAL$ miał poprzednio dziurę nazywamy $\prev$. Oznacza to, że ostatnim przesunięciem jakie 
+$\BAL$ wykonał były przenosiny serwera z wierzchołka $\curr$ do wierzchołka $\prev$.
+Przyglądając się bliżej nierówności \ref{eq:distance_bounded_1} można zauważyć następującą rzecz.
+
+\vspace{0.3cm}
+\begin{observation}
+\label{obs:balance}
+Dla dowolnego $v_j$, w którym jest serwer (tj.~różnym od $\curr$) zachodzi
+\[
+	D(v_j) - D(\prev) \leq d(v_j,\curr) - d(\curr,\prev) \enspace.
+\]
+\end{observation}
+
+\begin{proof}
+Jeśli $v_j = \prev$, to powyższa nierówność jest spełniona trywialnie. W przeciwnym przypadku 
+obserwacja wynika z nierówności \ref{eq:distance_bounded_1} po podstawieniu $\prev$ pod $v_\ell$ i 
+$\curr$ pod~$v_0$.
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\vspace{0.3cm}
+\begin{theorem}
+Algorytm $\BAL$ jest $k$-konkurencyjny dla dowolnych $k+1$-punktowych przestrzeni metrycznych.  
+\end{theorem}
+
+\begin{proof}
+Zauważmy, że istnieje algorytm optymalny, który jest leniwy, zatem 
+$\OPT$ ma też jedną dziurę. Niech $S = \sum_{v_i \neq \curr} D(v_i)$. 
+Zdefiniujmy następującą funkcję potencjału 
+\[
+	\Phi = \begin{cases}
+		k \cdot (D(\prev) - d(\curr,\prev)) - S & \textnormal{jeśli dziura $\OPT$ jest w $\curr$} \enspace, \\
+		k \cdot D(v) - S & \textnormal{jeśli dziura $\OPT$ jest w $v \neq \curr$} \enspace.
+	\end{cases}
+\]
+Zauważmy, że funkcja $\Phi$ nie jest zdefiniowana dopóki $\BAL$ nie wykona pierwszego przesunięcia serwera
+(załóżmy, że zachodzi to w kroku $t_0$).
+Dodatkowo w przeciwieństwie do poprzednio rozważanych funkcji potencjału $\Phi$ niekoniecznie jest nieujemna. 
+Jednak na mocy lematu \ref{lem:balance}, $\Phi$ jest ograniczona od dołu przez wielkości niezależne od 
+sekwencji wejściowej. Zatem istnieje takie $F_1$ (będące funkcją odległości punktów w metryce), 
+że $\Phi \geq F_1$. 
+
+Koszt algorytmu $\BAL$ do momentu pierwszego przesunięcia serwera jest ograniczony; 
+oznaczmy to ograniczenie przez $F_2$.
+Jeśli pokażemy, że w każdym kroku $t \geq t_0$ zachodzi 
+\begin{equation}
+\label{eq:bal_competitive}
+\BAL(t) + \Delta\Phi(t) \leq k \cdot \OPT(t) \enspace,
+\end{equation}
+to otrzymamy, że dla dowolnej sekwencji wejściowej $\sigma$ zachodzi
+\[ \BAL(\sigma) \leq k \cdot \OPT(\sigma) + F_2 - F_1 \enspace,\]
+czyli że algorytm $\BAL$ jest $k$-konkurencyjny (choć niekoniecznie ściśle $k$-konkurencyjny).
+
+Zauważmy, że jeśli odwołanie jest w wierzchołku różnym od dziury $\curr$, to $\BAL$ nie przesuwa żadnego 
+z serwerów, jego koszt jest równy zero, wierzchołki $\curr$, $\prev$ i wartości $D(\cdot)$ pozostają takie 
+same, a więc $\Delta\Phi = 0$. Koszt algorytmu optymalnego jest oczywiście nieujemny, a zatem
+nierównośc $\ref{eq:bal_competitive}$ jest trywialnie spełniona.
+
+Poniżej będziemy zatem zakładać, że żądanie występuje w wierzchołku $\curr$. 
+Rozbijemy (tak, znowu) operacje w kroku $t \geq 2$ na dwie akcje.
+
+\begin{description}
+\item[\textnormal{\em Akcja 1, ruch $\OPT$.}] 
+	Jeśli na początku ruchu $\OPT$ nie ma dziury w wierzchołku w wierzchołku $\curr$, to ponieważ jest 
+	algorytmem leniwym, to nic nie robi, potencjał pozostaje niezmieniony 
+	i nierówność \ref{eq:bal_competitive} jest trywialnie spełniona.
+	Załóżmy więc, że $\OPT$ przesuwa jeden ze swoich serwerów  
+	z wierzchołka $v_j$ do wierzchołka $\curr$, płacąc $d(v_j,\curr)$.
+	Pokażemy, że potencjał wzrasta co najwyżej o $k \cdot d(v_j,\curr)$. 
+
+	Przed ruchem potencjał jest równy $k \cdot (D(\prev) - d(\curr,\prev)) - S$,
+	natomiast po ruchu jest równy $k \cdot D(v_j) - S$. Zatem
+	\[
+		\Delta\Phi = k \cdot \left(\,D(v_j) - D(\prev) + d(\curr,\prev)\,\right) 
+		\leq k \cdot d(v_j,\curr) \enspace,
+	\]
+	gdzie ostatnia nierówność wynika z obserwacji \ref{obs:balance}.
+	
+\item[\textnormal{\em Akcja 2, ruch $\BAL$.}]
+	Na początku tej akcji $\OPT$ ma już serwer w punkcie $\curr$ (a jego dziura --- używając 
+	oznaczenia z poprzedniego przypadku --- jest w punkcie $v_j$) 
+	Stąd potencjał na początku tej akcji wynosi $\Phi_\textnormal{B} = k \cdot D(v_j) - S$.
+	Niech $S'$ oznacza wartość $S$ po ruchu $\BAL$; 
+	łatwo zauważyć, że $S' = S + d(v_\ell, \curr)$, gdzie $v_\ell$ jest pozycją serwera, który jest
+	przesuwany do wierzchołka $\curr$. Z tego przesunięcia wynika, że 
+	\[
+		D'(\curr) = D(v_\ell) + d(v_\ell,\curr) \enspace.
+	\]
+	Dodatkowo po przesunięciu wierzchołki $\prev$ i $\curr$ zmieniają się:
+	\begin{align*}
+		\curr' = v_\ell & & \prev' = \curr 
+	\end{align*}
+	%
+	Jeśli $v_\ell = v_j$, nowa dziura algorymu $\BAL$ tworzy się w tym samym miejscu co dziura $\OPT$.
+	Wtedy potencjał na końcu ruchu wynosi 
+	\begin{align*}
+		\Phi_\textnormal{F} \;
+		 & =\; k \cdot (D'(\prev') - d(\curr', \prev')) - S' \\
+		 & =\; k \cdot (D'(\curr) - d(v_\ell, \curr)) - S'  \\
+		 & =\; k \cdot D(v_\ell) - (S+d(v_\ell,A)) \\
+		 & =\; \Phi_\textnormal{B} - d(v_\ell,A) 
+		\enspace.
+	\end{align*}
+	%
+ 	W drugim przypadku $v_\ell \neq v_j$.  Wtedy potencjał na końcu wynosi $\Phi_\textnormal{F} = 
+	k \cdot D(v_j) - S'$, czyli również jest mniejszy od $\Phi_\textnormal{B}$ o $d(v_\ell,A)$.
+
+	Pokazaliśmy więc, że zmniejszenie się potencjału pokrywa koszt algorytmu.
+
+\end{description}
+Zatem w każdym przypadku nierówność \ref{eq:bal_competitive} zachodzi.
+\end{proof}
+

@@ -1,0 +1,78 @@
+\documentclass[a4paper,11pt]{scrartcl}
+\input{macros}
+\begin{document}
+\makeheader{7}
+
+\begin{description}
+
+\item[Zadanie 1] \textbf{(4 pkt.)}
+Rozważmy wariant ułamkowy problemu kupowania nart: w każdym dniu algorytm 
+wybiera jaki ułamek nart $x \in [0,1]$ chce posiadać. Wartość $x$ można tylko 
+zwiększać, tj.~nie można nart (częściowo) odsprzedawać. 
+Następujący program liniowy $(\mathcal{P}_k)$ opisuje 
+ten problem po $k$ dniach, gdzie $z_j$ jest ułamkiem nart, który pożyczymy dnia $j$.
+\begin{align*}
+\textnormal{minimalizuj: } & B \cdot x + \sum_{j=1}^k z_j & \\
+\textnormal{przy warunkach: }
+    & x + z_j \geq 1 & \textnormal{dla każdego dnia $j \leq k$} \\
+    & x \geq 0, \enspace z_j \geq 0 &  
+\end{align*}
+Zauważmy, że program dualny wygląda następująco $(\mathcal{D}_k)$:
+\begin{align*}
+\textnormal{maksymalizuj: } & \sum_{j=1}^k y_j & \\
+\textnormal{przy warunkach: }
+	& \sum_{j=1}^k y_j \leq B \\
+    & 0 \leq y_j \leq 1 & \textnormal{dla każdego dnia $j \leq k$} 
+\end{align*}
+
+Rozważmy następujący algorytm dla tego problemu. Początkowo ustalamy $x = 0$. 
+W dniu $k$, jeśli $x \geq 1$, wykonujemy przypisania 
+\begin{align*} 
+z_k \leftarrow 0 \enspace, 
+\hspace{0.5cm} 
+y_k \leftarrow 0 \enspace,
+\end{align*}
+zaś w przeciwnym przypadku ($x < 1$) przypisania
+\begin{align*} 
+z_k \leftarrow 1-x \enspace,
+\hspace{0.5cm} 
+x \leftarrow (1+1/B) \cdot x + c \enspace,
+\hspace{0.5cm} 
+y_k \leftarrow 1 \enspace.
+\end{align*}
+gdzie $c$ jest pewną stałą. Jakie może być $c$, żeby generowane rozwiązania dla 
+$(\mathcal{P}_k)$ i $(\mathcal{D}_k)$ były dopuszczalne? Jak współczynnik (ścisłej) konkurencyjności 
+rozwiązania zależy od $c$? Pokaż, że można tak dobrać $c$, żeby współczynnik był równy
+\[ 
+	R = \frac{(1+1/B)^B}{(1+1/B)^B-1} 
+	\enspace.
+\]
+
+\item[Zadanie 2] \textbf{(2 pkt.)}
+Rozważmy następujące losowe zaokrąglenie podejścia opisanego w poprzednim
+zadaniu. Na początku algorytm wybiera losowo liczbę $\alpha \in [0,1]$.
+Następnie symuluje algorytm ułamkowy i w kroku, w którym nowo obliczona wartość
+$x$ wynosi co najmniej $\alpha$, kupuje narty. Pokaż, że konkurencyjność takiego
+algorytmu jest nie większa niż konkurencyjność rozwiązania ułamkowego.
+
+\item[Zadanie 3] \textbf{(2 pkt.)}
+Rozważ algorytm dla ułamkowego wariantu problemu pokrywania zbiorami, który w każdym kroku aktualizuje
+obecne rozwiązanie zachłannie minimalizując przyrost kosztu. Pokaż dolne ograniczenie $\Omega(n)$
+na ścisłą konkurencyjność takiego algorytmu, gdzie $n$ jest liczbą elementów uniwersum.
+% Jeden zbior ktory ma wszystkie elementy o koszcie 1+eps, wszystkie inne zbiory sa singletonami 
+% o kosztach = 1. Algorytm zawsze bierze te singletony.
+
+
+\item[Zadanie 4] \textbf{(2 pkt.)}
+Rozważmy program prymalny i dualny (z wykładu) dla ułamkowego wariantu problemu pokrywania zbiorami. 
+Nie korzystając ze słabego twierdzenia o dualności pokaż, że wartość dowolnego rozwiązania 
+dla programu prymalnego jest co najmniej taka jak wartość dowolnego rozwiązania programu 
+dualnego.\footnote{Rozwiązaniem tego zadania jest dowód słabego twierdzenia o dualności, 
+ale wykorzystujący konkretne zmienne i nierówności z problemu pokrywania zbiorami.}
+
+
+\end{description}
+
+\makefooter
+\end{document}
+

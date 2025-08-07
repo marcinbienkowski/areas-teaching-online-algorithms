@@ -1,0 +1,186 @@
+
+\section{Zasada zaznaczania: MTS. Funkcje potencjału: reorganizacja listy}
+\marginnote{W.3A\\+10m}
+
+\subsection{MTS}
+
+\problem{Metryczne systemy zadań}{
+Dany jest skończony zbiór stanów $S$ i metryka $d$ na tym zbiorze. Dany jest również stan początkowy $s_0 \in S$.
+W każdym kroku $t$ algorytm otrzymuje wektor kar $r_t$, określający ile trzeba zapłacić za bycie w danym stanie.
+Algorytm zmienia swój stan z $s_{t-1}$ do $s_t$ płacąc $d(s_{t-1},s_t)$ (możliwe, że $s_t = s_{t-1}$)
+a następnie płaci $r_t(s_t)$. 
+Należy zminimalizować sumaryczny koszt.
+}
+
+\begin{observation}
+SRP to MTS
+\end{observation}
+
+\begin{observation}
+Problem pamięci podręcznej to MTS
+\end{observation}
+
+Algorytm zaznaczający dla metryki uniform (koszt zmiany stanu = $D$) 
+i jednostkowych kosztów ($r_t \in \{0,1\}^n$), gdzie $n = |S|$:
+Działamy w epokach. Na końcu kroku, w którym suma kar w epoce w stanie $s_i$ przekracza $D$ zaznaczamy 
+stan $s_i$. Jeśli algorytm jest w takim wierzchołku to zmienia stan na dowolny niezaznaczony. 
+Jeśli wszystko staje się zaznaczone, to kończymy epokę i odznaczamy wszystkie stany.
+
+Przykład epoki dla $D = 3$
+
+\begin{verbatim}
+ |s|s|s|s|s|s|
+ |1|2|3|4|5|6|
+---------------
+ |1| |1| | | |
+ | |1|1| |1|1|
+ |1|1| | |1| |
+ | |X| |1| |1|
+ |X|1| | | |X|
+ | |1|X|1|X|1|
+ |1| | |X| | |  
+--------------
+\end{verbatim}
+
+\begin{theorem}
+Algorytm zaznaczający jest $O(n)$-konkurencyjny.
+\end{theorem}
+
+W dowodzie pokazujemy, że:
+\begin{enumerate}
+\item Dla dowolnej epoki $E$, $\OPT(E) \geq D$.
+\item Algorytm płaci co najwyżej $n \cdot D$ (za przenosiny) i $n \cdot D$ (za obsługę żądań).
+\end{enumerate}
+
+
+\subsection{Reorganizacja listy}
+
+Mamy daną listę jednokierunkową ze wskaźnikiem na początek tej listy. Załóżmy,
+że lista ma w danej chwili długość $\ell$. Definiujemy na liście operację
+$\mathsf{Access}(x)$, która kosztuje $i$ jeśli $x$ jest na miejscu $i$-tym w
+liście.
+
+\problem{Reorganizacja listy}{
+Wejście dla problemu składa się z sekwencji operacji {\sf Access}.
+Bezpośrednio po operacji $\mathsf{Access}(x)$, można za darmo przesunąć $x$ na
+dowolne miejsce bliżej początku listy. Następnie można dokonać płatnych
+zamian: zamiana dwóch sąsiednich elementów kosztuje~$1$. Należy zminimalizować
+sumaryczny koszt wszystkich operacji.
+}
+
+Płatne zamiany: my nie będziemy tego robić, OPT może.
+
+Są trzy naturalne algorytmy: \textsc{Move-To-Front}, \textsc{Transpose} i \textsc{Frequency Count}. 
+Który jest najlepszy?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Dolne ograniczenie: argument o średniej}
+
+\begin{theorem}
+Współczynnik konkurencyjności dowolnego algorytmu deterministycznego wynosi co najmniej $2 - 2/(\ell+1)$.
+\end{theorem}
+
+\begin{proof}
+Ustalmy dowolny algorytm deterministyczny $\DET$ i dowolną listę początkową o długości~$\ell$. 
+Ustalmy dowolne $m$, które będzie długością sekwencji wejściowej $\sigma$.
+Wszystkie żądania będą dotyczyć ostatniego elementu na liście. Zatem $\DET(\sigma) = \ell \cdot m$.
+
+Do ograniczenia $\OPT$ wykorzystamy 
+$\ell!$ ,,statycznych'' algorytmów $\STAT_\pi$. Taki algorytm ustala na samym początku 
+permutację $\pi$ elementów na liście i nigdy go potem nie zmienia. 
+Maksimum ich kosztów związanych z~początkową reorganizacją listy oznaczmy przez $b$; $b = \O(\ell^2)$.
+Mamy 
+\[ 
+	\sum_\pi \STAT_\pi(\sigma) \leq \sum_\pi \left(b + \sum_{t=1}^m \STAT_\pi(\sigma_t) \right)
+	= b \cdot \ell! + \sum_{t=1}^m \sum_\pi \STAT_\pi(\sigma_t)
+	\enspace.
+\]
+Czym jest $\sum_\pi \STAT_\pi(\sigma_t)$? 
+W kroku $t$ $(\ell-1)!$ algorytmów ma $\sigma_t$ na pierwszej pozycji, $(\ell-1)!$ algorytmów ma
+$\sigma_t$ na drugiej pozycji itd. Stąd $\sum_\pi \STAT_\pi(\sigma_t) = (\ell-1)! \cdot \ell \cdot (\ell+1) / 2$. Oczywiście $\OPT$ jest nie gorszy niż najtańsze rozwiązanie $\STAT_\pi$, a zatem
+\[
+	\OPT(\sigma) \leq \min_\pi \;\STAT_\pi(\sigma) 
+		\leq \frac{\sum_\pi \STAT_\pi(\sigma)}{\ell!} \leq b + m \cdot (\ell+1) / 2 \enspace.
+\]  
+Otzymujemy zatem $\lim_{m \to \infty} \DET(\sigma) / \OPT(\sigma) = 2 \ell / (\ell + 1) = 2 - 2 /(\ell+1)$.
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Algorytm Move-To-Front}
+\marginnote{W.3B}
+
+W tej części rozważamy Algorytm $\MTF$ ({\sc Move-To-Front}), który po każdym żądaniu $\sigma_t$
+przenosi $\sigma_t$ (za darmo) na początek listy. 
+
+\begin{theorem}
+Algorytm $\MTF$ jest ściśle $2$-konkurencyjny.
+\end{theorem}
+
+Jaka jest idea dowodów z potencjałem?
+
+\begin{proof}
+Ustalmy dowolną sekwencję wejściową $\sigma$ o długości $m$. Będziemy śledzić 
+działanie algorytmu optymalnego $\OPT$ i algorytmu $\MTF$ na tej sekwencji i porównywać ich koszty.
+W tym celu zdefiniujemy następującą funkcję potencjału. 
+
+{\em Inwersja} jest to para elementów $x$ i $y$, taka, ze $x$ pojawia się przed $y$ w liście
+algorytmu $\MTF$, ale po~$y$ w liście algorytmu $\OPT$. Potencjał w kroku $t$, oznaczany
+przez $\Phi(t)$ definiujemy jako liczbę inwersji w kroku $t$. Zauważmy, że $\Phi$ 
+jest zawsze nieujemne, a jeśli $\MTF$ i $\OPT$
+zaczynają od takich samych list (np.~od pustych) to $\Phi_0 = 0$. 
+Udowodnimy, że w dowolnym kroku $1 \leq t \leq m$ zachodzi
+\begin{equation}
+\label{eq:mtf_competitive}
+	\MTF(t) + \Phi(t) - \Phi(t-1) \leq 2 \cdot \OPT(t) 
+\end{equation}
+Jeśli zsumujemy powyższą nierówność po wszystkich krokach $t$ otrzymamy 
+$\MTF(\sigma) + \Phi(m) - \Phi(0) \leq 2 \cdot \OPT(\sigma)$, czyli 
+$\MTF(\sigma) \leq 2 \cdot \OPT(\sigma)$. 
+
+Zauważmy, że jeśli nie wymagamy ścisłej konkurencyjności, powyższy rezultat zachodzi nawet gdy 
+$\MTF$ i $\OPT$ startują z różnych ustawień początkowych; 
+w takim przypadku $\Phi(0) \neq 0$, ale możemy umieścić $\Phi(0)$ w stałej
+addytywnej z definicji konkurencyjności. 
+
+W pozostałej części dowodu pokażemy nierówność (\ref{eq:mtf_competitive}). 
+Zauważmy, że dowolny krok $t$ możemy podzielić na dwie akcje:
+\begin{enumerate}
+\item Algorytmy $\MTF$ i $\OPT$ płacą za żądanie występujące w kroku $t$. 
+	Następnie $\MTF$ dokonuje ewentualnej (darmowej) zamiany. 
+	i $\OPT$ dokonuje swojej (ewentualnej) darmowej zamiany.
+\item $\OPT$ dokonuje swoich płatnych zamian.
+\end{enumerate}
+Dla każdej akcji z osobna udowodnimy, ze (\ref{eq:mtf_competitive}) zachodzi.
+
+\myfigurehere{mtf}{\includegraphics{pict/bit}}
+
+Można zrobić tutaj dokładniejszą analizę, co się dzieje z inwersjami różnego typu.
+
+\myparagraph{Dowód dla pierwszej akcji}
+%
+Niech $A$ będzie liczbą elementów, które poprzedzają $\sigma_t$ w liście $\MTF$ i liście $\OPT$.
+Niech $B$ będzie liczbą elementów, które poprzedzają $\sigma_t$ w liście $\MTF$, ale występują po 
+	$\sigma_t$ w liście $\OPT$. Wtedy mamy
+	\[
+		\MTF(t) \;=\; A + B + 1	\enspace, \enspace \enspace \enspace \OPT(t) \;\geq\; A + 1 \enspace.
+	\]
+	Jaki jest koszt i zmiana potencjału związana z reorganizacją listy? Zgodnie z założeniem 
+	algorytmy $\MTF$ i $\OPT$ dokonują darmowych zamian. 
+	Przy przesuwaniu $x_t$ na początek listy~$\MTF$ usuwamy $B$ inwersji i wprowadzamy co najwyżej $A$ nowych. 
+	Zatem zmiana potencjału związana z reorganizacją listy algorytmu $\MTF$ jest ograniczona 
+		z góry przez $A-B$. Zatem
+	\[
+		\MTF(t) + \Delta\Phi(t) \;\leq\; 2 A + 1 \;\leq\; 2 \cdot \OPT(t) - 1
+	\]
+
+Udowodniliśmy, że (\ref{eq:mtf_competitive}) zachodzi też dla pierwszej akcji.
+
+\myparagraph{Dowód dla drugiej akcji}
+%
+Niech $P$ oznacza liczbę płatnych zamian wykonywanych przez algorytm $\OPT$, tj. $\OPT = P$.
+Każda taka zamiana sąsiednich elementów powoduje wzrost potencjału o co najwyżej $1$. Zatem całkowity 
+wzrost potencjału $\Delta\Phi$ związany z tą akcją jest ograniczony z góry przez koszt $\OPT$.
+\end{proof}
+

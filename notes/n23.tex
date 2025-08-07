@@ -1,0 +1,124 @@
+\section{Routing: Optymalizacja obciążenia}
+
+Dla dowolnej krawędzi $e$ definiujemy {\em obciążenie krawędzi} $B(e) = | \{ j : e \in P_j \} |$ 
+jako liczbę przechodzących przez nią scieżek. 
+
+
+\problem{Optymalizacja obciążenia}{
+Dany jest graf $G=(V,E)$. Wejście składa się z par $(s_j,t_j)$, dla których algorytm wybiera ścieżkę $P_j$.
+Celem jest minimalizacja maksymalnego obciążenia krawędzi, tj.~$\max_e B(e)$. Tę ostatnią wielkość nazywamy 
+po prostu {\em obciążeniem}.
+}
+
+Jeśli popatrzymy na ten problem w sposób przyrostowy, to chcielibyśmy 
+śledzić wartość naszego rozwiązania (czyli obecnie maksymalnego obciążenia) i patrzeć w jaki sposób zmieni się ono 
+jeśli wybierzemy kolejna ścieżkę. Chcielibyśmy, żeby wartość tego rozwiązania nie wzrastała wtedy 
+albo żeby wzrastała o mały składnik, który jesteśmy w stanie porównać do wzrostu 
+kosztu rozwiązania optymalnego. 
+
+Zauważmy jednak, że jeśli chcemy optymalizować tylko jedną konkretną wartość (maksymalne obciążenie),
+to gubimy informację na temat struktury obecnego rozwiązania. Przede wszystkim tę samą wartość 
+maksymalnego obciążenia $L$ osiągamy jeśli obciążenie jedej krawędzi wynosi $L$ jak i kiedy obciążenie 
+wszystkich krawędzi wynosi~$L$. Dodatkowo bardzo trudno jest dobrze 
+uzależnić wzrost maksymalnego obciążenia od jego aktualnej wielkości i wyboru ścieżki w danym kroku.
+
+Zauważmy teraz, że jeśli dla dowolnego $a > 1$ weźmiemy wielkość $\log_a \sum_e a^{B(e)}$ to zachodzi 
+$\max_e \{ B(e) \} \leq \log_a \sum_e a^{B(e)} \leq \log_a m + \max_e \{ B(e) \}$, gdzie $m$ jest liczbą krawędzi
+w grafie. Zarazem wielkość $\sum_e a^{B(e)}$ (będziemy ją nazywać {\em wagą rozwiązania}) 
+niesie pewną informację o strukturze obecnego rozwiązania, którą 
+będziemy w stanie wykorzystać.
+
+Jako pierwsze przybliżenie rozwiązania, ilustrujące naszą metodę pokażemy algorytm, który 
+minimalizuje obciążenie pod warunkiem, że optymalne rozwiązanie generuje obciążenie $1$.
+
+\begin{theorem}
+Istnieje algorytm $\EXP_1$, który dla dowolnej sekwencji $\sigma$, takiej że $\OPT(\sigma) = 1$, generuje 
+ociążenie $\O(\log m)$.
+\end{theorem}
+
+\begin{proof}
+Parametrem algorytmu jest pewne ustalone $a \in (1,2)$.
+Załóżmy, że aktualne obciążenie na początku kroku $j$ opisywane jest przez funkcję $B_{j-1}$. 
+Algorytm jest zachłanny: ścieżka $P_j$ jest wybierana tak, żeby zminimalizować wartość 
+\[ 
+	X_j := \sum_{e \in P_j} \left( a^{B_{j-1}(e)+1} - a^{B_{j-1}(e)} \right) \enspace. 
+\]
+Jak taką ścieżkę wyliczyć w czasie wielomianowym od $m$ pozostawiamy jako proste ćwiczenie. 
+Zauważmy, że $X_j$ jest różnicą pomiędzy wagą rozwiązania w kolejnych dwóch krokach:
+$X_j = \sum_{e} ( a^{B_j(e)} - a^{B_{j-1}(e)} )$. 
+
+Dla dowodu lematu weźmy dowolną sekwencję wejściową $\sigma$ długości $N$, taką że $\OPT(\sigma) = 1$.
+Kolejne~$X_j$ sumują się teleskopowo i dostajemy
+\begin{equation}
+\label{eq:route-exp-1}
+	\sum_{j=1}^N X_j =  \sum_e a^{B_N(e)} - \sum_e a^{B_0(e)} 
+					 =  \sum_e \left(a^{B_N(e)}\right) - m \enspace.
+\end{equation}
+Jak ograniczyć $X_j$? Niech $P^*_j$ będzie ścieżką wybraną w $j$-tym kroku przez algorytm optymalny.
+\begin{align*}
+	X_j = &\; \sum_{e \in P_j} \left( a^{B_{j-1}(e)+1} - a^{B_{j-1}(e)} \right) \\
+		\leq &\; \sum_{e \in P^*_j} \left( a^{B_{j-1}(e)+1} - a^{B_{j-1}(e)} \right) && \textnormal{(z zachłanności algorytmu)}\\
+		= &\; \sum_{e \in P^*_j} a^{B_{j-1}(e)} \cdot ( a - 1 ) \\ 
+		\leq &\; \sum_{e \in P^*_j} a^{B_N(e)} \cdot ( a - 1 ) \enspace. 
+\end{align*}
+Sumując po wszystkich krokach otrzymujemy:
+\begin{align}
+	\nonumber
+	\sum_{j=1}^N X_j \leq &\; (a-1) \cdot \sum_{j=1}^N \sum_{e \in P^*_j} a^{B_N(e)} \\ 
+	\nonumber
+						= &\; (a-1) \cdot \sum_e \sum_{j\, :\, e \in P^*_j} a^{B_N(e)} 
+\intertext{Ponieważ założyliśmy, że rozwiązanie $\OPT$ generuje obciążenie co najwyżej $1$, zatem wewnętrzna suma 
+wynosi co najwyżej $a^{B_N(e)}$:}
+\label{eq:route-exp-2}
+	\sum_{j=1}^N X_j \leq &\; (a-1) \cdot \sum_e a^{B_N(e)} 
+	\enspace.
+\end{align}
+Porównując nierówności (\ref{eq:route-exp-1}) i (\ref{eq:route-exp-2}) otrzymujemy
+$(2 - a) \cdot \sum_e a^{B_N(e)} \leq m$. Stąd dla każdej krawędzi $e$ zachodzi 
+$a^{B_N(e)} \leq \frac{m}{2-a}$, a zatem $B_N(e) = \O(\log m)$. 
+\end{proof}
+
+Teraz rozszerzymy powyższy dowód na bardziej realistyczne przypadki.
+
+\begin{theorem}
+Dla dowolnej sekwencji wejściowej, którą algorytm optymalny jest w stanie obsłużyć z obciążeniem nie większym
+niż $\lambda$, istnieje algorytm online $\EXP_\lambda$, który generuje obciążenie $\O(\log m) \cdot \lambda$.
+\end{theorem}
+
+\begin{proof}
+Zmodyfikujmy lekko algorytm. Tym razem w kroku $j$ algorytm chce tak wybrać ścieżkę $P_j$, żeby 
+minimalizować wartość $X_j := \sum_{e \in P_j} a^{(B_{j-1}(e)+1)/\lambda} - \sum_e a^{B_{j-1}(e)/\lambda}$. 
+Prześledźmy, w których miejscach trzeba zmodyfikować dowód poprzedniego twierdzenia. 
+Równanie  (\ref{eq:route-exp-1}) przybiera postać 
+\begin{equation}
+\label{eq:route-exp-3}
+\sum_{j=1}^N X_j =  \sum_e \left(a^{B_N(e)/\lambda}\right) - m \enspace,
+\end{equation}
+natomiast ograniczenie na $X_j$ jest obecnie równe 
+\[ X_j \leq \sum_{e \in P^*_j} a^{B_N(e)/\lambda} \cdot ( a^{1/\lambda} - 1 ) 
+%	\;\leq\; \frac{a-1}{\lambda} \cdot \sum_{e \in P^*_j} a^{B_N(e)/\lambda} 
+\enspace.
+\] 
+Jak poprzednio sumując po wszystkich krokach otrzymujemy
+\[
+\sum_{j=1}^N X_j 
+	\leq (a^{1/\lambda}-1) \cdot \sum_e \sum_{j \,:\, e \in P^*_j} a^{B_N(e)/\lambda} \enspace.
+\] 
+
+TODO tutaj skorzystac z nierownosci
+Poniżej wykorzystamy nierówność $a^x - 1 \leq (a-1) \cdot x$, która jest prawdziwa dla dowolnego $x \in [0,1]$.
+
+Podobnie jak poprzednio, ponieważ $\OPT \leq \lambda$, to $|\{ j \,:\, e \in P^*_j \}| \leq \lambda$ 
+dla dowolnej krawędzi $e$. Zatem nowa postać nierówności (\ref{eq:route-exp-2}) jest następująca:
+\begin{align}
+\label{eq:route-exp-4}
+\sum_{j=1}^N X_j 
+	\nonumber
+	\leq \;& \lambda \cdot (a^{1/\lambda} -1) \cdot \sum_e a^{B_N(e)/\lambda} \\
+ 	\leq \;& (a-1) \cdot \sum_e a^{B_N(e)/\lambda} 
+		&& \textnormal{(bo $a^x - 1 \leq (a-1) \cdot x$ dla $x \in [0,1]$)}
+		\enspace.
+\end{align}
+Porównując ze sobą nierówności (\ref{eq:route-exp-3}) i (\ref{eq:route-exp-4}) otrzymujemy $B_N(e) = \O(\log m) \cdot \lambda$.
+\end{proof}
+

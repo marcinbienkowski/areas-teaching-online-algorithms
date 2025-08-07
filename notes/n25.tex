@@ -1,0 +1,50 @@
+\section{Lepsza analiza algorytmu dla pakowania pojemników}
+
+
+Jednym z najbardziej naturalnych algorytmów dla tego problemu jest algorytm $\FF$ ($\FFS$).
+Algorytm ten zakłada, że pojemniki są ponumerowane liczbami naturalnymi i wkłada dany przedmiot do pierwszego
+pojemnika, do którego włożenie jest możliwe.
+
+
+\begin{theorem}
+\label{lem:balance}
+Algorytm $\FF$ jest $7/4$-konkurencyjny.
+\end{theorem}
+
+\begin{proof}
+Ponownie weźmy dowolny ciąg wejściowy $\sigma$ zawierający $m$ przedmiotów.
+Niech $B$ oznacza zbiór wykorzystanych przez $\FF$ pojemników, $|B| = k$. 
+Podzielmy go na trzy pozbiory $B_1$, $B_2$ i $B_3$, i niech $k_i = |B_i|$.
+\begin{description}
+\item[$B_1$:] pojemniki zawierające jeden przedmiot o wadze większej niż $1/2$;
+\item[$B_2$:] pojemniki zawierające dwa lub więcej przedmiotów o sumarycznej wadze większej niż $2/3$;
+\item[$B_3$:] pozostałe pojemniki.
+\end{description}
+Podobnie jak powyżej można pokazać, że $k_3 \leq 2$. 
+W tym celu zauważmy, że w trzecim zbiorze może być co najwyżej jeden pojemnik zawierający pojedynczy 
+przedmiot o wadze nie większej niż~$1/2$.\footnote{Jeśli są dwa takie pojemniki, to dojdziemy do sprzeczności jak w 
+dowodzie poprzedniego twierdzenia.} 
+Z definicji $B_3$ poza rozpatrzonymi powyżej pojemnikami mogą się 
+tam jeszcze znajdować pojemniki, które mają dwa lub więcej przedmiotów o sumarycznej wadze nie 
+większej niż $2/3$; wystarczy pokazać, że jest co najwyżej jeden taki pojemnik. 
+Załóżmy nie wprost, że są dwa takie pojemniki $b_i$ i $b_j$ (gdzie $i \leq j$).
+W pojemniku $b_j$ są co najmniej dwa przedmioty, więc jeden z nich ma wagę nie większą niż $1/3$.
+Zatem mógł on zostać dołożony do pojemnika~$b_i$. 
+
+Stąd dostajemy, że 
+$\FFS(\sigma) \leq k_1 + k_2 + 2$. 
+Z drugiej strony $\OPT(\sigma) \geq k_1$ (bo każdy z przedmiotów o wadze większej niż $1/2$ musi być w osobnym 
+pojemniku) oraz $\OPT(\sigma) \geq w(B_1) + w(B_2) \geq \frac{1}{2} \cdot k_1 + \frac{2}{3} \cdot k_2$.
+Można pokazać, że dla dowolnych $k_1, k_2 \geq 0$, $k_1 + k_2 > 0$ zachodzi 
+\[
+\frac { k_1 + k_2 }{ \max \{ k_1, \frac{1}{2} \cdot k_1 + \frac{2}{3} \cdot k_2 \} }
+\leq \frac{7}{4} \enspace,
+\]
+a zatem 
+\[
+	\FFS(\sigma) \leq \frac{7}{4} \cdot \OPT(\sigma) + 2 \enspace. 
+	\qedhere
+\]
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,91 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Theorem-style environments
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newtheorem{theorem}{Twierdzenie}[section]
+\newtheorem{lemma}[theorem]{Lemat}
+\newtheorem{corollary}[theorem]{Wniosek}
+\newtheorem{definition}[theorem]{Definicja}
+\newtheorem{note}[theorem]{Uwaga}
+\newtheorem{observation}[theorem]{Obserwacja}
+\newtheorem{exercise}[theorem]{Ćwiczenie}
+\newtheorem{example}[theorem]{Przykład}
+
+%\newtheoremstyle{note}{6pt}{6pt}{\itshape}{}{\itshape}{.}{.5em}{}
+%\theoremstyle{note}
+%\newtheorem{observation}[theorem]{Obserwacja}
+%\theoremstyle{plain}
+
+\def\proofname{Dowód}
+\renewcommand{\openbox}{\leavevmode\rule{1.4ex}{1.4ex}}
+\makeatletter
+ \renewenvironment{proof}[1][\proofname]{\par
+ \pushQED{\qed}%
+ \normalfont \topsep6\p@\@plus6\p@\relax
+ \trivlist
+ \item[\hskip\labelsep
+ \bfseries
+ #1\@addpunct{.}]\ignorespaces
+ }{%
+ \popQED\endtrivlist\@endpefalse
+ }
+\makeatother
+
+\newcommand{\problem}[2]{
+\vspace{0.15cm}
+\noindent
+\fboxsep7pt
+\framebox[\textwidth]{
+\begin{minipage}{0.95\textwidth}
+\textsc{#1}. #2
+\end{minipage}
+}
+\medskip
+}
+
+
+\newcommand{\myfigure}[3]{
+\begin{figure}[t]
+\centering
+\fboxsep7pt
+\framebox[0.95\textwidth]{
+	\begin{minipage}{0.95\textwidth}
+		\centering #3
+	\end{minipage}
+}
+\caption{#2}
+\label{fig:#1}
+\end{figure}
+}
+
+\newcommand{\myfigurehere}[2]{
+\begin{figure}[h]
+\centering
+\fboxsep7pt
+\framebox[0.95\textwidth]{
+	\begin{minipage}{0.95\textwidth}
+		\centering #2
+	\end{minipage}
+}
+\label{fig:#1}
+\end{figure}
+}
+
+
+\newcommand{\rozdzial}[1]{
+\input n#1
+\vspace{0.3cm}
+\newpage
+}
+
+\newcommand{\etalchar}[1]{$^{#1}$}
+
+\newcommand{\myparagraph}[1]{%
+\medskip
+\noindent
+{\bf #1.}
+}
+
+\input shortcut
+

@@ -1,32 +1,29 @@
-\documentclass[a4paper,11pt]{scrartcl}
+\documentclass[a4paper,11pt]{article}
 \input{macros}
 \begin{document}
 \makeheader{2}
 
-\newcommand{\LFU}{\textsc{Lfu}}
-\newcommand{\RMARK}{\textsc{R-Mark}}
-
 
 \begin{description}
 
-\item[Zadanie 1] 
+\item[Zadanie 1.] 
 Załóżmy, że algorytm dysponuje pamięcią podręczną o rozmiarze $k$,
 a optymalny algorytm pamięcią o rozmiarze $h \leq k$.
-\begin{enumerate}[a)]
+\begin{enumerate}
 \item \textbf{(1 pkt.)} Pokaż, że dowolny deterministyczny algorytm zaznaczający jest $\frac{k}{k-h+1}$-kon\-ku\-ren\-cyj\-ny.
 \item \textbf{(3 pkt.)} Pokaż, że konkurencyjność dowolnego algorytmu deterministycznego (niekoniecznie zaznaczającego) wynosi 
 co najmniej $\frac{k}{k-h+1}$.
 \end{enumerate}
 
-\item[Zadanie 2] \textbf{(2 pkt.)} 
+\item[Zadanie 2.] \textbf{(2 pkt.)} 
 {\LFU} (\emph{Least Frequently Used}) 
 to algorytm, który z każdą stroną wiąże licznik określający, ile odwołań wystąpiło do tej strony.
 Zapisanie strony w pamięci podręcznej lub wyrzucenie jej stamtąd nie powoduje zerowania takiego licznika.   
 {\LFU} wyrzuca z pamięci podręcznej stronę, która była najrzadziej używana (o~najmniejszej wartości licznika).
 Udowodnij, że {\LFU} nie jest konkurencyjny. 
 
-\item[Zadanie 3] Rozważmy randomizowany algorytm zaznaczający {\RMARK} dla problemu pamięci podręcznej.
-\begin{enumerate}[a)]
+\item[Zadanie 3.] Rozważmy randomizowany algorytm zaznaczający {\RMARK} dla problemu pamięci podręcznej.
+\begin{enumerate}
 %\item \textbf{(1 pkt.)} (Ćwiczenie z wykładu). Załóżmy, że wejście $\sigma$ składa się z $\ell$ faz; niech $n_i$ oznacza liczbę nowych stron w fazie $i$ (zakładamy, że 
 %$f_1 = k$). Pokaż, że $\OPT(\sigma) \geq (1/2) \cdot \sum_{i=1}^\ell n_i$.
 \item \textbf{(1 pkt.)} Pokaż, że jeśli pamięć RAM zawiera $n = k+1$ stron, to algorytm 

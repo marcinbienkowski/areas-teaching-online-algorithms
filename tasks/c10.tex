@@ -1,20 +1,18 @@
-\documentclass[a4paper,11pt]{scrartcl}
+\documentclass[a4paper,11pt]{article}
 \input{macros}
 \begin{document}
 \makeheader{10}
 
 
-\newcommand{\CNT}{\textsc{Cnt}\xspace}
-
 \begin{description}
 
-\item[Zadanie 1] \textbf{(2 pkt.)}
+\item[Zadanie 1.] \textbf{(2 pkt.)}
 	Pokaż, że konkurencyjność dowolnego algorytmu deterministycznego \DET dla
 	problemu przenoszenia pliku wynosi co najmniej $3$. Wskazówka: rozważ graf
 	dwuwierzchołkowy i porównaj \DET z trzema algorytmami (dwa statyczne i
 	jeden, który ma plik w innym wierzchołku niż \DET).
 	
-\item[Zadanie 2] \textbf{(2 pkt.)}
+\item[Zadanie 2.] \textbf{(2 pkt.)}
 	Rozważ następujący algorytm $\CNT_k$ parametryzowany pewną stałą $k$. Na
 	początku działania $\CNT_k$ losuje wartość licznika $C$ jednostajnie z przedziału
 	$[1,k]$. W każdym kroku, po obsłudze żądania, $\CNT_k$ zmniejsza
@@ -35,7 +33,7 @@
 	
 
 
-\item[Zadanie 3] \textbf{(2 pkt.)}
+\item[Zadanie 3.] \textbf{(2 pkt.)}
 Rozważmy następujące uogólnienie algorytmu \textsc{Flip} dla problemu przenoszenia pliku: 
 algorytm \textsc{Flip}($p$) przenosi plik do żądania z prawdopodobieństwem $p \in (0,1]$. (Oryginalny 
 algorytm \textsc{Flip} wybierał $p = 1/(2D)$). 
@@ -47,7 +45,7 @@ na tym grafie wynosi co najmniej $3$.
 % Jeśli p >= 1/(2D), to dajemy zadanie (2 1^n)^ \infty
 
 
-\item[Zadanie 4]
+\item[Zadanie 4.]
 Na odwrocie znajdziesz program liniowy, zapisz go do pliku \texttt{lower.lp}.
 Przejrzyj jego zawartość zwracając uwagę na trzy wyróżnione nierówności:
 dlaczego są one prawdziwe? 
@@ -58,7 +56,7 @@ systemów operacyjnych. Jeśli w wyniku otrzymasz inne wartości niż
 \texttt{potential\_start = 0} i \texttt{potential\_end = 4}, to wymuś je
 odkomentowując odpowiednie wiersze.}  
 
-\begin{enumerate}[a)]
+\begin{enumerate}
 
 \item \textbf{(2 pkt.)} Na podstawie wyniku narysuj i opisz, jak wygląda faza
 dla której zachodzi $\ALG + \Delta \Phi = 7 \cdot \OPT$, gdzie $\Phi = 2 \cdot D

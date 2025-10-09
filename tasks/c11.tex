@@ -1,13 +1,12 @@
-\documentclass[a4paper,11pt]{scrartcl}
+\documentclass[a4paper,11pt]{article}
 \input{macros}
 \begin{document}
 \makeheader{11}
 
-\newcommand{\CONT}{\textsc{Cont}\xspace}
 
 \begin{description}
 
-\item[Zadanie 1]  \textbf{(2 pkt.)}
+\item[Zadanie 1.]  \textbf{(2 pkt.)}
 Przypomnijmy, że algorytm \textsc{Move-To-Min} (MTM) dla problemu migracji pliku. 
 na końcu fazy przenosił plik do wierzchołka $\arg \min_x \sum_{i=1}^D d(x, r_i)$.
 Algorytm \textsc{Move-To-Local-Min} (MTLM) jest jego modyfikacją, która przenosi 
@@ -23,13 +22,13 @@ i odpowiednio zmienić 3 wiersze definiujące algorytm.
 % A0 -----------4------------ O1=O2 -----------3------- R ---1----A1
 
 
-\item[Zadanie 2]  
+\item[Zadanie 2.]  
 W tym i następnym zadaniu rozważamy problem migracji pliku na grafie o dwóch
 wierzchołkach $v_0$ i $v_1$ połączonych krawędzią długości $1$, gdzie rozmiar pliku jest równy 
 $D \in \mathbb{N}$, zaś algorytm bezpośrednio po zobaczeniu żądania w kroku $t$ i zapłaceniu za nie 
 oblicza funkcję pracy~$w_t$. 
 
-\begin{enumerate}[a)]
+\begin{enumerate}
 \item 
 \textbf{(1 pkt.)}
 Niech $W_t = (w_t(v_0) + w_t(v_1)) / 2$.
@@ -43,7 +42,7 @@ Niech $v_i$ będzie wierzchołkiem, w którym algorytm \DET ma obecnie plik.
 \end{enumerate}
 
 
-\item[Zadanie 3] \textbf{(4 pkt.)} 
+\item[Zadanie 3.] \textbf{(4 pkt.)} 
 	Rozważmy model, w którym \OPT musi przechowywać plik w jednym z wierzchołków,
 	ale algorytm online może przechowywać plik w dowolnym miejscu krawędzi pomiędzy 
 	wierzchołkami $v_0$ i $v_1$. 

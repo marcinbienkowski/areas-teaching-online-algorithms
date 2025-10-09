@@ -1,4 +1,4 @@
-\documentclass[a4paper,11pt]{scrartcl}
+\documentclass[a4paper,11pt]{article}
 \input{macros}
 \begin{document}
 \makeheader{1}
@@ -6,11 +6,11 @@
 
 \begin{description}
 
-\item[Zadanie 1] \textbf{(1 pkt.)} 
+\item[Zadanie 1.] \textbf{(1 pkt.)} 
 Pokaż, że współczynnik ścisłej konkurencyjności dowolnego deterministycznego 
 algorytmu dla problemu poszukiwania krowy na prostej wynosi co najmniej $5$. 
 
-\item[Zadanie 2] \textbf{(1 pkt.)} 
+\item[Zadanie 2.] \textbf{(1 pkt.)} 
 Przypomnijmy, że w problemie poszukiwania krowy na prostej zakładamy, że krowa
 stoi w odległości równej co najmniej $1$ od punktu startowego. Przedstawiony na
 wykładzie algorytm odchodził od punktu startowego, raz w lewo, raz w prawo,
@@ -22,31 +22,34 @@ Rozważ problem poszukiwania krowy na prostej i załóż, że w powyższym algor
 wybieramy początkowy kierunek rzucając (sprawiedliwą) monetą.  Pokaż, że dla $q
 = 1$ i $r = 2$ taki algorytm jest ściśle $7$-konkurencyjny.
 
-\item[Zadanie 3] \textbf{(4 pkt.)}
+\item[Zadanie 3.] \textbf{(4 pkt.)}
 Załóż, że w powyższym algorytmie
 wybieramy początkowy kierunek rzucając (sprawiedliwą) monetą, a dodatkowo
-wybieramy $\theta$ z jednostajnym rozkładem z przedziału $[0,1)$. Pokaż, że dla
+wybieramy $\theta$ z jednostajnym rozkładem z~przedziału $[0,1)$. Pokaż, że dla
 $q = r^\theta$ taki algorytm jest ściśle $(1 + (r+1)/\ln r)$-konkurencyjny.
 Numerycznie wyznacz $r$ minimalizujące ten współczynnik. 
 
-\item[Zadanie 4] \textbf{(4 pkt.)}
+\item[Zadanie 4.] \textbf{(4 pkt.)}
+Niech 
+\[
+    R = \frac{1}{1-(1-1/B)^B}.
+\]
 Skonstruuj randomizowany algorytm dla problemu wypożyczania nart, który jest
-ściśle $\left(1-(1-1/B)^B\right)^{-1}$-konkurencyjny.  (To jest najlepszy
+ściśle $R$-kon\-ku\-ren\-cyj\-ny.\footnote{To jest najlepszy
 możliwy do osiągnięcia współczynnik konkurencyjności, ale nie trzeba tego
-udowadniać.) Do czego dąży to wyrażenie przy~$B \to \infty$?
+udowadniać.} Do czego dąży to wyrażenie przy~$B \to \infty$?
 
 \smallskip
-Wskazówki: Algorytm randomizowany jest w pełni opisywalny przez ciąg
+\emph{Wskazówki: Algorytm randomizowany jest w pełni opisywalny przez ciąg
 prawdopodobieństw $p_1,p_2,p_3,\ldots,p_\infty$, gdzie $p_i$ jest
-prawdopodobieństwem zakupu nart dnia $i$ oraz $\sum_{i=1}^\infty p_i = 1$.
+prawdopodobieństwem zakupu nart dnia $i$ oraz \mbox{$\sum_{i=1}^\infty p_i = 1$}.
 Ogranicz się do klasy algorytmów, dla których $p_i = 0$ dla $i > B$.  Jakie są
 możliwe strategie adwersarza przeciwko algorytmowi z takiej klasy? Pod
-warunkiem zastosowania danej strategii adwersarza: jaki będzie (oczekiwany) koszt
+warunkiem zastosowania danej strategii adwersarza: jaki będzie oczekiwany koszt
 algorytmu i jaki będzie koszt algorytmu optymalnego? Zauważ, że dla każdej
-takiej strategii musi zachodzić $\E[\ALG] \leq R \cdot \OPT$, gdzie $R$ jest
-współczynnikiem konkurencyjności. Ogranicz się do algorytmów, dla których
-wszystkie te nierówności są równością\footnote{W przypadku
-innych problemów takie algorytmy mogą nie istnieć.} i wyznacz stąd wartości $p_i$. 
+takiej strategii musi zachodzić $\E[\ALG] \leq R \cdot \OPT$. 
+Ogranicz się do algorytmów, dla których
+wszystkie te nierówności są równością i wyznacz stąd wartości $p_i$.}
 
 \end{description}
 

@@ -1,33 +1,58 @@
-\usepackage[margin=2cm,bottom=2cm,top=1cm]{geometry}
-\usepackage{amsmath,amsthm,amsopn,amsfonts}
-\usepackage{polski}
+\usepackage[margin=2.5cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{enumerate}
+\usepackage[polish]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{enumitem}
 \usepackage{graphicx}
 \usepackage{xspace}
 \usepackage{fancyvrb}
-\pagestyle{empty}
+\usepackage{titlesec}
 
-\newcommand{\makeheader}[1]{
-\setkomafont{title}{\sectfont\bfseries}
-\title{\sectfont Algorytmy online \\ Lista #1}
-\author{}
-\date{}
-\maketitle
-\vspace{-2cm}
+\definecolor{primaryblue}{RGB}{0,102,153}
+\definecolor{accentgray}{RGB}{85,85,85}
+
+\pagestyle{empty}
+\renewcommand{\baselinestretch}{1.05}
+
+\titleformat{\section}{\Large\bfseries\color{primaryblue}}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries\color{accentgray}}{\thesubsection}{1em}{}
+
+\setlist[description]{
+    font=\bfseries\color{primaryblue},
+    leftmargin=1.5em,
+    itemsep=1em
+}
+
+\setlist[enumerate,1]{label={\bfseries\color{primaryblue}\alph*)}}
+\setlist[enumerate,2]{label={\bfseries\color{primaryblue}\roman*.}}
+
+\newcommand{\makeheader}[1]{%
+\begin{center}
+{\Huge\bfseries\color{primaryblue} Algorytmy online: lista #1}\\[3em]
+\end{center}
 \thispagestyle{empty}
 }
 
-\newcommand{\makefooter}{
+\newcommand{\makefooter}{%
 \bigskip
-\hfill \emph{Marcin Bieńkowski}
+\begin{flushright}
+\color{accentgray}\emph{Marcin Bieńkowski}
+\end{flushright}
 }
 
-\newcommand{\E}{\mathbf{E}}
+\newcommand{\E}{\mathbb{E}}
 \newcommand{\ALG}{\textsc{Alg}\xspace}
 \newcommand{\OPT}{\textsc{Opt}\xspace}
 \newcommand{\DET}{\textsc{Det}\xspace}
 \newcommand{\RAND}{\textsc{Rand}\xspace}
-\newcommand{\e}{\textnormal{e}}
-
+\newcommand{\LFU}{\textsc{Lfu}\xspace}
+\newcommand{\RMARK}{\textsc{R-Mark}\xspace}
+\newcommand{\CIRC}{\textsc{Circ}}
+\newcommand{\CNT}{\textsc{Cnt}\xspace}
+\newcommand{\CONT}{\textsc{Cont}\xspace}
+\newcommand{\e}{\mathrm{e}}
 

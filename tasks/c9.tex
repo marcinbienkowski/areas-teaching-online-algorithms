@@ -1,19 +1,16 @@
-\documentclass[a4paper,11pt]{scrartcl}
+\documentclass[a4paper,11pt]{article}
 \input{macros}
 \begin{document}
-
 \makeheader{9}
 
 
-\newcommand{\CIRC}{\textsc{Circ}}
-
 \begin{description}
 
-\item[Zadanie 1] 
+\item[Zadanie 1.] 
 Chcemy za pomocą jednej transakcji zamienić jedngo bitcoina na złotówki w ciągu najbliższych $T$ dni. 
 Każdego dnia dowiadujemy się, jaki jest kurs danego dnia; jest on 
 dowolną liczbą rzeczywistą z zakresu $[1,M]$. Wartości $T$ i $M$ są znane algorytmowi od początku.
-\begin{enumerate}[a)]
+\begin{enumerate}
 \item \textbf{(1 pkt.)} Skonstruuj deterministyczny algorytm, który będzie  
     ściśle $\sqrt{M}$-konkurencyjny.
 \item \textbf{(2 pkt.)} Skonstruuj randomizowany algorytm, który będzie  
@@ -32,7 +29,7 @@ dowolną liczbą rzeczywistą z zakresu $[1,M]$. Wartości $T$ i $M$ są znane a
 %z $a_j$ albo z $a_{j+1}$.
 
 
-\item[Zadanie 2] \textbf{(2 pkt.)}
+\item[Zadanie 2.] \textbf{(2 pkt.)}
 Rozważmy problem $k$ serwisantów na okręgu, tj.~przestrzeń, w której występują
 odwołania jest okręgiem, a~odległość między dwoma punktami okręgu
 jest najkrótszą odległością liczoną wzdłuż
@@ -47,10 +44,10 @@ $P$).
 Pokaż, że $\CIRC$ jest $2 k$-konkurencyjny.
 
 
-\item[Zadanie 3] \textbf{(3 pkt.)}
+\item[Zadanie 3.] \textbf{(3 pkt.)}
 Rozważmy następujący algorytm rozwiązujący problem 2 serwisantów na płaszczyźnie 
 euklidesowej. Aby obsłużyć żądanie w punkcie $r$, algorytm wykonuje następujące kroki:
-\begin{enumerate}[i)]
+\begin{enumerate}
 \item Niech $x$ będzie serwisantem bliższym $r$ zaś $y$ dalszym (remisy rozstrzygamy 
 dowolnie).
 \item Przesuń $y$ o $\frac{1}{2} \cdot (d(x,r) + d(x,y) - d(y,r))$ 
@@ -61,12 +58,12 @@ Pokaż że powyższy algorytm jest $O(1)$-konkurencyjny. \emph{Wskazówka:} wyko
 potencjału podobną do tej wykorzystywanej w algorytmie \textsc{Double Coverage}. 
 
 
-\item[Zadanie 4] \textbf{(2 pkt.)}
+\item[Zadanie 4.] \textbf{(2 pkt.)}
 Rozważmy graf czterowierzchołkowy będący kwadratem o równych długościach
 krawędzi.  Rozważmy następujący algorytm randomizowany $\ALG$ dla problemu
 dwóch serwisantów w tym grafie.  $\ALG$ rozpoczyna z serwisantami w dwóch różnych
 wierzchołkach. Aby obsłużyć żądanie w punkcie $r$:
-\begin{enumerate}[i)]
+\begin{enumerate}
 \item jeśli $\ALG$ ma serwisanta w $r$, to nic nie robi;
 \item w przeciwnym przypadku do $r$ przesuwany jest ten z serwisantów, który jest bliższy $r$;
 \item jeśli obaj serwisanci mają taką samą odległość do $r$, to serwisant do

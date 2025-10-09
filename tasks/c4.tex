@@ -1,7 +1,8 @@
-\documentclass[a4paper,11pt]{scrartcl}
+\documentclass[a4paper,11pt]{article}
 \input{macros}
 \begin{document}
 \makeheader{4}
+
 
 \begin{description}
 
@@ -11,7 +12,7 @@
 %losową stronę. Pokaż, że \textsc{Rand} jest $k$-konkurencyjny. (To powinien być pełen dowód, 
 %tzn.~trzeba przeanalizować również przypadki rozważone już na wykładzie).
 
-\item[Zadanie 1] \textbf{(2 pkt.)} 
+\item[Zadanie 1.] \textbf{(2 pkt.)} 
     Rozważmy deterministyczny algorytm \textsc{Half-MTF} dla statycznej reorganizacji listy, 
     który obsługuje odwołanie do elementu $x$ w następujący sposób:
     jeśli jest to parzyste odwołanie do elementu $x$, to $x$ zostaje przeniesiony na początek.
@@ -19,7 +20,7 @@
 
 % Analizujemy bita w najgorszym mozliwym (nie-srednim) przypadku
 
-\item[Zadanie 2] \textbf{(4 pkt.)} 
+\item[Zadanie 2.] \textbf{(4 pkt.)} 
     Rozważ algorytm \textsc{Rand-MTF} dla problemu reorganizacji listy o długości $\ell$, który
     w przypadku odwołania do elementu $x$ przesuwa go na początek listy z prawdopodobieństwem $1/2$. 
     Udowodnij, że współczynnik konkurencyjności tego algorytmu wynosi co najmniej $2 - O(1/\sqrt{\ell})$.
@@ -34,7 +35,7 @@
 % drugi skladnik jest wiekszy od zera. Pr[zawsze dobrze] moze byc dowolnie bliskie 1 jesli zwiekszymy k
 % Z kolei E[ALG|zawsze dobrze] moze byc dowolnie bliskie 2 * OPT.
 
-\item[Zadanie 3] \textbf{(4 pkt.)} 
+\item[Zadanie 3.] \textbf{(4 pkt.)} 
 Na wykładzie zaprezentowany został algorytm \textsc{Rand} dla problemu pamięci
 podręcznej, który --- w przypadku chybienia --- wyrzuca z pamięci podręcznej
 losową stronę. Pokaż, że konkurencyjność takiego algorytmu wynosi co najmniej

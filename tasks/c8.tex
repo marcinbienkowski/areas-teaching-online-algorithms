@@ -1,12 +1,12 @@
-\documentclass[a4paper,11pt]{scrartcl}
+\documentclass[a4paper,11pt]{article}
 \input{macros}
 \begin{document}
-
 \makeheader{8}
+
 
 \begin{description}
 
-\item[Zadanie 1] \textbf{(3 pkt.)} 
+\item[Zadanie 1.] \textbf{(3 pkt.)} 
 Rozważmy problem routingu na linii o $n$ wierzchołkach, gdzie każda krawędź ma
 pojemność $U$. Pokaż dolne ograniczenie na ścisłą konkurencyjność dowolnego
 algorytmu deterministycznego w wysokości $\Omega(n^{1/U})$.
@@ -18,7 +18,7 @@ algorytmu deterministycznego w wysokości $\Omega(n^{1/U})$.
 %Chcemy za pomocą jednej transakcji zamienić jedngo bitcoina na złotówki w ciągu najbliższych 42 dni. 
 %Każdego dnia dowiadujemy się, jaki jest kurs danego dnia; jest on 
 %dowolną liczbą rzeczywistą z zakresu $[1,M]$, gdzie $M$ jest znane algorytmowi od początku.
-%\begin{enumerate}[a)]
+%\begin{enumerate}
 %\item \textbf{(1 pkt.)} Skonstruuj deterministyczny algorytm, który będzie  
 %    ściśle $\sqrt{M}$-konkurencyjny.
 %\item \textbf{(2 pkt.)} Skonstruuj randomizowany algorytm, który będzie  
@@ -26,7 +26,7 @@ algorytmu deterministycznego w wysokości $\Omega(n^{1/U})$.
 %\end{enumerate}
 
 
-\item[Zadanie 2]
+\item[Zadanie 2.]
 
 W problemie szeregowania zadań na $m$ \emph{niepowiązanych} maszynach
 dany jest ciąg zadań, gdzie zadanie $t$ jest zdefiniowane wektorem 
@@ -71,14 +71,14 @@ p_{k,j} \leq \lambda \}$. Następnie:
 \item Jeśli $\mathcal{S}_k = \emptyset$ lub jeśli $x_j > 1/\lambda$ dla pewnego $j$, to zwróć \texttt{FAIL}. 
 \item W przeciwnym
 przypadku niech $j^*$ będzie maszyną z $\mathcal{S}_k$ minimalizującą $p_{k,j^*} \cdot x_{j^*}$.
-\begin{enumerate}[i)]
+\begin{enumerate}
 \item przypisz zadanie $k$ do maszyny $j^*$ 
 \item $z_t \leftarrow 1 - p_{k,j^*} \cdot x_{j^*}$
 \item $x_{j^*} \leftarrow x_{j^*} \cdot \left(1 + \frac{p_{k,j^*}}{2 \cdot \lambda} \right)$
 \end{enumerate}
 \end{itemize}
 
-\begin{enumerate}[a)]
+\begin{enumerate}
 \item \textbf{(2 pkt.)} Załóżmy, że \ALG nie zwróci \texttt{FAIL}. Ustalmy $j$. Pokaż, że w dowolnym momencie zachodzi 
 \[
 		x_j \geq \frac{1}{2\lambda \cdot m} \cdot C^{\ell_j / \lambda}

@@ -1,12 +1,12 @@
-\documentclass[a4paper,11pt]{scrartcl}
+\documentclass[a4paper,11pt]{article}
 \input{macros}
 \begin{document}
-
 \makeheader{12}
+
 
 \begin{description}
 
-\item[Zadanie 1] \textbf{(2 pkt.)} 
+\item[Zadanie 1.] \textbf{(2 pkt.)} 
 W problemie drzewa Steinera dany jest $n$-wierzchołkowy graf z wyróżnionym
 wierzchołkiem $r$. Wejście jest ciągiem wierzchołków grafu; jeśli na wejściu
 pojawia się wierzchołek $v$, algorytm musi zwrócić pewną ścieżkę łączącą $r$ z $v$.
@@ -17,7 +17,7 @@ Skonstruuj randomizowany $O(\log n)$-konkurencyjny algorytm dla tego problemu.
 \emph{Wskazówka:} Skonstruuj $1$-konkurencyjny algorytm online \ALG, gdy grafu będącego drzewem. 
 Przybliż graf losowym drzewem konstrukcją FRT z wykładu i uruchom na tym drzewie \ALG.
 
-\item[Zadanie 2] \textbf{(2 pkt.)} 
+\item[Zadanie 2.] \textbf{(2 pkt.)} 
 Mamy do dyspozycji $k$-konkurencyjny algorytm dla problemu $k$ serwisantów dla 
 drzew.\footnote{Przedstawiony na wykładzie algorytm \textsc{Double Coverage} 
 można łatwo rozszerzyć do drzew: do żądania przesuwa on ze stałą prędkością 
@@ -26,7 +26,7 @@ od żądania do $x$ nie zawiera innych serwisantów).}
 Dany jest $n$-wierzchołkowy graf. Skonstruuj randomizowany 
 $O(k \cdot \log n)$-konkurencyjny algorytm dla tego grafu.
 
-\item[Zadanie 3] \textbf{(2 pkt.)}
+\item[Zadanie 3.] \textbf{(2 pkt.)}
 Drzewo $T$ otrzymane w przedstawionej na wykładzie konstrukcji FRT 
 składa się z liści odpowiadających
 wierzchołkom grafu $V$ i wierzchołków wewnętrznych $V'$. Pokaż, jak na
@@ -34,7 +34,7 @@ podstawie $T$ skonstruować drzewo $T'$, w którym zbiór wierzchołków jest r�
 odległości w~$T'$ między dowolną parą $v,w \in V$ różnią się od odległości
 w $T$ co najwyżej $O(1)$ razy. \emph{Wskazówka:} usuwaj niektóre krawędzie.
 
-\item[Zadanie 4]
+\item[Zadanie 4.]
 W pewnym kraju linia brzegowa jest prostą oddzielającą brzeg od morza. Pewien
 kapitan odpłynął od brzegu na odległość 1 km, rzucił kotwicę i zrobił wielką
 balangę. Kiedy następnego dnia obudził się na kacu, nie wiedział skąd ani jak 
@@ -44,7 +44,7 @@ która mogłaby pomóc znaleźć mu brzeg, jest to zatem zadanie dla Ciebie.
 (Jest to wariant poszukiwania prostej na płaszczyźnie: tym razem wiadomo tylko, że
 prosta jest w odległości równej~$1$). 
 
-\begin{enumerate}[a)]
+\begin{enumerate}
 \item \textbf{(2 pkt.)} Skonstruuj deterministyczny algorytm, którego współczynnik 
 	ścisłej konkurencyjności wynosi dokładnie $1 + 2\cdot \pi$. 
 \item \textbf{(2 pkt.)} Skonstruuj deterministyczny algorytm, którego współczynnik 

@@ -1,14 +1,15 @@
-\documentclass[a4paper,11pt]{scrartcl}
+\documentclass[a4paper,11pt]{article}
 \input{macros}
 \begin{document}
 \makeheader{6}
 
+
 \begin{description}
 
-\item[Zadanie 1] Rozważmy problem szeregowania na $m$ identycznych maszynach (o takiej samej prędkości).
+\item[Zadanie 1.] Rozważmy problem szeregowania na $m$ identycznych maszynach (o takiej samej prędkości).
 Celem jest minimalizacja obciążenia najbardziej obciążonej maszyny.
 
-\begin{enumerate}[a)]
+\begin{enumerate}
 
 \item \textbf{(2 pkt.)} 
 Pokaż, że strategia zachłanna (przypisujemy zadanie do najmniej obciążonej maszyny) ma współczynnik
@@ -24,10 +25,10 @@ szeregowania zadań na $2$ identycznych maszynach wynosi co najmniej $4/3$.
 
 \end{enumerate}
 
-\item[Zadanie 2] \textbf{(3 pkt.)} 
+\item[Zadanie 2.] \textbf{(3 pkt.)} 
 Pokaż, że ścisła konkurencyjność problemu \textsc{Online Bidding} wynosi co najmniej~$4$. 
 Możesz skorzystać z następującego schematu:
-\begin{enumerate}[i)]
+\begin{enumerate}
 \item Ustal nieskończony ciąg $0 < d_1 < d_2 < d_3 \ldots $ definiujący algorytm i
 oznacz konkurencyjność algorytmu przez $R$.
 Zdefiniuj $s_j = \sum_{i=1}^j d_i$ i pokaż, że dla każdego $j$ 
@@ -60,7 +61,7 @@ Do czego zbiega lewa i prawa strona \eqref{eq:b_j}?
 
 
 
-\item[Zadanie 3] \textbf{(3 pkt.)} 
+\item[Zadanie 3.] \textbf{(3 pkt.)} 
 %
 (Problem inkrementalnych median). Dane są dwa zbiory: $K$ (klienci) i $M$ (miejsca na zbudowanie fabryk) oraz
 funkcja odległości $d(k,m)$ zdefiniowana dla dowolnej pary $(k,m) \in K \times
@@ -78,7 +79,7 @@ fabryki w każdym dostępnym miejscu.
 Zadaniem algorytmu jest rozbudowa zbioru fabryk, 
 tj.~skonstruowanie ciągu zbiorów $F_1 \subseteq F_2 \subseteq \ldots \subseteq F_{|M|-1} \subseteq F_{|M|}$,
 takiego że dla każdego $i \in \{1,\ldots,|M|\}$ zachodzą warunki
-\begin{enumerate}[i)]
+\begin{enumerate}
 \item $\textsc{cost}(F_i) \leq \OPT(i)$,
 \item $|F_i| \leq 4 \cdot i$.
 \end{enumerate}

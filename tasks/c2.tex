@@ -6,7 +6,34 @@
 
 \begin{description}
 
-\item[Zadanie 1.] 
+\item[Zadanie 1.] \textbf{(2 pkt.)} 
+Aby zrobić miejsce w pamięci podręcznej, algorytm \FIFO usuwa z niej stronę,
+która była tam najdłużej. Pokaż, że \FIFO jest nie jest
+algorytmem zaznaczającym. Pokaż, że \FIFO jest $k$-konkurencyjny.
+
+\item[Zadanie 2.] \textbf{(2 pkt.)} 
+{\LFU} (\emph{Least Frequently Used}) to algorytm, który z każdą stroną wiąże
+licznik określający, ile odwołań wystąpiło do tej strony. Zapisanie strony w
+pamięci podręcznej lub wyrzucenie jej stamtąd nie powoduje zerowania takiego
+licznika. Aby zrobić miejsce w~pamięci podręcznej, {\LFU} wyrzuca z niej stronę
+o~najmniejszej wartości licznika. Pokaż, że {\LFU} nie jest konkurencyjny. 
+
+
+\item[Zadanie 3.] \textbf{(2 pkt.)} 
+Celem tego zadania jest udowodnienie, że konkurencyjność dowolnego algorytmu deterministycznego \DET dla problemu pamięci podręcznej wynosi co najmniej $k$. 
+Założymy, że algorytm \DET startuje z pełną pamięcią podręczną. 
+Rozważ ciąg wejściowy $\sigma^n$ o długości~$n$ składający się z $k+1$ różnych stron, w którym adwersarz zawsze pyta o stronę, której \DET nie ma w pamięci podręcznej.
+
+\begin{enumerate}
+\item Pokaż, że $\OPT(\sigma^n) \leq 1 + n/k$. \emph{Wskazówka: jak na ciągu $\sigma^n$ zachowa się algorytm \emph{Longest Forward Distance}?}
+
+\item Wywnioskuj, że $\DET(\sigma^n) \geq k \cdot \OPT(\sigma^n) - k$.
+
+\item Jak z poprzedniego punktu wynika dolne ograniczenie na konkurencyjność \DET? 
+\end{enumerate}
+
+
+\item[Zadanie 4.] 
 Załóżmy, że algorytm dysponuje pamięcią podręczną o rozmiarze $k$,
 a optymalny algorytm pamięcią o rozmiarze $h \leq k$.
 \begin{enumerate}
@@ -15,21 +42,13 @@ a optymalny algorytm pamięcią o rozmiarze $h \leq k$.
 co najmniej $\frac{k}{k-h+1}$.
 \end{enumerate}
 
-\item[Zadanie 2.] \textbf{(2 pkt.)} 
-{\LFU} (\emph{Least Frequently Used}) 
-to algorytm, który z każdą stroną wiąże licznik określający, ile odwołań wystąpiło do tej strony.
-Zapisanie strony w pamięci podręcznej lub wyrzucenie jej stamtąd nie powoduje zerowania takiego licznika.   
-{\LFU} wyrzuca z pamięci podręcznej stronę, która była najrzadziej używana (o~najmniejszej wartości licznika).
-Udowodnij, że {\LFU} nie jest konkurencyjny. 
 
-\item[Zadanie 3.] Rozważmy randomizowany algorytm zaznaczający {\RMARK} dla problemu pamięci podręcznej.
-\begin{enumerate}
-%\item \textbf{(1 pkt.)} (Ćwiczenie z wykładu). Załóżmy, że wejście $\sigma$ składa się z $\ell$ faz; niech $n_i$ oznacza liczbę nowych stron w fazie $i$ (zakładamy, że 
-%$f_1 = k$). Pokaż, że $\OPT(\sigma) \geq (1/2) \cdot \sum_{i=1}^\ell n_i$.
-\item \textbf{(1 pkt.)} Pokaż, że jeśli pamięć RAM zawiera $n = k+1$ stron, to algorytm 
-{\RMARK} jest $H_k$-konkurencyjny. 
-\item \textbf{(3 pkt.)} Pokaż, że dla dowolnego $k \geq 2$ można dobrać takie $n$, że konkurencyjność {\RMARK} jest większa niż $H_k$.
-\end{enumerate}
+%\item[Zadanie.] Rozważmy randomizowany algorytm zaznaczający {\RMARK} dla problemu pamięci %podręcznej.
+%\begin{enumerate}
+%\item \textbf{(1 pkt.)} Pokaż, że jeśli pamięć RAM zawiera $n = k+1$ stron, to algorytm 
+%{\RMARK} jest $H_k$-konkurencyjny. 
+%\item \textbf{(3 pkt.)} Pokaż, że dla dowolnego $k \geq 2$ można dobrać takie $n$, że %konkurencyjność {\RMARK} jest większa niż $H_k$.
+%\end{enumerate}
 
 \end{description}
 

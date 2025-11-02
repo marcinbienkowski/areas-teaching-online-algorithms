@@ -7,37 +7,27 @@
 \begin{description}
 
 \item[Zadanie 1.] \textbf{(3 pkt.)} 
-Rozważmy wariant problemu MTS (\emph{Metrical Task System}) z metryką dyskretną 
-\mbox{$n$-elementową}, gdzie odległość między każdymi dwoma różnymi punktami wynosi $D \in \mathbb{N}$.
-W każdym kroku wektor kar zawiera tylko zera i jedynki. Skonstruuj
-$O(\log n)$-konkurencyjny randomizowany algorytm. Wskazówka: zrandomizuj  
-deterministyczy algorytm zaznaczający z~wykładu.
+%
+Rozważmy wariant problemu MTS (\emph{Metrical Task System}) z metryką dyskretną \mbox{$n$-elementową}, gdzie odległość między każdymi dwoma różnymi punktami wynosi~$D \in \mathbb{N}$. W każdym kroku wektor kar zawiera tylko zera i jedynki. Skonstruuj $O(\log n)$-konkurencyjny randomizowany algorytm. \emph{Wskazówka: zrandomizuj deterministyczny algorytm zaznaczający z~wykładu.}
 
 \item[Zadanie 2.] \textbf{(2 pkt.)}
-Rozważmy następujące algorytmy dla problemu reorganizacji listy długości
-$\ell$.  Algorytm \textsc{Transpose} po odwołaniu do elementu $x$ przesuwa $x$
-o jedno miejsce w stronę początku listy.  Algorytm \textsc{Frequency Count} po
-wystąpieniu żądania reorganizuje listę, tak żeby była posortowana pod względem
-częstotliwości wystąpienia elementów w już widzianej części sekwencji
-wejściowej.  Pokaż, że konkurencyjność obu tych algorytmów
-wynosi~$\Omega(\ell)$.  
+%
+Rozważmy następujące algorytmy dla problemu reorganizacji listy długości~$\ell$. 
+\begin{itemize}
+\item Algorytm \textsc{Transpose} po dostępie do elementu $x$ przesuwa $x$ o jedno miejsce w stronę początku listy. 
+\item Algorytm \textsc{Frequency Count} po każdym żądaniu reorganizuje listę, tak żeby była posortowana pod względem częstotliwości wystąpienia elementów w już widzianej części sekwencji wejściowej. 
+\end{itemize}
+Pokaż, że konkurencyjność obu tych algorytmów wynosi~$\Omega(\ell)$. 
+
 %Wskazówka: co się dzieje jeśli adwersarz pyta zawsze o ostatni elementy listy?
 %Wskazówka: rozważ sekwencję $\sigma = x_1^k, x_2^{k-1}, x_3^{k-2}, \ldots, x_\ell^{k+1-\ell}$.
 
 \item[Zadanie 3.] \textbf{(3 pkt.)} 
-Wykorzystując funkcje potencjału, pokaż, że dla listy dwuelementowej algorytm
-\textsc{Move To Front} jest $4/3$-konkurencyjny. 
-Funkcja potencjału nie powinna zależeć od historii, tylko 
-od bieżącego stanu listy \textsc{Opt} i \textsc{Mtf}. 
+%
+Wykorzystując funkcję potencjału, pokaż, że dla listy dwuelementowej algorytm \textsc{Move To Front} jest $4/3$-konkurencyjny. Funkcja potencjału nie powinna zależeć od historii, tylko od bieżącego stanu listy \textsc{Opt} i \textsc{Mtf}. 
 
 \item[Zadanie 4.] \textbf{(2 pkt.)} 
-Wykorzystując funkcje potencjału, pokaż, że algorytm, który kupuje narty
-dnia $B$, jest $2$-konkurencyjny.  Funkcja potencjału może zależeć od stanu
-algorytmu, stanu \textsc{Opt} i numeru dnia.
-
-%\item[Zadanie 5] \textbf{(1 pkt.)}
-%Pokaż sekwencję wejściową dla problemu reorganizacji listy, dla której rozwiązanie optymalne
-%musi wykorzystywać płatne zamiany.
+Wykorzystując funkcję potencjału, pokaż, że algorytm, który kupuje narty dnia $B$, jest $2$-konkurencyjny.  Funkcja potencjału może zależeć od stanu algorytmu, stanu \textsc{Opt} i numeru dnia.
 
 % jeśli OPT nie ma nart, to:
 % phi_i = i w dni i<B, 0 w dniu i>=B
@@ -47,7 +37,6 @@ algorytmu, stanu \textsc{Opt} i numeru dnia.
 % pokazujemy to dla dwoch akcji: 
 % 1. OPT może kupić narty
 % 2. ALG i OPT płacą za wypozyczanie i ALG byc moze kupuje.
-
 
 \end{description}
 

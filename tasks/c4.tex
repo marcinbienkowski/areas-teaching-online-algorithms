@@ -6,29 +6,16 @@
 
 \begin{description}
 
-%\item[Zadanie 1] \textbf{(4 pkt.)} 
-%Na wykładzie zaprezentowany został algorytm \textsc{Rand} dla problemu pamięci
-%podręcznej, który --- w przypadku chybienia --- wyrzuca z pamięci podręcznej
-%losową stronę. Pokaż, że \textsc{Rand} jest $k$-konkurencyjny. (To powinien być pełen dowód, 
-%tzn.~trzeba przeanalizować również przypadki rozważone już na wykładzie).
 
 \item[Zadanie 1.] \textbf{(2 pkt.)} 
-    Rozważmy deterministyczny algorytm \textsc{Half-MTF} dla statycznej reorganizacji listy, 
-    który obsługuje odwołanie do elementu $x$ w następujący sposób:
-    jeśli jest to parzyste odwołanie do elementu $x$, to $x$ zostaje przeniesiony na początek.
-	Pokaż, że \textsc{Half-MTF} jest $3$-konkurencyjny.    
+%
+Rozważmy deterministyczny algorytm \textsc{Half-MTF} dla statycznej reorganizacji listy, który obsługuje odwołanie do elementu $x$ w następujący sposób: jeśli jest to parzyste odwołanie do elementu $x$, to $x$ zostaje przeniesiony na początek. Pokaż, że \textsc{Half-MTF} jest $3$-konkurencyjny.    
 
 % Analizujemy bita w najgorszym mozliwym (nie-srednim) przypadku
 
 \item[Zadanie 2.] \textbf{(4 pkt.)} 
-    Rozważ algorytm \textsc{Rand-MTF} dla problemu reorganizacji listy o długości $\ell$, który
-    w przypadku odwołania do elementu $x$ przesuwa go na początek listy z prawdopodobieństwem $1/2$. 
-    Pokaż, że współczynnik konkurencyjności tego algorytmu wynosi co najmniej $2 - O(1/\sqrt{\ell})$.
-	\footnote{Można zastąpić $O(1/\sqrt{\ell})$ inną funkcją malejącą wraz z $\ell$.}
-
-    Wskazówka: Niech początkowa lista zawiera elementy $x_1, x_2, \dots, x_\ell$. 
-    Załóż, że współczynnik wynosi $2 - \epsilon$ i rozważ 
-    ciąg odwołań do elementów $x_\ell^k, x_{\ell-1}^k, \ldots, x_1^k$ powtórzony wiele razy.
+%
+Rozważ algorytm \textsc{Rand-MTF} dla problemu reorganizacji listy o długości~$\ell$, który  w przypadku odwołania do elementu $x$ przesuwa go na początek listy z prawdopodobieństwem $1/2$. Pokaż, że współczynnik konkurencyjności tego algorytmu wynosi co najmniej $2 - O(1/\sqrt{\ell})$.\footnote{Można zastąpić $O(1/\sqrt{\ell})$ inną funkcją malejącą wraz z $\ell$.} \emph{Wskazówka: Niech początkowa lista zawiera elementy $x_1, x_2, \dots, x_\ell$. Załóż, że współczynnik wynosi $2 - \epsilon$ i rozważ ciąg odwołań do elementów $x_\ell^k, x_{\ell-1}^k, \ldots, x_1^k$ powtórzony wiele razy.}
 
 % Zawsze jest dobrze = podczas tych k krokow przenosimy dany element na poczatek. 
 % E[ALG] = E[ALG|zawsze dobrze] * Pr[zawsze dobrze] + E[ALG|nie zawsze dobrze] * Pr[nie zawsze dobrze]
@@ -36,14 +23,8 @@
 % Z kolei E[ALG|zawsze dobrze] moze byc dowolnie bliskie 2 * OPT.
 
 \item[Zadanie 3.] \textbf{(4 pkt.)} 
-Na wykładzie zaprezentowany został algorytm \textsc{Rand} dla problemu pamięci
-podręcznej, który --- w przypadku chybienia --- wyrzuca z pamięci podręcznej
-losową stronę. Pokaż, że konkurencyjność takiego algorytmu wynosi co najmniej
-$k$.\footnote{Na wykładzie wspomniałem, że $k$-konkurencyjność algorytmu 
-\textsc{Rand} zachodzi również dla silniejszego, adaptującego się adwersarza. Należy
-rozwiązywać to zadanie, jak gdyby tej uwagi nie było, tj.~pokazać dolne
-ograniczenie wykorzystując słabszego adwersarza, który nie widzi bitów losowych
-algorytmu (czyli takiego, jak rozważaliśmy do tej pory).}
+%
+Na wykładzie zaprezentowany został algorytm \textsc{Rand} dla problemu pamięci podręcznej, który --- w przypadku chybienia --- wyrzuca z pamięci podręcznej losową stronę. Pokaż, że konkurencyjność takiego algorytmu wynosi co najmniej $k$.\footnote{Na wykładzie wspomniałem, że $k$-konkurencyjność algorytmu \textsc{Rand} zachodzi również dla silniejszego, adaptującego się adwersarza. Należy rozwiązywać to zadanie, jak gdyby tej uwagi nie było, tj.~pokazać dolne ograniczenie wykorzystując słabszego adwersarza, który nie widzi bitów losowych algorytmu (czyli takiego, jak rozważaliśmy do tej pory).}
 
 \end{description}
 

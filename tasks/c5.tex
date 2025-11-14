@@ -21,13 +21,13 @@
 \item[Zadanie 3.] \textbf{(3 pkt.)} 
 	Pokaż dolne ograniczenie na konkurencyjność dowolnego randomizowanego 
     algorytmu rozwiązującego problem wypożyczania nart wynoszące $\e/(\e-1)$, gdy $B \to \infty$.
-    Wskazówka: zastosuj zasadę minimaksową Yao stosując następujący rozkład:
+    \emph{Wskazówka: zastosuj zasadę minimaksową Yao stosując następujący rozkład:
     narciarz łamie nogę dnia $1 \leq i \leq B$ z prawdopodobieństwem 
     \begin{align*}
-    p_i = & \frac{1}{B} \cdot \left( \frac{B-1}{B}\right)^{i-1} \enspace,
+    p_i & = \frac{1}{B} \cdot \left( \frac{B-1}{B}\right)^{i-1},
     \intertext{i nigdy nie łamie nogi z prawdopodobieństwem}
-    p_\infty = & \left( \frac{B-1}{B} \right)^B \enspace.
-    \end{align*}
+    p_\infty & = \left( \frac{B-1}{B} \right)^B.
+    \end{align*}}
     % E[ALG] = B, E[OPT] = B(1-((b-1)/b)^b) 
 
 \end{description}
